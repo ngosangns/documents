@@ -170,3 +170,24 @@ import { FormsModule } from '@angular/forms';
 # Giá trị mặc định
 *ngSwitchDefault
 ```
+
+---
+
+### Lifecycle Hook: Vòng đời của ứng dụng
+- Constructor: Gọi đầu tiên khi implement component
+```
+constructor() {
+	code...
+}
+```
+- Ngoai ra còn có:
+	- ngOnInit: Chạy sau constructor và ngOnChanges
+	- ngOnChanges: Bắt sự kiện thay đổi Input và quản lí thông qua SimpleChanges (Chạy trước ngOnInit)
+	```
+	ngOnChanges(simpleChanges : SimpleChanges) {
+		code...
+	}
+	```
+	- ngOnDestroy: Chạy trước khi kết thúc componennts
+	- ngOnCheck: Chạy sau mỗi lần gọi ngOnInit và ngOnChange (Mục đích kiểm tra giá trị truyền lên/xuống)
+	- 
