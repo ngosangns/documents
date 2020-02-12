@@ -60,3 +60,113 @@ ng g c tên-Component
 <tên-Component></tên-Component>
 # Tên Component lấy từ giá trị selector trong file typescript của Component
 ```
+
+### Data Binding
+#### Component -> View
+- Interpolation (thường dùng để truyền string): `{{ value }}`
+```
+# Khai báo trong file .ts
+# Khai báo biến
+[access: public, private,...] tên-biến : kiểu-dữ-liệu = giá trị;
+
+# VD Chèn theo kiểu Interpolation
+href="{{ tên-biến }}"
+```
+- Property Binding (thường dùng để truyền thuộc tính custom) `[property-name] = "value"`
+```
+# VD Chèn theo kiểu Property Binding
+[href] = "tên-biến" 
+```
+- Attribute Binding (thường dùng để truyền thuộc tính được hỗ trợ) `[attr.tên-thuộc-tính] = "value"`
+```
+# VD Chèn theo kiểu Attribute Binding
+[attr.href] = "tên-biến"
+# Mỗi tag trong html đều có attribute riêng trong typescript, Google để tìm hiểu thêm
+```
+- Class Binding (thường dùng cho class) `[class.class-name] = "condition"`
+```
+# VD Chèn theo kiểu Class Binding
+[class.text-danger] = "true"
+```
+- Style Binding (thường dùng cho style) `[style.style-name] = "value"`
+```
+# VD Chèn theo kiểu Style Binding
+[style.text-align] = "center"
+[style.font-size.px] = "50" # Thêm đơn vị cho style
+```
+
+#### View -> Component
+- Event Binding (dùng để bắt sự kiện từ người dùng)
+```
+# Dùng ngoặc tròn thay vì ngoặc vuông
+# Dùng để bắt sự kiện
+(event) = "tên-function hoặc lệnh đơn"
+
+# VD
+(keydown) = "count = count + 1"
+# VD 2
+(keydown) = "function2($event)" # Đặt chính xác là $event để nhận sự kiện
+```
+
+#### Two ways binding
+> Thường được dùng trong form (input/select/....)
+
+- Import thư viện và khai báo (file *app.component.ts*):
+```
+# Import
+import { FormsModule } from '@angular/forms';
+
+# Khai báo trong @NgModule phần imports
+
+# Cú pháp
+[(ngModel)] = "tên-biến-muốn-đồng-bộ"
+```
+
+### Build-in Directives
+> Là một thành phần mở rộng của HTML, hay nói cách khác là các thuộc tính (properties) của các thẻ HTML mà Angular nó định nghĩa thêm, vì nó là của riêng Angular nên phải tuân theo các nguyên tắc của Angular
+
+#### Directives in Angular
+- Component
+- Attribute Directive
+- Structual Directive
+
+#### Structual Directive
+-  ngIf
+	- Dùng trong thẻ tag, dùng để hiển thị hoặc không một tag nào đó 
+	- Cú pháp
+```
+*ngIf="condition"
+
+# Cú pháp có then
+*ngIf="condition; then tên-block-muốn-trỏ-đến"
+
+# Cú pháp có else
+*ngIf="condition; else tên-block-muốn-trỏ-đến"
+
+<ng-template #tên-block>
+	tag
+</ng-template>
+```
+	- ngIf có thể sử dụng trong ng-template
+	- ng-template không hiển thị ra source html
+	- Nếu sử dụng ngIf ở ng-template thì nội dung bên trong ng-template đó sẽ không hiển thị ra ngoài cho dù điều kiện đúng. Để sửa lỗi ta dùng ng-container thay thế
+- ngFor
+	- Dùng cho mảng
+	- Cú pháp
+```
+*ngFor="let biến-lặp-for-each of tên-mảng[; let i = index[; let f = even[; trackby : tên-function]]]"
+# i là biến đếm, f là true nếu là số chẵn, ngược lại là false
+```
+	- function(index, item) của trackby nhận đầu vào để xử lí và return về
+	- Biến lặp có hiệu lực trong thẻ tag
+- ngSwitch
+	- Dùng cho mảng
+	- Cú pháp
+```
+# Tạo biến dùng để so sánh (Binding từ typescript ra)
+[ngSwitch] = "tên-biến"
+# Hàm switch (Sử dụng bên trong thẻ khai báo biến ngSwitch)
+*ngSwitchCase = "giá-trị"
+# Giá trị mặc định
+*ngSwitchDefault
+```
