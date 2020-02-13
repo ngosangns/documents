@@ -1,9 +1,9 @@
-### Required
+## 1. Required
 - HTML/CSS/JS basic
 - ES6
 - Typescript
 
-### Installation
+## 2. Installation
 - [**Node.js**](https://nodejs.org/en/)
 - Install **Typescript**
 ```
@@ -14,7 +14,7 @@ npm install -g typescript
 npm install -g @angular/cli 
 ```
 
-### First App
+## 3. First App
 - Create new app (app name: HelloWorld):
 ```
 ng new HelloWorld
@@ -26,7 +26,7 @@ ng serve [--o (Auto open in browser)]
 ng serve [--port 3000 (Change port, default port is 4200)]
 ```
 
-### Text Editor
+## 4. Text Editor
 - [**Sublime Text**](https://www.sublimetext.com/3)
 - Extensions: 
 	- HTML-CSS-JS Prettify (Node.js needed)
@@ -35,7 +35,8 @@ ng serve [--port 3000 (Change port, default port is 4200)]
 	- Bootstrap 4
 	- Sidebar
 
-### Component
+## 5. Component
+### 5.1. Tổng quan
 - Là các khối lắp ghép trên ứng dụng, giúp tạo ra các tag html do mình tự định nghĩa
 - Có class để chứa dữ liệu và các phương thức
 - Import Component từ thư viện **Angular Core**:
@@ -61,8 +62,8 @@ ng g c tên-Component
 # Tên Component lấy từ giá trị selector trong file typescript của Component
 ```
 
-### Data Binding
-#### Component -> View
+### 5.2 Data Binding
+#### 5.2.1. Component -> View
 - Interpolation (thường dùng để truyền string): `{{ value }}`
 ```
 # Khai báo trong file .ts
@@ -95,7 +96,7 @@ href="{{ tên-biến }}"
 [style.font-size.px] = "50" # Thêm đơn vị cho style
 ```
 
-#### View -> Component
+#### 5.2.2. View -> Component
 - Event Binding (dùng để bắt sự kiện từ người dùng)
 ```
 # Dùng ngoặc tròn thay vì ngoặc vuông
@@ -108,7 +109,7 @@ href="{{ tên-biến }}"
 (keydown) = "function2($event)" # Đặt chính xác là $event để nhận sự kiện
 ```
 
-#### Two ways binding
+#### 5.2.3. Two ways binding
 > Thường được dùng trong form (input/select/....)
 
 - Import thư viện và khai báo (file *app.component.ts*):
@@ -122,15 +123,15 @@ import { FormsModule } from '@angular/forms';
 [(ngModel)] = "tên-biến-muốn-đồng-bộ"
 ```
 
-### Build-in Directives
-> Là một thành phần mở rộng của HTML, hay nói cách khác là các thuộc tính (properties) của các thẻ HTML mà Angular nó định nghĩa thêm, vì nó là của riêng Angular nên phải tuân theo các nguyên tắc của Angular
+## 6. Build-in Directives
+Là một thành phần mở rộng của HTML, hay nói cách khác là các thuộc tính (properties) của các thẻ HTML mà Angular nó định nghĩa thêm, vì nó là của riêng Angular nên phải tuân theo các nguyên tắc của Angular
 
-#### Directives in Angular
+### 6.1. Directives in Angular
 - Component
 - Attribute Directive
 - Structual Directive
 
-#### Structual Directive
+### 6.2. Structual Directive
 -  ngIf
 	- Dùng trong thẻ tag, dùng để hiển thị hoặc không một tag nào đó 
 	- Cú pháp
@@ -171,23 +172,70 @@ import { FormsModule } from '@angular/forms';
 *ngSwitchDefault
 ```
 
----
+#### 6.2.1 ngClass, ngStyle, @Input, @Output (Đang cập nhật)
 
-### Lifecycle Hook: Vòng đời của ứng dụng
-- Constructor: Gọi đầu tiên khi implement component
+## 7. Lifecycle Hook: Vòng đời của ứng dụng
+### 7.1. **Constructor**: Gọi đầu tiên khi implement component
 ```
 constructor() {
 	code...
 }
 ```
-- Ngoai ra còn có:
-	- ngOnInit: Chạy sau constructor và ngOnChanges
-	- ngOnChanges: Bắt sự kiện thay đổi Input và quản lí thông qua SimpleChanges (Chạy trước ngOnInit)
+### 7.2. Lifecycle Hook
+Khai báo
+```
+# Typescript
+import { tên-hook-1(bỏ ng), tên-hook-2(bỏ ng) } from '@angular/core';
+```
+Một số Lifecycle Hook:
+
+- **ngOnChanges**: Bắt sự kiện thay đổi Input và quản lí thông qua SimpleChanges (Chạy trước ngOnInit)
+```
+ngOnChanges(simpleChanges : SimpleChanges) {
+	code...
+}
+```
+- **ngOnInit**: Chạy sau constructor và ngOnChanges
+- **ngOnDestroy**: Chạy trước khi kết thúc componennt
+- **ngOnCheck**: Chạy sau mỗi lần gọi ngOnInit và ngOnChange (Mục đích kiểm tra giá trị truyền lên/xuống)
+
+#### 7.2.1. ngContent: hỗ trợ đổ dữ liệu từ tag html của component	
+##### 7.2.1.1. Tổng quan
+- Gọi component
+```
+<my-component>
+	Content
+</my-component>
+```
+- Xác định vị trí đổ content trong component
+```
+# Đổ content không query
+<ng-content></ng-content> # Thẻ xác định nơi mà content khai báo thêm bên trên sẽ đổ vào
+# Đổ content có query
+<ng-content select="x"></ng-content>
+# (Trong đó x có thể là class, thẻ tag, attribute, attribute có value (query giống css))
+```
+
+##### 7.2.1.2. Một số Lifecycle Hook và thư viện cho ngContent
+- **ContentChild, ElementRef**: Lấy dữ liệu từ ng-content	
+	- Khai báo
 	```
-	ngOnChanges(simpleChanges : SimpleChanges) {
-		code...
-	}
+	import { ContentChild, ElementRef } from "@angular/core";
 	```
-	- ngOnDestroy: Chạy trước khi kết thúc componennts
-	- ngOnCheck: Chạy sau mỗi lần gọi ngOnInit và ngOnChange (Mục đích kiểm tra giá trị truyền lên/xuống)
-	- 
+	- Tạo đối tượng trong ng-content
+	```
+	<my-component>
+		<h1 #tên-key>Title</h1>
+	</my-component>
+	```
+	- Sử dụng
+	```
+	#ContentChild('tên-key') tên-biến : ElementRef;
+	```
+- **ngContentInit**: Hook được gọi 1 lần khi tạo ng-content		
+- **ngContentChecked**: Hook được gọi khi có dữ liệu đổ vào ng-content	
+- **ngAfterViewInit**: Hook được gọi 1 lần khi khởi tạo view	
+- **ngAfterViewChecked**: Hook được gọi khi có sự thay đổi về view của ng-content	
+- **@ViewChild**: **Tương tự như ContentChild** nhưng khác biệt là ContentChild được tạo ra bởi người lập trình, còn ViewChild tạo ra bởi người dùng
+
+## 8. Service: Ứng dụng DI
