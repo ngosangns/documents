@@ -11,7 +11,11 @@ npm install -g typescript
 ```
 - Install [**Angular CLI**](https://github.com/angular/angular-cli)
 ```
-npm install -g @angular/cli 
+npm i -g @angular/cli
+```
+- Install **IONIC CLI and Cordova** (mobile app develope)
+```
+npm i -g ionic cordova
 ```
 
 ## 3. First App
@@ -54,44 +58,44 @@ import { Component } from '@angular/core';
 - Tạo Component bằng command:
 ```
 ng g c tên-Component
-# Khi chạy xong Component sẽ được khai báo trong app module gần nhất (app.module.ts)
+// Khi chạy xong Component sẽ được khai báo trong app module gần nhất (app.module.ts)
 ```
 - Gọi Component trong file HTML:
 ```
 <tên-Component></tên-Component>
-# Tên Component lấy từ giá trị selector trong file typescript của Component
+// Tên Component lấy từ giá trị selector trong file typescript của Component
 ```
 
 ### 5.2 Data Binding
 #### 5.2.1. Component -> View
 - Interpolation (thường dùng để truyền string): `{{ value }}`
 ```
-# Khai báo trong file .ts
-# Khai báo biến
+// Khai báo trong file .ts
+// Khai báo biến
 [access: public, private,...] tên-biến : kiểu-dữ-liệu = giá trị;
 
-# VD Chèn theo kiểu Interpolation
+// VD Chèn theo kiểu Interpolation
 href="{{ tên-biến }}"
 ```
 - Property Binding (thường dùng để truyền thuộc tính custom) `[property-name] = "value"`
 ```
-# VD Chèn theo kiểu Property Binding
+// VD Chèn theo kiểu Property Binding
 [href] = "tên-biến" 
 ```
 - Attribute Binding (thường dùng để truyền thuộc tính được hỗ trợ) `[attr.tên-thuộc-tính] = "value"`
 ```
-# VD Chèn theo kiểu Attribute Binding
+// VD Chèn theo kiểu Attribute Binding
 [attr.href] = "tên-biến"
-# Mỗi tag trong html đều có attribute riêng trong typescript, Google để tìm hiểu thêm
+// Mỗi tag trong html đều có attribute riêng trong typescript, Google để tìm hiểu thêm
 ```
 - Class Binding (thường dùng cho class) `[class.class-name] = "condition"`
 ```
-# VD Chèn theo kiểu Class Binding
+// VD Chèn theo kiểu Class Binding
 [class.text-danger] = "true"
 ```
 - Style Binding (thường dùng cho style) `[style.style-name] = "value"`
 ```
-# VD Chèn theo kiểu Style Binding
+// VD Chèn theo kiểu Style Binding
 [style.text-align] = "center"
 [style.font-size.px] = "50" # Thêm đơn vị cho style
 ```
@@ -99,13 +103,13 @@ href="{{ tên-biến }}"
 #### 5.2.2. View -> Component
 - Event Binding (dùng để bắt sự kiện từ người dùng)
 ```
-# Dùng ngoặc tròn thay vì ngoặc vuông
-# Dùng để bắt sự kiện
+// Dùng ngoặc tròn thay vì ngoặc vuông
+// Dùng để bắt sự kiện
 (event) = "tên-function hoặc lệnh đơn"
 
-# VD
+// VD
 (keydown) = "count = count + 1"
-# VD 2
+// VD 2
 (keydown) = "function2($event)" # Đặt chính xác là $event để nhận sự kiện
 ```
 
@@ -114,12 +118,12 @@ href="{{ tên-biến }}"
 
 - Import thư viện và khai báo (file *app.component.ts*):
 ```
-# Import
+// Import
 import { FormsModule } from '@angular/forms';
 
-# Khai báo trong @NgModule phần imports
+// Khai báo trong @NgModule phần imports
 
-# Cú pháp
+// Cú pháp
 [(ngModel)] = "tên-biến-muốn-đồng-bộ"
 ```
 
@@ -138,10 +142,10 @@ Là một thành phần mở rộng của HTML, hay nói cách khác là các th
 ```
 *ngIf="condition"
 
-# Cú pháp có then
+// Cú pháp có then
 *ngIf="condition; then tên-block-muốn-trỏ-đến"
 
-# Cú pháp có else
+// Cú pháp có else
 *ngIf="condition; else tên-block-muốn-trỏ-đến"
 
 <ng-template #tên-block>
@@ -156,7 +160,7 @@ Là một thành phần mở rộng của HTML, hay nói cách khác là các th
 	- Cú pháp
 ```
 *ngFor="let biến-lặp-for-each of tên-mảng[; let i = index[; let f = even[; trackby : tên-function]]]"
-# i là biến đếm, f là true nếu là số chẵn, ngược lại là false
+// i là biến đếm, f là true nếu là số chẵn, ngược lại là false
 ```
 	- function(index, item) của trackby nhận đầu vào để xử lí và return về
 	- Biến lặp có hiệu lực trong thẻ tag
@@ -164,11 +168,11 @@ Là một thành phần mở rộng của HTML, hay nói cách khác là các th
 	- Dùng cho mảng
 	- Cú pháp
 ```
-# Tạo biến dùng để so sánh (Binding từ typescript ra)
+// Tạo biến dùng để so sánh (Binding từ typescript ra)
 [ngSwitch] = "tên-biến"
-# Hàm switch (Sử dụng bên trong thẻ khai báo biến ngSwitch)
+// Hàm switch (Sử dụng bên trong thẻ khai báo biến ngSwitch)
 *ngSwitchCase = "giá-trị"
-# Giá trị mặc định
+// Giá trị mặc định
 *ngSwitchDefault
 ```
 
@@ -184,7 +188,7 @@ constructor() {
 ### 7.2. Lifecycle Hook
 Khai báo
 ```
-# Typescript
+// Typescript
 import { tên-hook-1(bỏ ng), tên-hook-2(bỏ ng) } from '@angular/core';
 ```
 Một số Lifecycle Hook:
@@ -209,11 +213,11 @@ ngOnChanges(simpleChanges : SimpleChanges) {
 ```
 - Xác định vị trí đổ content trong component
 ```
-# Đổ content không query
+// Đổ content không query
 <ng-content></ng-content> # Thẻ xác định nơi mà content khai báo thêm bên trên sẽ đổ vào
-# Đổ content có query
+// Đổ content có query
 <ng-content select="x"></ng-content>
-# (Trong đó x có thể là class, thẻ tag, attribute, attribute có value (query giống css))
+// (Trong đó x có thể là class, thẻ tag, attribute, attribute có value (query giống css))
 ```
 
 ##### 7.2.1.2. Một số Lifecycle Hook và thư viện cho ngContent
@@ -239,3 +243,95 @@ ngOnChanges(simpleChanges : SimpleChanges) {
 - **@ViewChild**: **Tương tự như ContentChild** nhưng khác biệt là ContentChild được tạo ra bởi người lập trình, còn ViewChild tạo ra bởi người dùng
 
 ## 8. Service: Ứng dụng DI
+Viết các hàm dùng chung cho nhiều component và page dựa trên DI
+- Khởi tạo (Kèm theo Injectable)
+```sh
+ionic g service tên-service
+```
+- Import
+```
+import { tên-export-class } from 'service-path';
+```
+- Khai báo trong providers
+- Tạo biến trong constructor
+
+## 9. Routing
+Thực hiện nhiệm vụ chính là chuyển trang mà không cần load lại trang
+
+### 9.1. Sử dụng
+- Tại index.html có `<base href="/">`
+- Cần có 1 khu vực khai báo directive `<router-outlet></router-outlet>` nơi mà các nội dung cần thay đổi
+- Cần import `RouterModule, Routes` từ `@angular/router`
+- Khai báo **Router Root** cho ứng dụng (trong phần imports): `RouterModule.forRoot(routerArray: Routes[])`
+- Trong đó **routerArray** là 1 mảng object có kiểu **Routes** gồm các thuộc tính
+	- **path**: Đường dẫn để bắt router, nếu path: "\*\*" thì component sẽ được load khi không có router nào được bắt (giống 404 error page) 
+	- **component**: Component để load sau khi bắt router
+- Chuyển trang khi bắt được router nào đó
+	- **path**: 'path-để-bắt-router'
+	- **redirectTo**: '/tên-router-muốn-chuyển-đến'
+	- **pathMatch**: 'full'
+
+### 9.2. Một số thuộc tính khác
+- **routerLink**: Chuyển trang mà không load lại trang như thuộc tính href
+```
+<a [routerLink]="['/path']">Chuyển trang</a>
+```
+- **routerLinkActive**: Add class nào đó khi link được active
+```
+<a routerLinkActive="tên-class">Chuyển trang</a>
+```
+- Chuyển trang bằng **Event Binding**
+	- Sử dụng **Navigate** và **Router**
+	```
+	# Import thư viện
+	import { Router } from "@angular/router";
+	...
+	# Tạo biến
+	constructor(public routerService : Router) {
+	}
+	# Sử dụng navigate
+	navigate(path: string (có "/")) {
+		this.routerService.navigate([path]);
+	}
+	# Hoặc sử dụng navigateByUrl
+	navigate(path: string (không có "/")) {
+		this.routerService.navigateByUrl('path');
+	}
+	```
+
+### 9.3. Lấy tham số từ router
+- Khai báo path trong Router Array
+```
+{
+	path: '/product/:id'
+	component: CustomComponent
+}
+```
+- Import thư viện
+```
+import { ActivatedRoute } from "@angular/router";
+```
+- Tạo biến trong constructor
+```
+export class myComponent {
+	constructor(public activatedRoute : ActivatedRoute) {
+
+	}
+}
+```
+- Lấy giá trị trong params
+```
+customFunction() {
+	let id = this.activatedRoute.snapshot.params['id'];
+	# Hoặc ép kiểu
+	let id = (+this.activatedRoute.snapshot.params['id']);
+}
+```
+- Lắng nghe sự thay đổi của Params
+```
+customFunction() {
+	this.activatedRoute.params.subscribe(data => {
+		let id = data.id;
+	});
+}
+```
