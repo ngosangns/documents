@@ -1,3 +1,7 @@
+# Angular, IONIC Learning (nghiepuit)
+- [Playlist](https://www.youtube.com/playlist?list=PLJ5qtRQovuENHYHqlQP5XT7zwbCA5Q5He)
+- [Slide](https://github.com/nghiepuit/slide/blob/master/slide-angular4-1.pptx)
+
 ## 1. Required
 - HTML/CSS/JS basic
 - ES6
@@ -176,7 +180,7 @@ Là một thành phần mở rộng của HTML, hay nói cách khác là các th
 *ngSwitchDefault
 ```
 
-#### 6.2.1 ngClass, ngStyle, @Input, @Output (Đang cập nhật)
+#### 6.2.1 ngClass, ngStyle, \@Input, \@Output (Đang cập nhật)
 
 ## 7. Lifecycle Hook: Vòng đời của ứng dụng
 ### 7.1. **Constructor**: Gọi đầu tiên khi implement component
@@ -240,7 +244,7 @@ ngOnChanges(simpleChanges : SimpleChanges) {
 - **ngContentChecked**: Hook được gọi khi có dữ liệu đổ vào ng-content	
 - **ngAfterViewInit**: Hook được gọi 1 lần khi khởi tạo view	
 - **ngAfterViewChecked**: Hook được gọi khi có sự thay đổi về view của ng-content	
-- **@ViewChild**: **Tương tự như ContentChild** nhưng khác biệt là ContentChild được tạo ra bởi người lập trình, còn ViewChild tạo ra bởi người dùng
+- **\@ViewChild**: **Tương tự như ContentChild** nhưng khác biệt là ContentChild được tạo ra bởi người lập trình, còn ViewChild tạo ra bởi người dùng
 
 ## 8. Service: Ứng dụng DI
 Viết các hàm dùng chung cho nhiều component và page dựa trên DI
@@ -283,18 +287,18 @@ Thực hiện nhiệm vụ chính là chuyển trang mà không cần load lại
 - Chuyển trang bằng **Event Binding**
 	- Sử dụng **Navigate** và **Router**
 	```
-	# Import thư viện
+	// Import thư viện
 	import { Router } from "@angular/router";
 	...
-	# Tạo biến
+	// Tạo biến
 	constructor(public routerService : Router) {
 	}
-	# Sử dụng navigate
-	navigate(path: string (có "/")) {
+	// Sử dụng navigate
+	navigate(path: string (không có "/")) {
 		this.routerService.navigate([path]);
 	}
-	# Hoặc sử dụng navigateByUrl
-	navigate(path: string (không có "/")) {
+	// Hoặc sử dụng navigateByUrl
+	navigate(path: string (có "/")) {
 		this.routerService.navigateByUrl('path');
 	}
 	```
@@ -314,16 +318,14 @@ import { ActivatedRoute } from "@angular/router";
 - Tạo biến trong constructor
 ```
 export class myComponent {
-	constructor(public activatedRoute : ActivatedRoute) {
-
-	}
+	constructor(public activatedRoute : ActivatedRoute) { }
 }
 ```
 - Lấy giá trị trong params
 ```
 customFunction() {
 	let id = this.activatedRoute.snapshot.params['id'];
-	# Hoặc ép kiểu
+	// Hoặc ép kiểu
 	let id = (+this.activatedRoute.snapshot.params['id']);
 }
 ```
@@ -335,3 +337,100 @@ customFunction() {
 	});
 }
 ```
+
+### 9.4. Lấy tham số từ query
+- Tạo form và truyền theo kiểu queryParams
+```
+<input type="text" [(ngModel)] = 'name'>
+<button [routerLink]="[/path] [queryParams] = "{ key1: value1, key2: value2 }"></button>
+```
+- Tạo form và truyền theo kiểu **Event Binding (Navigate)**
+```
+// Import thư viện
+import { Router } from "@angular/router";
+...
+// Tạo biến (ngModel)
+public value1 : string;
+public value2 : string;
+...
+constructor(public routerService : Router) {
+}
+// Sử dụng navigate
+navigate(path: string (không có "/")) {
+	this.routerService.navigate([path], { queryParams: { key1: this.value1, key2: this.value2 } });
+}
+```
+- Bắt giá trị bằng **ActivatedRoute**
+```
+// Import thư viện
+import { ActivatedRoute } from "@angular/router";
+// Tạo biến trong constructor
+export class myComponent {
+	constructor(public activatedRoute : ActivatedRoute) { }
+}
+// Lấy giá trị trong params
+customFunction() {
+	this.activatedRoute.params.subscribe(data => {
+		let value1 = data.key1;
+		let value2 = data.key2;
+	});
+}
+```
+*Lưu ý: `this.activatedRoute.params.subscribe` trả về giá trị kiểu dữ liệu `Subscription` nên phải add kiểu dữ liệu vào*
+```
+import { Subscription } from "rxjs/Subscription";
+...
+public subscription : Subscription;
+...
+this.subscription = this.activatedService.parent.params.subscribe(...);
+
+// Hủy Subscription trước khi kết thúc Lifecycle
+ngOnDestroy() {
+	if(this.subscription)
+		this.subscription.unsubscribe();
+}
+```
+
+## 10. Area trong Angular
+Giới hạn những trang mà các cấp user khác nhau có thể vào
+### 10.1. CanActive
+- Tạo Guard
+```sh
+ng g Guard tên-guard
+```
+- Là 1 service, chú ý khai báo trong providers
+- Tạo biến toàn cục để lưu trữ dữ liệu người dùng
+```
+// Set
+localStorage.setItem('key', value);
+// Get
+this.value1 = localStorage.getItem('key');
+// Remove
+localStorage.removeItem('key');
+// Clear
+localStorage.clear();
+```
+- Override giá trị trả về của Guard bằng biến toàn cục
+
+### 10.2. CanDeactive
+- Tương tự như CanActive nhưng ngược chức năng
+- Override một component trong export class
+```
+export class AccessGuard implements CanDeactive<HomeComponent> {
+	CanDeactive() : boolean {
+		return false;
+	}
+}
+```
+
+## 11. Module
+- Là một class có decorater là **\@NgModule({})**
+- Bao gồm : **imports** : [], **declarations** : [], **bootstrap** : [], **providers** : [], **exports** : []
+	- **declarations** : components, directives, pipes ( chú ý chỉ thuộc về duy nhất 1 angular module )
+	- **import** :  module, components, directives, pipes ( nếu cần )
+		- **BrowserModule** : bắt buộc import ( ngIf, ngFor thuộc CommonModule - \@angular/common ), đã imports CommonModule
+	- **providers** :  services
+	- **bootstrap** : nơi khai báo component chạy đầu tiên
+	- **exports** : export/reexport module, components, directives, pipes. Không export một service
+- Khai báo module đầu tiên ở main.ts
+- Xây dựng Module dùng chung chứa các pipe ( bao gồm CommonModule ) sau đó reexport CommonModule cho các module khác sử dụng. Tránh việc import lại nhiều lần
