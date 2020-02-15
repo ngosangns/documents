@@ -180,8 +180,28 @@ Là một thành phần mở rộng của HTML, hay nói cách khác là các th
 *ngSwitchDefault
 ```
 
-#### 6.2.1 ngClass, ngStyle, \@Input, \@Output (Đang cập nhật)
+#### 6.2.1. ngClass, ngStyle, \@Input, \@Output (Đang cập nhật)
+#### 6.2.2. \@Input: Truyền dữ liệu từ cha sang con
+- Tạo biến tại parent component (*file app.component.ts*)
+```
+export class AppComponent {
+	public testVar: string = "Hello";
+	...
+}
+```
+- Đưa biến vào khi gọi component con (*file app.component.html*)
+```
+<app-child [tên-key]="tên-biến"></app-child>
+```
+- Dùng \@Input bắt giá trị tại component con
+```
+// Khai báo thư viện
+import { Input } from '@angular/core';
 
+// Bắt dữ liệu
+@Input('tên-key') tên-biến-mới : kiểu-dữ-liệu = giá-trị-mặc-định;
+
+```
 ## 7. Lifecycle Hook: Vòng đời của ứng dụng
 ### 7.1. **Constructor**: Gọi đầu tiên khi implement component
 ```
