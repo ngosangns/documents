@@ -454,3 +454,61 @@ export class AccessGuard implements CanDeactive<HomeComponent> {
 	- **exports** : export/reexport module, components, directives, pipes. Không export một service
 - Khai báo module đầu tiên ở main.ts
 - Xây dựng Module dùng chung chứa các pipe ( bao gồm CommonModule ) sau đó reexport CommonModule cho các module khác sử dụng. Tránh việc import lại nhiều lần
+
+## 12. HttpClient
+Import module (file *app.component.ts*)
+```
+import { HttpClientModule } from "@angular/common/http";
+// Khai báo vào phần import trong ngModule
+```
+Import thư viện trong component
+```
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { Observable } from "rxjs";
+```
+Inject `HttpClient` vào constructor
+```
+constructor(public http : HttpClient) { }
+```
+Lệnh GET (tạo trong file service)
+```
+getAllTodos() : Observable<ToDo[]> {
+	return this.http.get(link);
+}
+```
+*Response trả về kiểu Observable*
+
+Để lắng nghe sự thay đổi ta dùng subscribe
+```
+public subscription : Subscription;
+public todo : Todo = null;
+public todos : Todos[] = [];
+
+// Subscribe
+loadData() {
+	this.subscription = this.todoService.getAllTodos().subscribe(
+		data => {
+			this.todos = data;
+		}, 
+		err => {
+			this.todoService.handleError(error);
+		});
+
+}
+
+// Handle error (tạo trong file service)
+handleError(err) {
+	if(err.error instanceof Error) {
+		console.log('Client-side error: ${err.error.message}');
+	}
+	else {
+		console.log('Server-side error: ${err.status} - ${err.error.message}');
+	}
+}
+```
+Vì subscribe mà không hủy sẽ dẫn đến tình trạng tràn bộ nhớ, nên ta phải hủy nó trước khi kết thúc component
+```
+ngOnDestroy() {
+	this.subscription.unsubscribe();
+}
+```
