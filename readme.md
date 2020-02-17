@@ -512,3 +512,62 @@ ngOnDestroy() {
 	this.subscription.unsubscribe();
 }
 ```
+## 13. Forms
+### 13.1. Template-Driven Forms
+Import thư viện (trong component)
+```
+import { NgForm } from "@angular/forms";
+```
+Đặt tên form và tạo sự kiện
+```
+<form #formuser="ngForm" (ngSubmit)="onSubmitForm(formUser)">
+...
+</form>
+```
+Các attribute liên quan
+```
+<input type="text" name="txtUsername"
+	minlength="3"
+	maxlength="20"
+	required="required"
+	pattern="mã-regex"
+	[(ngModel)]="user.username"
+	#username="ngModel" <!-- Gán tên biến với ngModel để có thể bắt lỗi -->
+></input>
+```
+*Lưu ý: Khi đã đặt tên form thì không cần sử dụng ngModelOption cho các input con và ngược lại*
+
+Reset form
+```
+# Typescript
+formUser.reset();
+```
+Bắt lỗi và hiển thị lỗi
+```
+<!-- Tắt validate của HTML5 -->
+<input type="text" name="txtUsername"
+	...
+	novalidate
+	autocomplete="false"
+></input>
+
+<span class="label label-danger" *ngIf="username.error?.required">
+	Vui lòng nhập username
+</span>
+<span class="label label-danger" *ngIf="username.error?.minlength">
+	Username phải có độ dài từ 3 kí tự
+</span>
+<span class="label label-danger" *ngIf="username.error?.maxlength">
+	Username phải có độ dài tối đa là 20 kí tự
+</span>
+```
+Gom nhóm các input con
+```
+<div ngModelGroup="tên-group">
+	<input...></input>
+	<input...></input>
+	<input...></input>
+</div>
+```
+### 13.2. Data-Driven Forms (Update sau)
+### 13.3. Custom Validation
