@@ -131,3 +131,62 @@ let testFunc2 = (testPar1 : number = 1, testPar2 : number = 2) => {
     console.log(arguments.length); // Kết quả: 2
 }
 ```
+
+## 3.9. Rest parameter
+>Nhận một lượng tham số không xác định và hỗ trợ truy xuất lượng tham số đó
+```javascript
+var testFunc = function(...colors: any[]) {
+    for(let i in colors) {
+        console.log(color[i]);
+    }
+}
+```
+*Chúng ta có thể truyền vào một mảng (Spread parameter)*
+```javascript
+var testFunc = function(...colors: any[]) {
+    for(let i in colors) {
+        console.log(color[i]);
+    }
+}
+colorArray = ['Red', 'Green', 'Blue'];
+testfunc(...colorArray);
+```
+
+## 3.10. Bóc tách Array
+```javascript
+var employees = ['A', 'B', 'C'];
+
+let [em1, em2, em3] = employees;
+console.log(em1+" "+em2+" "+em3); // Kết quả: A B C
+
+let [,, em3] = employees;
+console.log(em3); // Kết quả: C
+
+// Có thể sử dụng Rest parameter
+let [...ems] = employees;
+console.log(em1[0]+" "+em[1]+" "+em[2]); // Kết quả: A B C
+```
+
+## 3.11. Bóc tách object
+```javascript
+let employee = {
+    fname : "Nguyễn",
+    mname : "Văn",
+    lname : "A"
+}
+let {fname, mname, lname} = employee;
+console.log(fname+" "+mname+" "+lname); // Kết quả: Nguyễn Văn A
+
+// Chuyển đổi tên biến để code tường minh
+let {fname : f, mname: m, lname: l} = employee;
+console.log(f+" "+m+" "+l); // Kết quả: Nguyễn Văn A
+```
+
+## 3.12. String template
+```javascript
+let fname = "Nguyễn";
+let mname = "Văn";
+let lname = "A";
+
+console.log(`${fname} ${mname} ${lname}`); // Kết quả: Nguyễn Văn A
+```
