@@ -190,3 +190,24 @@ let lname = "A";
 
 console.log(`${fname} ${mname} ${lname}`); // Kết quả: Nguyễn Văn A
 ```
+
+## 3.13. For in/For of
+```javascript
+let testArray = ['Nguyễn', 'Văn', 'A'];
+for(let i in testArray) {
+    console.log(i); // Kết quả 0 1 2
+}
+for(let i of testArray) {
+    console.log(i); // Kết quả Nguyễn Văn A
+}
+```
+## 4. Class
+- Không hỗ trợ hoisting khi tạo thực thể từ class
+- Vẫn hỗ trợ hoisting bên trong class
+```javascript
+class TestClass {
+    constructor() {
+
+    }
+}
+```
