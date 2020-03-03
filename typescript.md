@@ -1,3 +1,4 @@
+Thầy: Bạch Ngọc Toàn - TEDU Channel
 # 1. Phần mềm cần thiết
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Node.js](https://nodejs.org/en/)
@@ -201,6 +202,13 @@ for(let i of testArray) {
     console.log(i); // Kết quả Nguyễn Văn A
 }
 ```
+## 3.14. Tuple
+> Bản chất là một mảng nhưng có ràng buộc sử dụng đúng kiểu dữ liệu theo thứ tự
+- Khai báo
+```javascript
+let student : [string, number]
+student = ["John", 20];
+```
 ## 4. Class
 - Không hỗ trợ hoisting khi tạo thực thể từ class
 - Vẫn hỗ trợ hoisting bên trong class
@@ -210,4 +218,129 @@ class TestClass {
 
     }
 }
+```
+## 4.1. Kế thừa Class
+- Khai báo class
+```javascript
+class Person {
+    constructor(name) {
+        console.log(name);
+    }
+    getId() {
+        return 10;
+    }
+}
+```
+- Khai báo class kế thừa
+```javascript
+class Employee extends Person {
+    constructor(name) {
+        super(name);
+        console.log(name+" employee person");
+    }
+    getId() {
+        return super.getId();
+    }
+}
+```
+- Sử dụng class kế thừa
+```javascript
+var emp = new Employee("John");
+console.log(emp.getId())
+```
+*Từ khóa **super** sử dụng để chỉ class cha*
+## 4.2. Truyền tham số vào biến bằng constructor
+- Khai báo bình thường
+```javascript
+class Person {
+    public name;
+    constructor(name) {
+        this.name = name;
+    }
+}
+```
+- Khai báo ngắn gọn
+```javascript
+class Person {
+    constructor(public name) {}
+}
+```
+# 5. Module
+## 5.1. Import/Export
+- File moduleA.js
+```javascript
+export let name = "John";
+```
+- File moduleB.js
+```javascript
+import {name as n} from 'moduleA.js';
+console.log(name) // Kết quả: John
+```
+##### Import/Export default: Không cần biết tên biến trong file export là gì
+- File moduleC.js 
+```javascript
+let name = "John";
+export default name;
+```
+- File moduleD.js
+```javascript
+import {default as name1} from "moduleC.js";
+console.log(name);
+```
+# 6. Interface
+> Khai báo, kiểm tra, ràng buộc cách triển khai dữ liệu của object, class,...
+- Khai báo interface cho object
+```javascript
+interface Person {
+    fname : string,
+    readonly lname : string, // readonly thể hiện thuộc tính sẽ không bị ghi đè bởi các hàm triển khai
+    age? : number // Dấu ? thể hiện không yêu cầu bắt buộc
+}
+```
+- Triển khai từ interface
+```javascript
+function testFunc(person : Person) {
+    console.log(person.fname);
+}
+```
+# 7. Decorator
+> Là một pattern cho phép thêm các hành vi, tính chất mới vào trong object, class, function,...
+- Bật tính năng **Decorator**. Thêm vào file tsconfig.json
+```json
+{
+    "compilerOptions": {
+        ...
+        "experimentalDecorators": true
+    }
+}
+```
+Một số ví dụ cho Decorator
+- @enumerable(trigger: boolean) : Cho phép return về kiểu số hay không
+```javascript
+@enumerable(false) // Không cho phép return về kiểu số
+greet() {
+    return "John";
+}
+```
+- @validate : Kiểm tra lỗi, tính hợp lệ đầu vào
+```javascript
+@validate
+greet(@required name : string) { // Bắt buộc phải truyền tham số name
+    return name;
+}
+```
+- Ví dụ **Component Decorator** trong **Angular**
+```javascript
+@Component({
+    selector: "my-app", // Chỉ tên tag để gọi Component
+    template: "<h1>Welcome to {{name}} Decorator</h1>" // Template cho Component
+})
+export class AppComponent {
+    name : string "John";
+}
+```
+```html
+<body>
+    <my-app></my-app>
+</body>
 ```
