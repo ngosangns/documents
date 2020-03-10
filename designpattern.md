@@ -1,21 +1,26 @@
 # Design Pattern là gì?
 Design Pattern ban đầu đơn giản là một khái niệm kiến trúc do Christopher Alexander gây dựng. Lần đầu tiên được ứng dụng vào phần mềm vào năm 1987 bởi Kent Beck and Ward Cunningham. Hai ông trình bày ý tưởng của mình trong một hội nghị. Sau đó Design Pattern trở thành khái niệm phổ biến và tiếp tuc phát triển cho đến ngày nay. Design Pattern lần đầu tiên được tổng hợp thành cuốn sách hoàn chỉnh vào năm 1995 trong cuốn `Design Patterns: Elements of Reusable Object-Oriented Software`.
-Trong phát triển phần mềm, Design Pattern là giải pháp thiết kế mã để tái sử dụng chúng. Design Pattern được sử dụng mạnh mẽ nhất trong OOP qua Object và Class. Có rất nhiều Design Pattern, theo tổng kết của Gang of Four, hiện tại có hơn 250 mẫu đang được sử dụng trong phát triển phần mềm, tuy nhiên bạn không cần sử dụng hết 250 mẫu này, một lập trình viên giỏi Desgin Pattern chỉ cần sử dụng thành thạo khoảng 23 mẫu.
+Trong phát triển phần mềm, Design Pattern là giải pháp thiết kế mã để tái sử dụng chúng. Design Pattern được sử dụng mạnh mẽ nhất trong OOP qua Object và Class. Có rất nhiều Design Pattern, theo tổng kết của Gang of Four, hiện tại có hơn 250 mẫu đang được sử dụng trong phát triển phần mềm, tuy nhiên bạn không cần sử dụng hết 250 mẫu này, một lập trình viên giỏi Desgin Pattern chỉ cần sử dụng thành thạo khoảng 35 mẫu.
 
 *Lưu ý: Design Pattern không phải thuật toán, không phải một component.*
 
 | Creational | Structure | Behavioral |
 | --- | --- | --- |
-| Abstract factory | Adapter | Chain of responsibility |
-| Builder | Bridge | Command |
-| Factory | Composite | Interpreter |
-| Prototype | Decorator | Iterator |
-| Singleton | Facade | Mediator |
-| Flyweight | Memento | Memento |
-| | Proxy | Observer |
-| | | Strategy |
-| | | Template Method |
-| | | Visitor |
+| Singleton | Adapter/ Wrapper | Chain of responsibility |
+| Factory | Bridge | Command |
+| Method Factory | Composite | Interpreter |
+| Abstract Factory | Decorator | Iterator |
+| Builder | Facade | Mediator |
+| Multiton | Proxy | Memento |
+| Pool | Flyweight | Observer |
+| Prototype | Registry | Strategy |
+| | Data Mapper | Template Method |
+| | Dependency Injection | Visitor |
+| | Fluent Interface | Null Object |
+| | Delegation | Specification |
+| | | State |
+| | | Repository |
+| | | Entity-Attribute-Value (EAV) |
 
 # I. Creational Pattern
 ## 1. Singleton
@@ -119,6 +124,7 @@ car.car.viewCar();
 
 ##### Cấu trúc: 
 ![](./images/method_factory_structure.png)
+
 *Trên hình ta thấy interface **Product** được trỏ đến nhiều nhất, do đó ta bắt đầu định nghĩa từ đây.*
 *Trên hình ta chia ra làm 2 phần (trên và dưới). Phía trên ta xem như hợp đồng mà 2 sếp kí kết với nhau, còn phía dưới là nhân viên 2 bên giao tiếp với nhau nhờ các điều khoản hợp tác trong bản hợp đồng.*
 - Định nghĩa Product
@@ -134,14 +140,19 @@ class ConcreteProduct1 implements Product {
         return "Result of the ConcreteProduct1";
     }
 }
+class ConcreteProduct2 implements Product {
+    doStuff() {
+        return "Result of the ConcreteProduct2";
+    }
+}
 ```
 - Định nghĩa Creator
 ```javascript
 abstract class Creator {
-    public abstract factoryMethod() : Product;
+    public abstract createProduct() : Product;
     someOperation() {
         // Call the factory method to create a Product object.
-        let product : Product = this.factoryMethod();
+        let product : Product = this.createProduct();
         // Now, use the product.
         return `Creator: The same creator's code has just worked with ${product.doStuff()}`;
     }
@@ -150,8 +161,13 @@ abstract class Creator {
 - Tạo ra một instance của Creator
 ```javascript
 class ConcreteCreator1 extends Creator {
-    public factoryMethod() {
+    public createProduct() {
         return new ConcreteProduct1();
+    }
+}
+class ConcreteCreator2 extends Creator {
+    public createProduct() {
+        return new ConcreteProduct2();
     }
 }
 ```
@@ -160,19 +176,19 @@ class ConcreteCreator1 extends Creator {
 function clientCode(creator: Creator) {
     console.log(creator.someOperation());
 }
-console.log("App: Launched with the ConcreteCreator1.\n");
-clientCode(new ConcreteCreator1());
+console.log("App: Launched with the ConcreteCreator2\n");
+clientCode(new ConcreteCreator2());
 ```
 - Output
 ```
-App: Launched with the ConcreteCreator1.
-The same creator's code has just worked with Result of the ConcreteProduct1
+App: Launched with the ConcreteCreator2
+The same creator's code has just worked with Result of the ConcreteProduct2
 ```
 
 ## 4. Abstract Factory
 > Abstract Factory cung cấp một đối tượng bằng cách ẩn đi những sự phức tạp đằng sau nó, có nghĩa là chúng ta có một số lớp phức tạp nào đó mà được sử dụng theo từng ngữ cãnh cụ thể chúng có thể có một số chức năng, thuộc tính thống nhất theo một mô hình nào đó, có thể là một số lớp cấu trúc từ một lớp abstract, chúng ta sẽ kết hợp chúng lại để xử lý trong một lớp, mà ở đó mọi công việc xử lý được diễn ra và chỉ trả về những cái cần thiết, điều này giúp mô hình chặt chẽ và dễ dàng để sử dụng.
 
-Sử dụng: Khá thường xuyên
+Mức độ sử dụng: Khá thường xuyên
 ##### Cấu trúc:
 ![](./images/abstract_factory_structure.png)
 - Trước tiên ta định nghĩa sản phẩm ta muốn tạo ra là gì
@@ -290,3 +306,107 @@ Rút ra:
 - **Factory Method**: dùng khi cần tạo ra một kiểu product nào đó thôi, sử dụng để làm cho chương trình độc lập với những lớp cụ thể mà ta cần tạo 1 đối tượng, hoặc khi không biết sau này sẽ cần đến những lớp con nào nữa. Khi cần sử dụng Factory Method, hãy tạo tạo ra subclass (1 factory implement 1 kiểu abstract) và implement Factory Method.
 
 *Nguồn: quyển sách Head First – Design Pattern*
+
+## 5. Builder
+>Builder pattern được tạo ra để xây dựng một đôi tượng phức tạp bằng cách sử dụng các đối tượng đơn giản và sử dụng tiếp cận từng bước, việc xây dựng các đối tượng đôc lập với các đối tượng khác
+
+Mức độ sử dụng: Thường xuyên
+
+### **Builder Pattern** sẽ gồm có 4 thành phần chính
+- **Product**: Đại diện cho đối tượng cần tạo, đối tượng này phức tạp, có nhiều thuộc tính
+- **Builder**: Là abstract class hoặc interface khai báo phương thức tạo đối tượng
+- **ConcreteBuilder**: Kế thừa Builder và cài đặt chi tiết cách tạo ra đối tượng. Nó sẽ xác định và nắm giữ các thể hiện mà nó tạo ra, đồng thời nó cũng cung cấp phương thức để trả các các thể hiện mà nó đã tạo ra trước đó
+- **Director**: Là nơi sẽ gọi tới Builder để tạo ra đối tượng
+### Cấu trúc
+![](./images/builder_structure.png)
+
+*Trên hình ta thấy **interface Builder** được trỏ đến nhiều nhất, do đó ta bắt đầu từ đây. Nhưng trước đó cần phải khai báo định nghĩa Product. Vì muốn xây dựng builder của sản phẩm thì ta phải biết về định nghĩa sản phẩm đó đã.*
+- Định nghĩa danh sách sản phẩm
+```javascript
+class Product {
+    constructor(
+        private partA: string, 
+        private partB: string, 
+        private partC: string
+    ) { }
+    show() : string {
+        return `This product has 3 parts: ${this.partA}, ${this.partB} and ${this.partC}`;
+    }
+}
+```
+- Định nghĩa **Builder**
+```javascript
+abstract class Builder {
+    abstract BuildPartA(content: string): Builder;
+    abstract BuildPartB(content: string): Builder;
+    abstract BuildPartC(content: string): Builder;
+    abstract GetResult(): Product;
+}
+```
+- Tạo ra 2 mẫu bullder dùng để tạo 2 loại sản phẩm khác nhau
+```javascript
+class ConcreteBuilder1 extends Builder {
+    private partA! : string;
+    private partB! : string;
+    private partC! : string;
+    BuildPartA(content: string) : Builder {
+        this.partA = content;
+        return this;
+    }
+    BuildPartB(content: string) : Builder {
+        this.partB = content;
+        return this;
+    }
+    BuildPartC(content: string) : Builder {
+        this.partC = content;
+        return this;
+    }
+    GetResult() : Product {
+        return new Product(this.partA, this.partB, this.partC);
+    }
+}
+class ConcreteBuilder2 extends Builder {
+    private partX! : string;
+    private partY! : string;
+    private partZ! : string;
+    BuildPartA(content: string) : Builder {
+        this.partX = content;
+        return this;
+    }
+    BuildPartB(content: string) : Builder {
+        this.partY = content;
+        return this;
+    }
+    BuildPartC(content: string) : Builder {
+        this.partZ = content;
+        return this;
+    }
+    GetResult() : Product {
+        return new Product(this.partX, this.partY, this.partZ);
+    }
+}
+```
+- Tạo ra **Director** sử dụng Builder
+```javascript
+class Director {
+    private product! : Product;
+    // Builder uses a complex series of steps
+    constructor(private builder : Builder) {
+        this.product = this.builder.GetResult();
+    }
+    showProduct() {
+        return this.product.show();
+    }
+}
+```
+- Client sử dụng
+```javascript
+// Create director and builders
+let b1 : Builder = new ConcreteBuilder1();
+let director : Director = new Director(b1.BuildPartA('Ngô').BuildPartB('Quang').BuildPartC('Sang'));
+console.log(director.showProduct());
+```
+- Output
+```
+This product has 3 parts: Ngô, Quang and Sang
+```
