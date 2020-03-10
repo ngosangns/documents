@@ -112,7 +112,64 @@ class CarFactory {
 var car = new CarFactory("TOYOTA");
 car.car.viewCar();
 ```
-## 3. Abstract Factory
+## 3. Factory Method
+>Factory Method là một mẫu thiết kế sáng tạo giúp giải quyết vấn đề tạo ra các đối tượng sản phẩm mà không cần chỉ định các lớp cụ thể của chúng.
+- Pattern này được sinh ra nhằm mục đích khởi tạo đối tượng mà bản thân muốn che giấu class nào được khởi tạo.
+- Factory Method định nghĩa một phương thức, nên được sử dụng để tạo các đối tượng thay vì gọi hàm dựng trực tiếp (toán tử new). Các lớp con có thể ghi đè phương thức này để thay đổi lớp đối tượng sẽ được tạo.
+
+##### Cấu trúc: 
+![](./images/method_factory_structure.png)
+*Trên hình ta thấy interface **Product** được trỏ đến nhiều nhất, do đó ta bắt đầu định nghĩa từ đây.*
+*Trên hình ta chia ra làm 2 phần (trên và dưới). Phía trên ta xem như hợp đồng mà 2 sếp kí kết với nhau, còn phía dưới là nhân viên 2 bên giao tiếp với nhau nhờ các điều khoản hợp tác trong bản hợp đồng.*
+- Định nghĩa Product
+```javascript
+interface Product {
+    doStuff() : void;
+}
+```
+- Tạo ra mẫu sản phẩm từ định nghĩa Product
+```javascript
+class ConcreteProduct1 implements Product {
+    doStuff() {
+        return "Result of the ConcreteProduct1";
+    }
+}
+```
+- Định nghĩa Creator
+```javascript
+abstract class Creator {
+    public abstract factoryMethod() : Product;
+    someOperation() {
+        // Call the factory method to create a Product object.
+        let product : Product = this.factoryMethod();
+        // Now, use the product.
+        return `Creator: The same creator's code has just worked with ${product.doStuff()}`;
+    }
+}
+```
+- Tạo ra một instance của Creator
+```javascript
+class ConcreteCreator1 extends Creator {
+    public factoryMethod() {
+        return new ConcreteProduct1();
+    }
+}
+```
+- Client sử dụng
+```javascript
+function clientCode(creator: Creator) {
+    console.log(creator.someOperation());
+}
+console.log("App: Launched with the ConcreteCreator1.\n");
+clientCode(new ConcreteCreator1());
+```
+- Output
+```
+App: Launched with the ConcreteCreator1.
+The same creator's code has just worked with Result of the ConcreteProduct1
+```
+
+## 4. Abstract Factory
 > Abstract Factory cung cấp một đối tượng bằng cách ẩn đi những sự phức tạp đằng sau nó, có nghĩa là chúng ta có một số lớp phức tạp nào đó mà được sử dụng theo từng ngữ cãnh cụ thể chúng có thể có một số chức năng, thuộc tính thống nhất theo một mô hình nào đó, có thể là một số lớp cấu trúc từ một lớp abstract, chúng ta sẽ kết hợp chúng lại để xử lý trong một lớp, mà ở đó mọi công việc xử lý được diễn ra và chỉ trả về những cái cần thiết, điều này giúp mô hình chặt chẽ và dễ dàng để sử dụng.
 
 Sử dụng: Khá thường xuyên
@@ -205,74 +262,31 @@ Rút ra:
 - Muốn tạo ra sản phẩm gì cần phải định nghĩa nó trước
 - Muốn xây nhà máy sản xuất sản phẩm thì cần phải định nghĩa và tạo mẫu sản phẩm rồi mới đến định nghĩa và tạo ra nhà máy
 - Bản chất là việc tạo ra nhiều lớp, định nghĩa và kết hợp chúng để giảm sự phụ thuộc và dễ bảo trì, nâng cấp. Nếu muốn thêm một sản phẩm mới thì chỉ việc thêm code chứ không sửa code.
-## 4. Factory Method
->Factory Method là một mẫu thiết kế sáng tạo giúp giải quyết vấn đề tạo ra các đối tượng sản phẩm mà không cần chỉ định các lớp cụ thể của chúng.
-- Pattern này được sinh ra nhằm mục đích khởi tạo đối tượng mà bản thân muốn che giấu class nào được khởi tạo.
-- Factory Method định nghĩa một phương thức, nên được sử dụng để tạo các đối tượng thay vì gọi hàm dựng trực tiếp (toán tử new). Các lớp con có thể ghi đè phương thức này để thay đổi lớp đối tượng sẽ được tạo.
 
-##### Cấu trúc: 
-![](./images/method_factory_structure.png)
-*Trên hình ta thấy interface **Product** được trỏ đến nhiều nhất, do đó ta bắt đầu định nghĩa từ đây.*
-*Trên hình ta chia ra làm 2 phần (trên và dưới). Phía trên ta xem như hợp đồng mà 2 sếp kí kết với nhau, còn phía dưới là nhân viên 2 bên giao tiếp với nhau nhờ các điều khoản hợp tác trong bản hợp đồng.*
-- Định nghĩa Product
-```javascript
-interface Product {
-    doStuff() : void;
-}
-```
-- Tạo ra mẫu sản phẩm từ định nghĩa Product
-```javascript
-class ConcreteProduct1 implements Product {
-    doStuff() {
-        return "Result of the ConcreteProduct1";
-    }
-}
-```
-- Định nghĩa Creator
-```javascript
-abstract class Creator {
-    public abstract factoryMethod() : Product;
-    someOperation() {
-        // Call the factory method to create a Product object.
-        let product : Product = this.factoryMethod();
-        // Now, use the product.
-        return `Creator: The same creator's code has just worked with ${product.doStuff()}`;
-    }
-}
-```
-- Tạo ra một instance của Creator
-```javascript
-class ConcreteCreator1 extends Creator {
-    public factoryMethod() {
-        return new ConcreteProduct1();
-    }
-}
-```
-- Client sử dụng
-```javascript
-function clientCode(creator: Creator) {
-    console.log(creator.someOperation());
-}
-console.log("App: Launched with the ConcreteCreator1.\n");
-clientCode(new ConcreteCreator1());
-```
-- Output
-```
-App: Launched with the ConcreteCreator1.
-The same creator's code has just worked with Result of the ConcreteProduct1
-```
 ### Phân biệt Abstract Factory và Factory Method
 #### Giống nhau
-- Đều là factory pattern
-- Đều dùng để giảm sự phụ thuộc giữa chương trình với những cài đặt cụ thể (với 2 cách làm riêng)
+- Đều là **Factory Pattern**
+- Đều dùng để giảm sự phụ thuộc giữa chương trình với những cài đặt cụ thể
 - Đều đóng gói (encapsulate) quá trình tạo ra đối tượng để giúp chương trình độc lập và giảm phụ thuộc với những kiểu cụ thể
 
 #### Khác nhau
+##### Factory Method
+- Dùng các lớp để tạo ra products.
+- Tạo ra các products, objects nhờ vào sự kế thừa (inheritance) nghĩa là nếu muốn tạo ra các đối tượng bằng cách Factory Method, người ta cần phải extend một lớp và override lại hàm tạo Factory Method, rồi Factory Method sẽ tạo ra 1 object
+- Ý tưởng của Factory Method Pattern, là sẽ sử dụng các lớp con để sinh ra 1 đối tượng mong muốn. Bằng cách đó, người dùng sẽ chỉ cần biết đến lớp trừu tượng như gia cầm, và các lớp con cụ thể sẽ lo về các kiểu gà, kiểu vịt, kiểu ngan. Vì vậy, nói theo cách khác, nó giúp chương trình độc lập với các kiểu (type) cụ thể đó.
+- Khi muốn bổ sung thêm một product nữa vào nhóm các products chỉ cần một method.
+- Factory Method dùng hàm Factory Method để tạo ra product cụ thể mà người dùng muốn, họ sẽ không biết cái gì được tạo ra, mà chỉ cần gọi hàm.
 
-Factory Method | Factory Abstract
---- | ---
-Dùng các lớp để tạo ra products | Dùng các đối tượng để tạo ra products
-Tạo ra các products, objects nhờ vào sự kế thừa (inheritance) nghĩa là nếu muốn tạo ra các đối tượng bằng cách Factory Method, người ta cần phải extend một lớp và override lại hàm tạo Factory Method, rồi Factory Method sẽ tạo ra 1 object | Tạo ra các products, objects nhờ vào sự kết hợp các đối tượng
-Ý tưởng của Factory Method Pattern, là sẽ sử dụng các lớp con để sinh ra 1 đối tượng mong muốn. Bằng cách đó, người dùng sẽ chỉ cần biết đến lớp trừu tượng như gia cầm, và các lớp con cụ thể sẽ lo về các kiểu gà, kiểu vịt, kiểu ngan. Vì vậy, nói theo cách khác, nó giúp chương trình độc lập với các kiểu (type) cụ thể đó | Ý tưởng cũng giống giống vậy nhưng làm theo một cách khác : tạo ra một kiểu trừu tượng (abstract type) để dùng vào việc tạo ra một nhóm những products khác. Khi đó, những lớp con của kiểu trừu tượng sẽ xác định cách tạo ra các products này. Để áp dụng được ý tưởng này, phải tạo ra một instance của một trong các lớp con trên (instance này là 1 factory) và đưa nó vào chỗ cần thiết trong code. Vì thế, giống như Factory Method, những nơi sử dụng factory của Abstract Factory sẽ hoàn toàn độc lập với những produtcts cụ thể. Một lợi ích nữa của cách này là các products tương tự nhau đã được nhóm lại. Vậy nên khi cần bổ sung thêm một product nữa vào nhóm các products mà Abstract Factory có thể tạo ra, người dùng phải đi đổi tất cả các lớp con (các lớp con ở đây là các factories). Người dùng rất không thích Abstract Factory ở điểm này
-Khi muốn bổ sung thêm một product nữa vào nhóm các products chỉ cần một method | Có khả năng tạo ra nhiều kiểu products khác nhau
-Factory Method dùng hàm Factory Method để tạo ra product cụ thể mà người dùng muốn, họ sẽ không biết cái gì được tạo ra, mà chỉ cần gọi hàm | Abstract Factory thường sử dụng nhiều hàm Factory Method theo cách của Factory Method để tạo các đối tượng bên trong những factories của chính nó. Những lớp factory con thường dùng các Factory Method để tạo các products tương ứng. Trong trường hợp này, các Factory Method được dùng thuần túy để tạo ra các products
+##### Abstract Factory
+- Dùng các đối tượng để tạo ra products.
+- Tạo ra các products, objects nhờ vào sự kết hợp các đối tượng.
+- Tạo ra một kiểu trừu tượng (abstract type) để dùng vào việc tạo ra một nhóm những products khác. Khi đó, những lớp con của kiểu trừu tượng sẽ xác định cách tạo ra các products này. Để áp dụng được ý tưởng này, phải tạo ra một instance của một trong các lớp con trên (instance này là 1 factory) và đưa nó vào chỗ cần thiết trong code. Vì thế, giống như Factory Method, những nơi sử dụng factory của Abstract Factory sẽ hoàn toàn độc lập với những products cụ thể. Một lợi ích nữa của cách này là các products tương tự nhau đã được nhóm lại. Vậy nên khi cần bổ sung thêm một product nữa vào nhóm các products mà Abstract Factory có thể tạo ra, người dùng phải đi đổi tất cả các lớp con (các lớp con ở đây là các factories). Người dùng rất không thích Abstract Factory ở điểm này.
+- Có khả năng tạo ra nhiều kiểu products khác nhau.
+- Abstract Factory thường sử dụng nhiều hàm Factory Method theo cách của Factory Method để tạo các đối tượng bên trong những factories của chính nó. Những lớp factory con thường dùng các Factory Method để tạo các products tương ứng. Trong trường hợp này, các Factory Method được dùng thuần túy để tạo ra các products.
+
+#### Vậy khi nào nên dùng Abstract Factory, khi nào nên dùng Factory Method?
+- **Abstract Factory**: sử dụng khi nào cần cùng một lúc tạo ra nhiều loại products, và khi muốn chắc chắn những nơi sử dụng sẽ không cần biết đến những lớp cụ thể khi cần làm việc này.
+
+- **Factory Method**: dùng khi cần tạo ra một kiểu product nào đó thôi, sử dụng để làm cho chương trình độc lập với những lớp cụ thể mà ta cần tạo 1 đối tượng, hoặc khi không biết sau này sẽ cần đến những lớp con nào nữa. Khi cần sử dụng Factory Method, hãy tạo tạo ra subclass (1 factory implement 1 kiểu abstract) và implement Factory Method.
+
+*Nguồn: quyển sách Head First – Design Pattern*
