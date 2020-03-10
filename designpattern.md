@@ -11,9 +11,9 @@ Trong phát triển phần mềm, Design Pattern là giải pháp thiết kế m
 | Method Factory | Composite | Interpreter |
 | Abstract Factory | Decorator | Iterator |
 | Builder | Facade | Mediator |
-| Multiton | Proxy | Memento |
-| Pool | Flyweight | Observer |
-| Prototype | Registry | Strategy |
+| Object Pool | Proxy | Memento |
+| Prototype | Flyweight | Observer |
+| | Registry | Strategy |
 | | Data Mapper | Template Method |
 | | Dependency Injection | Visitor |
 | | Fluent Interface | Null Object |
@@ -22,6 +22,7 @@ Trong phát triển phần mềm, Design Pattern là giải pháp thiết kế m
 | | | Repository |
 | | | Entity-Attribute-Value (EAV) |
 
+*Trong document này mình sử dụng **Typescript** làm ngôn ngữ ví dụ*
 # I. Creational Pattern
 ## 1. Singleton
 > Tạo ra 1 instance từ 1 class sử dụng cho toàn hệ thống và đảm bảo không có instance thứ 2 được tạo ra. Sử dụng khi muốn chạy 1 chương trình con độc lập để kiểm tra và xử lí cho toàn hệ thống
@@ -310,6 +311,17 @@ Rút ra:
 ## 5. Builder
 >Builder pattern được tạo ra để xây dựng một đôi tượng phức tạp bằng cách sử dụng các đối tượng đơn giản và sử dụng tiếp cận từng bước, việc xây dựng các đối tượng đôc lập với các đối tượng khác
 
+- Mẫu thiết kế này cho phép lập trình viên tạo ra những đối tượng phức tạp nhưng chỉ cần thông qua các câu lệnh đơn giản để tác động nên các thuộc tính của nó.
+- Muốn thay đổi thiết kế cho việc lồng nhau của các hàm khởi tạo (Telescoping Constructor Pattern). Vấn đề này phát sinh khi lập trình viên làm việc với một lớp mà có chứa rất nhiều các thuộc tính và cần phải tạo ra nhiều hàm khởi tạo với số lượng các thuộc tính tăng dần.
+- Cần tạo ra một đối tượng phức tạp, một đối tượng mà thuật toán để tạo tạo lập các thuộc tính là độc lập đối với các thuộc tính khác.
+
+### Ưu điểm
+- Cung cấp thêm một cách khởi tạo đối tượng
+- Hỗ trợ, loại bớt việc phải viết nhiều constructor
+
+### Hạn chế
+- Phải tạo builder cho từng class khác nhau.
+
 Mức độ sử dụng: Thường xuyên
 
 ### **Builder Pattern** sẽ gồm có 4 thành phần chính
@@ -365,32 +377,11 @@ class ConcreteBuilder1 extends Builder {
         return new Product(this.partA, this.partB, this.partC);
     }
 }
-class ConcreteBuilder2 extends Builder {
-    private partX! : string;
-    private partY! : string;
-    private partZ! : string;
-    BuildPartA(content: string) : Builder {
-        this.partX = content;
-        return this;
-    }
-    BuildPartB(content: string) : Builder {
-        this.partY = content;
-        return this;
-    }
-    BuildPartC(content: string) : Builder {
-        this.partZ = content;
-        return this;
-    }
-    GetResult() : Product {
-        return new Product(this.partX, this.partY, this.partZ);
-    }
-}
 ```
 - Tạo ra **Director** sử dụng Builder
 ```javascript
 class Director {
     private product! : Product;
-    // Builder uses a complex series of steps
     constructor(private builder : Builder) {
         this.product = this.builder.GetResult();
     }
@@ -401,12 +392,38 @@ class Director {
 ```
 - Client sử dụng
 ```javascript
-// Create director and builders
 let b1 : Builder = new ConcreteBuilder1();
-let director : Director = new Director(b1.BuildPartA('Ngô').BuildPartB('Quang').BuildPartC('Sang'));
+let director : Director = new Director(
+    b1.BuildPartA('Ngô')
+    .BuildPartB('Quang')
+    .BuildPartC('Sang')
+);
 console.log(director.showProduct());
 ```
 - Output
 ```
 This product has 3 parts: Ngô, Quang and Sang
 ```
+
+## 6. Multiton
+> Object Pool được sử dụng để quản lý bộ nhớ đệm lưu trữ các đối tượng. Một client có quyền truy cập vào Object pool thay vì tạo ra một đối tượng mới thì chỉ cần đơn giản yêu cầu các Object pool cho một đối tượng đã có sẵn trong object pool để thay thế. Object pool thông thường hoạt động theo kiểu: Tự tạo đối tượng mới nếu mình chưa có sẵn hoặc chúng ta có thể tự tạo 1 object pool chứa hạn chế đối tượng trong đó.
+
+### Ví dụ
+Cơ chế hoạt động của Object pool tương tự như một kho văn phòng. Khi một nhân viên mới được tuyển dụng, quản lý văn phòng phải chuẩn bị một không gian làm việc cho anh ta. Nếu các thiết bị phụ tùng đã có sẵn trong kho, quản lý sẽ đến kho và lấy các thiết bị đó. Nếu không, quản lý sẽ phải đặt mua các thiết bị mới. Trong trường hợp nếu một nhân viên bị sa thải, thiết bị của anh ta được chuyển tới nhà kho, các thiết bị đó có thể sử dụng cho một nhân viên mới nào đó sau này.
+Nhìn từ ví dụ thực tế trên, chúng ta có thể thấy ngay vấn đề của object pool: Thứ nhất, sử dụng object pool đồng nghĩa với việc chúng ta phải tốn thêm tài nguyên cho đối tượng object pool. Quá rõ ràng, muốn lưu trữ thiết bị thì phải có nhà kho (trong thực tế công ty lại tốn chi phí, diện tích, nhân viên quản lý nhà kho). Thứ hai, nếu đồ trong kho quá cũ đến một thời điểm nào đó sẽ không sử dụng được. Ví dụ cần 1 Iphone 7s cho nhân viên mới, trong khi đó trong kho chỉ có Nokia 1080 ...(RIP). Trong trường hợp này, chúng ta vừa tốn tài nguyên mà lại không thể sử dụng được tài nguyên đó.
+Ý tưởng chung cho mô hình Connection Pool là nếu các instances của một lớp có thể được tái sử dụng, thay vì khởi tạo một instances mới khi cần, bạn có thể tái sử dụng chúng.
+### Ưu điểm
+- Cải thiện tốc độ
+
+### Nhược điểm
+- Có thể tạo ra rác. Do đó cần dọn dẹp trong một khoảng thời gian cài đặt trước
+
+### Sử dụng mẫu Object Pool khi
+- Các đối tượng được tạo ra một cách khá tốn kém. Ví dụ: truy vấn database ... (phân bổ chi phí)
+- Bạn cần tạo một số lượng lớn các đối tượng trong thời gian ngắn (phân mảnh bộ nhớ)
+### Cấu trúc
+![](./images/object_pool_structure.png)
+
+- **Reusable**: Các đối tượng có thể tái sử dụng
+- **Client**: Các lớp có vai trò sử dụng các đối tượng có thể tái sử dụng được
+- **ReusablePool**: Các lớp có vai trò quản lý các đối tượng có thể tái sử dụng để cung cấp cho các đối tượng Client
