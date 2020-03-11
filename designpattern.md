@@ -363,7 +363,7 @@ class ConcreteBuilder1 extends Builder {
     private partC! : string;
     BuildPartA(content: string) : Builder {
         this.partA = content;
-        return this;
+        return this; // Sử dụng để khai báo ngắn khi client sử dụng
     }
     BuildPartB(content: string) : Builder {
         this.partB = content;
@@ -396,7 +396,7 @@ let b1 : Builder = new ConcreteBuilder1();
 let director : Director = new Director(
     b1.BuildPartA('Ngô')
     .BuildPartB('Quang')
-    .BuildPartC('Sang')
+    .BuildPartC('Sang') // Khai báo ngắn
 );
 console.log(director.showProduct());
 ```
@@ -405,7 +405,7 @@ console.log(director.showProduct());
 This product has 3 parts: Ngô, Quang and Sang
 ```
 
-## 6. Multiton
+## 6. Object Pool
 > Object Pool được sử dụng để quản lý bộ nhớ đệm lưu trữ các đối tượng. Một client có quyền truy cập vào Object pool thay vì tạo ra một đối tượng mới thì chỉ cần đơn giản yêu cầu các Object pool cho một đối tượng đã có sẵn trong object pool để thay thế. Object pool thông thường hoạt động theo kiểu: Tự tạo đối tượng mới nếu mình chưa có sẵn hoặc chúng ta có thể tự tạo 1 object pool chứa hạn chế đối tượng trong đó.
 
 ### Ví dụ
@@ -427,3 +427,42 @@ Nhìn từ ví dụ thực tế trên, chúng ta có thể thấy ngay vấn đ�
 - **Reusable**: Các đối tượng có thể tái sử dụng
 - **Client**: Các lớp có vai trò sử dụng các đối tượng có thể tái sử dụng được
 - **ReusablePool**: Các lớp có vai trò quản lý các đối tượng có thể tái sử dụng để cung cấp cho các đối tượng Client
+
+### Ví dụ Object Pool thông qua ứng dụng Taxi
+Một hãng taxi A chỉ hữu hạn N chiếc taxi, hãng taxi chịu trách nhiệm quản lý trạng thái các xe (đang rảnh hay đang chở khách), phân phối các xe đang rảnh đi đón khách, chăm sóc, kéo dài thời gian chờ đợi của khách hàng cho trong trường hợp tất cả các xe đều đang bận (để chờ một trong số các xe đó rảnh thì điều đi đón khách luôn), hủy khi việc chờ đợi của khách hàng là quá lâu.
+
+Ta mô phỏng và thiết kế thành các lớp sau:
+- **Taxi**: đại diện cho một chiếc taxi, là một class định nghĩa các thuộc tính và phương thức của một taxi.
+- **TaxiPool**: Đại diện cho công ty taxi, có:
+    - Phương thức **getTaxi()**: để lấy về một thể hiện Taxi đang ở trạng thái rảnh, có thể throw ra một exception nếu chờ lâu mà không lấy được thể hiện.
+    - Phương thức **release()**: để trả thể hiện Taxi về Pool sau khi đã phục vụ xong.
+- Thuộc tính **available** : lưu trữ danh sách Taxi rãnh, đang chờ phục vụ.
+- Thuộc tính **inUse** : lưu trữ danh sách Taxi đang bận phục vụ.
+- **ClientThread**: đại diện cho khách hàng sử dụng dịch vụ Taxi, mô phỏng việc gọi, chở và trả khách.
+
+Trong đoạn code bên dưới, tôi sẽ cài đặt mô phỏng với TaxiPool quản lý được 4 taxi, cùng lúc có 8 cuộc gọi của khách hàng đến công ty để gọi xe, thời gian mỗi taxi đến địa điểm chở khách là 200ms, mỗi taxi chở khách trong khoảng thời gian từ 1000ms đến 1500ms (ngẫu nhiên), mỗi khách hàng chịu chờ tối đa 1200ms trước khi hủy.
+
+- Khai báo class **Taxi** đại diện cho 1 chiếc taxi
+```javascript
+class Taxi {
+    constructor(private name: string) {}
+    getName() : String {
+        return this.name;
+    }
+    setName(name: string) : String {
+        this.name = name;
+    }
+    toString() : String {
+        return `Taxi [name = ${this.name}]`
+    }
+}
+```
+- Khai báo định nghĩa TaxiPool đại diện cho 1 object pool
+```javascript
+class Taxi {
+    const EXPIRED_TIME_IN_MILISECOND = 1200;
+    const NUMBER_OF_TAXI = 4;
+
+    
+}
+```
