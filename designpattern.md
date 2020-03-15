@@ -558,6 +558,41 @@ for (let i = 0; i < NUM_OF_CLIENT; i++) {
     client.run();
 }
 ```
+- Kết quả
+```
+New client: 1196
+New client: 1346
+New client: 1398
+New client: 1052
+New client: 1132
+New client: 1280
+New client: 1174
+New client: 1247
+Taxi 1 is created
+Taxi 2 is created
+Taxi 3 is created
+Taxi 4 is created
+Taxi 5 is created
+Taxi 6 is created
+Taxi 7 is created
+Taxi 8 is created
+Taxi 8 is free
+Served the client: 1247
+Taxi 5 is free
+Served the client: 1132
+Taxi 6 is free
+Served the client: 1280
+Taxi 3 is free
+Served the client: 1398
+Taxi 4 is free
+Served the client: 1052
+Taxi 2 is free
+Served the client: 1346
+Taxi 7 is free
+Served the client: 1174
+Taxi 1 is free
+Served the client: 1196
+```
 #### Nhận xét:
 - Ưu điểm của việc cài đặt Pool là việc tận dụng được các tài nguyên đã được cấp phát. Với ví dụ về taxi ở trên với 4 taxi, trong nhiều trường hợp vẫn có thể đáp ứng được nhiều hơn 4 yêu cầu cùng một lúc. Nó làm tăng hiệu năng hệ thống ở điểm không cần phải khởi tạo quá nhiều thể hiện (trong nhiều trường hợp việc khởi tạo này mấy nhiều thời gian), tận dụng được các tài nguyên đã được khởi tạo (tiết kiệm bộ nhớ, không mất thời gian hủy đối tượng).
 - Việc cài đặt Pool có thể linh động hơn nữa bằng cách đặt ra 2 giá trị N và M. Trong đó: N là số lượng thể hiện tối thiểu (trong những lúc rảnh rỗi), M là số thể hiện tối đa (lúc cần huy động nhiều thể hiện nhất mà phần cứng đáp ứng được). Sau khi qua trạng thái cần nhiều thể hiện, Pool có thể giải phóng bớt một số thể hiện không cần thiết.
