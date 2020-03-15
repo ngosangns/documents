@@ -436,7 +436,7 @@ Ta mô phỏng và thiết kế thành các lớp sau:
 - **TaxiPool**: Đại diện cho công ty taxi, có:
     - Phương thức **getTaxi()**: để lấy về một thể hiện Taxi đang ở trạng thái rảnh, có thể throw ra một exception nếu chờ lâu mà không lấy được thể hiện.
     - Phương thức **release()**: để trả thể hiện Taxi về Pool sau khi đã phục vụ xong.
-- Thuộc tính **available** : lưu trữ danh sách Taxi rãnh, đang chờ phục vụ.
+- Thuộc tính **available** : lưu trữ danh sách Taxi rảnh, đang chờ phục vụ.
 - Thuộc tính **inUse** : lưu trữ danh sách Taxi đang bận phục vụ.
 - **ClientThread**: đại diện cho khách hàng sử dụng dịch vụ Taxi, mô phỏng việc gọi, chở và trả khách.
 
@@ -449,7 +449,7 @@ class Taxi {
     getName() : String {
         return this.name;
     }
-    setName(name: string) : String {
+    setName(name: string) {
         this.name = name;
     }
     toString() : String {
@@ -463,6 +463,5 @@ class Taxi {
     const EXPIRED_TIME_IN_MILISECOND = 1200;
     const NUMBER_OF_TAXI = 4;
 
-    
 }
 ```
