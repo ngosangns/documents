@@ -598,3 +598,135 @@ Served the client: 1196
 - Việc cài đặt Pool có thể linh động hơn nữa bằng cách đặt ra 2 giá trị N và M. Trong đó: N là số lượng thể hiện tối thiểu (trong những lúc rảnh rỗi), M là số thể hiện tối đa (lúc cần huy động nhiều thể hiện nhất mà phần cứng đáp ứng được). Sau khi qua trạng thái cần nhiều thể hiện, Pool có thể giải phóng bớt một số thể hiện không cần thiết.
 
 *Tham khảo: [https://gpcoder.com/4456-huong-dan-java-design-pattern-object-pool/](https://gpcoder.com/4456-huong-dan-java-design-pattern-object-pool/)*
+
+## 7. Prototype
+>Prototype được sử dụng để tạo ra object từ 1 object nguyên mẫu, bằng cách copy các thuộc tính của object đó
+
+Tần suất sử dụng: Cao
+
+### Cấu trúc
+![](./images/prototype_structure.png)
+
+### Các thành phần tham gia pattern này gồm có
+- **Prototype - CustomerPrototype**: Tạo ra 1 giao diện để clone chính nó
+- **Clones - Customer**: Các object đã được tạo bằng việc clone
+
+```javascript
+class CustomerPrototype {
+    constructor(public proto: any) { }
+    clone() {
+        var customer: Customer = new Customer(
+            this.proto.first, 
+            this.proto.last, 
+            this.proto.status
+        );
+        return customer;
+    };
+}
+
+class Customer {
+    constructor(
+        public first: string, 
+        public last: string, 
+        public status: string
+    ) { }
+    say() {
+        console.log(
+            `name: ${this.first} ${this.last}, status: ${this.status}`
+        );
+    }
+}
+```
+- Chạy chương trình
+```javascript
+let proto = new Customer("n/a", "n/a", "pending");
+let prototype = new CustomerPrototype(proto);
+
+let customer = prototype.clone();
+customer.say();
+```
+- Kết quả
+```
+name: n/a n/a, status: pending
+```
+- Một cách clone nhanh trong ES6
+```javascript
+let prototye : {
+    name: "John"
+}
+let custom = {...prototype};
+```
+Do tính chất các thuộc tính, phương thức mà các instance có đều được kế thừa từ class nên sẽ tốn bộ nhớ cho các thuộc tính, phương thức của các instance. Do đó ngoài ra Prototype Pattern còn có biến thể khác đó là dùng chung các thuộc tính từ class để tiết kiệm bộ nhớ.
+- Giả sử khi viết game ta muốn xây dựng một lớp Warrior như sau:
+```javascript
+function Warrior(name) {
+    this.name = name;
+    this.hp = 100;
+    this.bash = function(target) {
+        target.hp -= 10
+    }
+    this.slash = function(target) {
+        target.hp /= 2
+    }
+}
+ 
+let harryPotter = new Warrior('Harry Potter');
+let ngan = new Warrior('Ngan');
+let snake = new Warrior('Snake');
+
+harryPotter.bash(ngan)
+console.log(ngan.hp) // 90
+ngan.slash(snake)
+console.log(snake.hp) // 50
+```
+- Với cách trên, 3 chiến binh đã được tạo ra. Chúng cùng chia sẻ với nhau một contructor là Warrior
+```javascript
+console.log(
+    harryPotter.constructor === ngan.constructor, 
+    snake.constructor === ngan.constructor
+) // Kết quả: true true
+```
+- Giờ cách chiến binh đã có những skill và tha hồ cà khịa lẫn nhau. Nhưng ở đây, mỗi một chiến binh lại có một skill riêng biệt, nhưng rõ ràng, skill này lại giống hệt nhau. Điều này là lãng phí khi mà ta kiểm tra lại
+```javascript
+console.log(
+    harryPotter.bash === ngan.bash,
+    snake.bash === ngan.bash
+) // Kết quả: false false
+```
+- Chính vì thể ta cần một cái gì đó giống như constructor, đó chính là prototype
+```javascript
+function Warrior(name) {
+    this.name = name
+    this.hp = 100
+}
+ 
+Warrior.prototype.bash = function(target) {
+    target.hp -= 10
+}
+
+Warrior.prototype.slash = function(target) {
+    target.hp /= 2
+}
+ 
+let harryPotter = new Warrior('Harry Potter');
+let ngan = new Warrior('Ngan');
+let snake = new Warrior('Snake');
+
+console.log(
+    harryPotter.bash === ngan.bash,
+    snake.bash === ngan.bash
+) // Kết quả: true, true
+```
+- Cách trên cũng tương tự với cách viết như sau
+```javascript
+Warrior.prototype = {
+    bash: function(target) {
+        target.hp -= 10
+    },
+    
+    slash: function(target) {
+        target.hp /= 2
+     },
+}
+```
+*Tuy nhiên với cách này sẽ làm mất đi constructor Warrrior đó nhé. Trên đây chính là cách mà prototype đã thực hiện khả năng thừa kế và chia sẻ của mình như thế nào trong javascript*
