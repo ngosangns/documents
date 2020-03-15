@@ -413,14 +413,22 @@ Cơ chế hoạt động của Object pool tương tự như một kho văn phò
 Nhìn từ ví dụ thực tế trên, chúng ta có thể thấy ngay vấn đề của object pool: Thứ nhất, sử dụng object pool đồng nghĩa với việc chúng ta phải tốn thêm tài nguyên cho đối tượng object pool. Quá rõ ràng, muốn lưu trữ thiết bị thì phải có nhà kho (trong thực tế công ty lại tốn chi phí, diện tích, nhân viên quản lý nhà kho). Thứ hai, nếu đồ trong kho quá cũ đến một thời điểm nào đó sẽ không sử dụng được. Ví dụ cần 1 Iphone 7s cho nhân viên mới, trong khi đó trong kho chỉ có Nokia 1080 ...(RIP). Trong trường hợp này, chúng ta vừa tốn tài nguyên mà lại không thể sử dụng được tài nguyên đó.
 Ý tưởng chung cho mô hình Connection Pool là nếu các instances của một lớp có thể được tái sử dụng, thay vì khởi tạo một instances mới khi cần, bạn có thể tái sử dụng chúng.
 ### Ưu điểm
-- Cải thiện tốc độ
+- Tăng hiệu suất của ứng dụng.
+- Hiệu quả trong một vài tình huống cần tốc độ khởi tạo một object cao.
+- Quản lý các kết nối và cung cấp một cách để tái sử dụng và chia sẻ chúng.
+- Có thể giới hạn số lượng tối đa các đối tượng có thể được tạo ra.
 
 ### Nhược điểm
 - Có thể tạo ra rác. Do đó cần dọn dẹp trong một khoảng thời gian cài đặt trước
+- Khi triển khai mô hình Object pool, chúng ta phải cẩn thận để đảm bảo rằng trạng thái của các đối tượng quay trở lại object pool phải được đặt ở trạng thái hợp lý cho việc sử dụng tiếp theo của đối tượng. Nếu không kiểm soát được điều này, đối tượng sẽ thường ở trong một số trạng thái mà chương trình client không mong đợi và có thể làm cho chương trình client lỗi (failed), không nhất quán, rò rỉ thông tin.
 
 ### Sử dụng mẫu Object Pool khi
 - Các đối tượng được tạo ra một cách khá tốn kém. Ví dụ: truy vấn database ... (phân bổ chi phí)
 - Bạn cần tạo một số lượng lớn các đối tượng trong thời gian ngắn (phân mảnh bộ nhớ)
+- Khi cần tạo và hủy một số lượng lớn các đối tượng trong thời gian ngắn, liên tục.
+- Khi cần sử dụng các object tương tự thay vì khởi tạo một object mới không có kiểm soát.
+- Các đối tượng tốn nhiều chi phí để tạo ra.
+- Khi có một số client cần cùng một tài nguyên tại các thời điểm khác nhau.
 ### Cấu trúc
 ![](./images/object_pool_structure.png)
 
@@ -459,9 +467,99 @@ class Taxi {
 ```
 - Khai báo định nghĩa TaxiPool đại diện cho 1 object pool
 ```javascript
-class Taxi {
-    const EXPIRED_TIME_IN_MILISECOND = 1200;
-    const NUMBER_OF_TAXI = 4;
+class TaxiPool {
+    private readonly EXPIRED_TIME_IN_MILISECOND: number = 1200;
+    private readonly NUMBER_OF_TAXI: number = 4;
+    private available: Array<Taxi> = new Array<Taxi>();
+    private inUse: Array<Taxi> = new Array<Taxi>();
+    private count: number = 0;
+    private waiting: boolean = false;
 
+    async getTaxi(): Promise<Taxi> {
+        if (this.available.length > 0) {
+            let taxi: Taxi = this.available.shift() || new Taxi('');
+            this.inUse.push(taxi);
+            return Promise.resolve(taxi);
+        }
+        if (this.count == this.NUMBER_OF_TAXI) {
+            this.waitingUntilTaxiAvailable();
+            return this.getTaxi();
+        }
+        return await this.createTaxi();
+    }
+    release(taxi: Taxi) {
+        this.inUse.splice(this.inUse.indexOf(taxi), 1);
+        this.available.push(taxi);
+        console.log(taxi.getName() + " is free");
+    }
+    async createTaxi(): Promise<Taxi> {
+        await this.sleep(200);
+        this.count++;
+        let taxi: Taxi = new Taxi("Taxi " + this.count);
+        console.log(taxi.getName() + " is created");
+        return taxi;
+    }
+    async waitingUntilTaxiAvailable(): Promise<void> {
+        if (this.waiting) {
+            this.waiting = false;
+            throw new Error("No taxi available");
+        }
+        this.waiting = true;
+        await this.waitingF(this.EXPIRED_TIME_IN_MILISECOND);
+    }
+    async waitingF(numberOfSecond: number) {
+        try {
+            await this.sleep(numberOfSecond);
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
+    sleep(ms: any): Promise<any> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 }
 ```
+- Tạo **ClientThread** để gọi xe
+```javascript
+class ClientThread {
+    private clientNumber: number = Math.floor(Math.random() * 501) + 1000;
+    constructor(private taxiPool: TaxiPool) { }
+
+    run(): void {
+        this.takeATaxi();
+    }
+
+    private async takeATaxi(): Promise<void> {
+        try {
+            console.log("New client: " + this.clientNumber);
+            let taxi: Taxi;
+            taxi = await this.taxiPool.getTaxi().then(res => res);
+
+            await this.sleep(Math.floor(Math.random() * 501) + 1000);
+
+            this.taxiPool.release(taxi);
+            console.log("Served the client: " + this.clientNumber);
+        } catch (e) {
+            console.log(">>>Rejected the client: " + this.clientNumber);
+        }
+    }
+
+    sleep(ms: any): Promise<any> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+}
+```
+- Chạy chương trình
+```javascript
+const NUM_OF_CLIENT: number = 8;
+let taxiPool: TaxiPool = new TaxiPool();
+for (let i = 0; i < NUM_OF_CLIENT; i++) {
+    let client: ClientThread = new ClientThread(taxiPool);
+    client.run();
+}
+```
+#### Nhận xét:
+- Ưu điểm của việc cài đặt Pool là việc tận dụng được các tài nguyên đã được cấp phát. Với ví dụ về taxi ở trên với 4 taxi, trong nhiều trường hợp vẫn có thể đáp ứng được nhiều hơn 4 yêu cầu cùng một lúc. Nó làm tăng hiệu năng hệ thống ở điểm không cần phải khởi tạo quá nhiều thể hiện (trong nhiều trường hợp việc khởi tạo này mấy nhiều thời gian), tận dụng được các tài nguyên đã được khởi tạo (tiết kiệm bộ nhớ, không mất thời gian hủy đối tượng).
+- Việc cài đặt Pool có thể linh động hơn nữa bằng cách đặt ra 2 giá trị N và M. Trong đó: N là số lượng thể hiện tối thiểu (trong những lúc rảnh rỗi), M là số thể hiện tối đa (lúc cần huy động nhiều thể hiện nhất mà phần cứng đáp ứng được). Sau khi qua trạng thái cần nhiều thể hiện, Pool có thể giải phóng bớt một số thể hiện không cần thiết.
+
+*Tham khảo: [https://gpcoder.com/4456-huong-dan-java-design-pattern-object-pool/](https://gpcoder.com/4456-huong-dan-java-design-pattern-object-pool/)*
