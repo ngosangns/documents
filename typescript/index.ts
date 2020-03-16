@@ -39,7 +39,6 @@ class Warrior {
         target.hp /= 2;
     }
 }
-
 const harryPotter = new Warrior('Harry Potter');
 const ngan = new Warrior('Ngan');
 const snake = new Warrior('Snake');
