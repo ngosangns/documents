@@ -124,7 +124,7 @@ car.car.viewCar();
 - Factory Method định nghĩa một phương thức, nên được sử dụng để tạo các đối tượng thay vì gọi hàm dựng trực tiếp (toán tử new). Các lớp con có thể ghi đè phương thức này để thay đổi lớp đối tượng sẽ được tạo.
 
 ##### Cấu trúc: 
-![](./images/method_factory_structure.png)
+![](./../images/method_factory_structure.png)
 
 *Trên hình ta thấy interface **Product** được trỏ đến nhiều nhất, do đó ta bắt đầu định nghĩa từ đây.*
 *Trên hình ta chia ra làm 2 phần (trên và dưới). Phía trên ta xem như hợp đồng mà 2 sếp kí kết với nhau, còn phía dưới là nhân viên 2 bên giao tiếp với nhau nhờ các điều khoản hợp tác trong bản hợp đồng.*
@@ -191,7 +191,7 @@ The same creator's code has just worked with Result of the ConcreteProduct2
 
 Mức độ sử dụng: Khá thường xuyên
 ##### Cấu trúc:
-![](./images/abstract_factory_structure.png)
+![](./../images/abstract_factory_structure.png)
 - Trước tiên ta định nghĩa sản phẩm ta muốn tạo ra là gì
 ```javascript
 interface AbstractProductA {
@@ -330,7 +330,7 @@ Mức độ sử dụng: Thường xuyên
 - **ConcreteBuilder**: Kế thừa Builder và cài đặt chi tiết cách tạo ra đối tượng. Nó sẽ xác định và nắm giữ các thể hiện mà nó tạo ra, đồng thời nó cũng cung cấp phương thức để trả các các thể hiện mà nó đã tạo ra trước đó
 - **Director**: Là nơi sẽ gọi tới Builder để tạo ra đối tượng
 ### Cấu trúc
-![](./images/builder_structure.png)
+![](./../images/builder_structure.png)
 
 *Trên hình ta thấy **interface Builder** được trỏ đến nhiều nhất, do đó ta bắt đầu từ đây. Nhưng trước đó cần phải khai báo định nghĩa Product. Vì muốn xây dựng builder của sản phẩm thì ta phải biết về định nghĩa sản phẩm đó đã.*
 - Định nghĩa danh sách sản phẩm
@@ -430,7 +430,7 @@ Nhìn từ ví dụ thực tế trên, chúng ta có thể thấy ngay vấn đ�
 - Các đối tượng tốn nhiều chi phí để tạo ra.
 - Khi có một số client cần cùng một tài nguyên tại các thời điểm khác nhau.
 ### Cấu trúc
-![](./images/object_pool_structure.png)
+![](./../images/object_pool_structure.png)
 
 - **Reusable**: Các đối tượng có thể tái sử dụng
 - **Client**: Các lớp có vai trò sử dụng các đối tượng có thể tái sử dụng được
@@ -605,7 +605,7 @@ Served the client: 1196
 Tần suất sử dụng: Cao
 
 ### Cấu trúc
-![](./images/prototype_structure.png)
+![](./../images/prototype_structure.png)
 
 ### Các thành phần tham gia pattern này gồm có
 - **Prototype - CustomerPrototype**: Tạo ra 1 giao diện để clone chính nó

@@ -1,46 +1,23 @@
 "use strict";
-// class CustomerPrototype {
-//     constructor(public proto: any) { }
-//     clone() {
-//         var customer: Customer = new Customer(
-//             this.proto.first, 
-//             this.proto.last, 
-//             this.proto.status
-//         );
-//         return customer;
-//     };
-// }
-// class Customer {
-//     constructor(
-//         public first: string, 
-//         public last: string, 
-//         public status: string
-//     ) { }
-//     say() {
-//         console.log(
-//             `name: ${this.first} ${this.last}, status: ${this.status}`
-//         );
-//     }
-// }
-// let proto = new Customer("n/a", "n/a", "pending");
-// let prototype = new CustomerPrototype(proto);
-// let customer = prototype.clone();
-// customer.say();
-class Warrior {
-    constructor(name) {
-        this.name = name;
-        this.hp = 100;
-    }
-    bash(target) {
-        target.hp -= 10;
-    }
-    slash(target) {
-        target.hp /= 2;
+class Adaptee {
+    specificRequest() {
+        return ".eetpadA eht fo roivaheb laicepS";
     }
 }
-const harryPotter = new Warrior('Harry Potter');
-const ngan = new Warrior('Ngan');
-const snake = new Warrior('Snake');
-console.log(harryPotter.bash === ngan.bash, // false
-snake.bash === ngan.bash // false
-);
+class Adapter {
+    constructor(obj) {
+        this.obj = obj;
+    }
+    request() {
+        return "Adapter: (TRANSLATED) " + this.obj.specificRequest().split("").reverse().join("");
+    }
+}
+function clientCode(target) {
+    console.log(target.request());
+}
+let adaptee = new Adaptee();
+console.log("Client: The Adaptee class has a weird interface. See, I don't understand it");
+console.log("Adaptee: " + adaptee.specificRequest());
+console.log("Client: But I can work with it via the Adapter");
+let adapter = new Adapter(adaptee);
+clientCode(adapter);
