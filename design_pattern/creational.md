@@ -57,7 +57,7 @@ Singleton.getInstance().helloWorld(); // Kết quả: "Hello World"
 ## 2. Factory
 >Quản lý và trả về các đối tượng theo yêu cầu, giúp cho việc khởi tạo đổi tượng một cách linh hoạt hơn. Thường áp dụng để khởi tạo các đối tượng từ các class tương tự nhau (thường là implement từ 1 interface).
 
-##### Chức năng:
+### 2.1. Chức năng
 - Tạo ra 1 cách mới trong việc khởi tạo Object
 - Che giấu xử lý logic của việc khởi tạo (Trong trường hợp bạn đang muốn viết 1 thư viện để người khác sử dụng)
 - Giảm sự phụ thuộc: Nếu có class nào extend class CarFactory để sử dụng thì khi thêm xe mới vào chỉ sửa từ phần class CarFactory trở lên thôi
@@ -123,7 +123,7 @@ car.car.viewCar();
 - Pattern này được sinh ra nhằm mục đích khởi tạo đối tượng mà bản thân muốn che giấu class nào được khởi tạo.
 - Factory Method định nghĩa một phương thức, nên được sử dụng để tạo các đối tượng thay vì gọi hàm dựng trực tiếp (toán tử new). Các lớp con có thể ghi đè phương thức này để thay đổi lớp đối tượng sẽ được tạo.
 
-##### Cấu trúc: 
+### 3.1. Cấu trúc 
 ![](./../images/method_factory_structure.png)
 
 *Trên hình ta thấy interface **Product** được trỏ đến nhiều nhất, do đó ta bắt đầu định nghĩa từ đây.*
@@ -190,7 +190,7 @@ The same creator's code has just worked with Result of the ConcreteProduct2
 > Abstract Factory cung cấp một đối tượng bằng cách ẩn đi những sự phức tạp đằng sau nó, có nghĩa là chúng ta có một số lớp phức tạp nào đó mà được sử dụng theo từng ngữ cãnh cụ thể chúng có thể có một số chức năng, thuộc tính thống nhất theo một mô hình nào đó, có thể là một số lớp cấu trúc từ một lớp abstract, chúng ta sẽ kết hợp chúng lại để xử lý trong một lớp, mà ở đó mọi công việc xử lý được diễn ra và chỉ trả về những cái cần thiết, điều này giúp mô hình chặt chẽ và dễ dàng để sử dụng.
 
 Mức độ sử dụng: Khá thường xuyên
-##### Cấu trúc:
+### 4.1. Cấu trúc
 ![](./../images/abstract_factory_structure.png)
 - Trước tiên ta định nghĩa sản phẩm ta muốn tạo ra là gì
 ```javascript
@@ -280,13 +280,13 @@ Rút ra:
 - Muốn xây nhà máy sản xuất sản phẩm thì cần phải định nghĩa và tạo mẫu sản phẩm rồi mới đến định nghĩa và tạo ra nhà máy
 - Bản chất là việc tạo ra nhiều lớp, định nghĩa và kết hợp chúng để giảm sự phụ thuộc và dễ bảo trì, nâng cấp. Nếu muốn thêm một sản phẩm mới thì chỉ việc thêm code chứ không sửa code.
 
-### Phân biệt Abstract Factory và Factory Method
-#### Giống nhau
+### 4.2. Phân biệt Abstract Factory và Factory Method
+#### 4.2.1. Giống nhau
 - Đều là **Factory Pattern**
 - Đều dùng để giảm sự phụ thuộc giữa chương trình với những cài đặt cụ thể
 - Đều đóng gói (encapsulate) quá trình tạo ra đối tượng để giúp chương trình độc lập và giảm phụ thuộc với những kiểu cụ thể
 
-#### Khác nhau
+#### 4.2.2. Khác nhau
 ##### Factory Method
 - Dùng các lớp để tạo ra products.
 - Tạo ra các products, objects nhờ vào sự kế thừa (inheritance) nghĩa là nếu muốn tạo ra các đối tượng bằng cách Factory Method, người ta cần phải extend một lớp và override lại hàm tạo Factory Method, rồi Factory Method sẽ tạo ra 1 object
@@ -301,7 +301,7 @@ Rút ra:
 - Có khả năng tạo ra nhiều kiểu products khác nhau.
 - Abstract Factory thường sử dụng nhiều hàm Factory Method theo cách của Factory Method để tạo các đối tượng bên trong những factories của chính nó. Những lớp factory con thường dùng các Factory Method để tạo các products tương ứng. Trong trường hợp này, các Factory Method được dùng thuần túy để tạo ra các products.
 
-#### Vậy khi nào nên dùng Abstract Factory, khi nào nên dùng Factory Method?
+### 4.3. Vậy khi nào nên dùng Abstract Factory, khi nào nên dùng Factory Method?
 - **Abstract Factory**: sử dụng khi nào cần cùng một lúc tạo ra nhiều loại products, và khi muốn chắc chắn những nơi sử dụng sẽ không cần biết đến những lớp cụ thể khi cần làm việc này.
 
 - **Factory Method**: dùng khi cần tạo ra một kiểu product nào đó thôi, sử dụng để làm cho chương trình độc lập với những lớp cụ thể mà ta cần tạo 1 đối tượng, hoặc khi không biết sau này sẽ cần đến những lớp con nào nữa. Khi cần sử dụng Factory Method, hãy tạo tạo ra subclass (1 factory implement 1 kiểu abstract) và implement Factory Method.
@@ -315,21 +315,22 @@ Rút ra:
 - Muốn thay đổi thiết kế cho việc lồng nhau của các hàm khởi tạo (Telescoping Constructor Pattern). Vấn đề này phát sinh khi lập trình viên làm việc với một lớp mà có chứa rất nhiều các thuộc tính và cần phải tạo ra nhiều hàm khởi tạo với số lượng các thuộc tính tăng dần.
 - Cần tạo ra một đối tượng phức tạp, một đối tượng mà thuật toán để tạo tạo lập các thuộc tính là độc lập đối với các thuộc tính khác.
 
-### Ưu điểm
+### 5.1. Ưu điểm
 - Cung cấp thêm một cách khởi tạo đối tượng
 - Hỗ trợ, loại bớt việc phải viết nhiều constructor
 
-### Hạn chế
+### 5.2. Hạn chế
 - Phải tạo builder cho từng class khác nhau.
 
 Mức độ sử dụng: Thường xuyên
 
-### **Builder Pattern** sẽ gồm có 4 thành phần chính
+### 5.3. Thành phần chính
 - **Product**: Đại diện cho đối tượng cần tạo, đối tượng này phức tạp, có nhiều thuộc tính
 - **Builder**: Là abstract class hoặc interface khai báo phương thức tạo đối tượng
 - **ConcreteBuilder**: Kế thừa Builder và cài đặt chi tiết cách tạo ra đối tượng. Nó sẽ xác định và nắm giữ các thể hiện mà nó tạo ra, đồng thời nó cũng cung cấp phương thức để trả các các thể hiện mà nó đã tạo ra trước đó
 - **Director**: Là nơi sẽ gọi tới Builder để tạo ra đối tượng
-### Cấu trúc
+
+### 5.4. Cấu trúc
 ![](./../images/builder_structure.png)
 
 *Trên hình ta thấy **interface Builder** được trỏ đến nhiều nhất, do đó ta bắt đầu từ đây. Nhưng trước đó cần phải khai báo định nghĩa Product. Vì muốn xây dựng builder của sản phẩm thì ta phải biết về định nghĩa sản phẩm đó đã.*
@@ -408,35 +409,35 @@ This product has 3 parts: Ngô, Quang and Sang
 ## 6. Object Pool
 > Object Pool được sử dụng để quản lý bộ nhớ đệm lưu trữ các đối tượng. Một client có quyền truy cập vào Object pool thay vì tạo ra một đối tượng mới thì chỉ cần đơn giản yêu cầu các Object pool cho một đối tượng đã có sẵn trong object pool để thay thế. Object pool thông thường hoạt động theo kiểu: Tự tạo đối tượng mới nếu mình chưa có sẵn hoặc chúng ta có thể tự tạo 1 object pool chứa hạn chế đối tượng trong đó.
 
-### Ví dụ
+### 6.1. Ví dụ
 Cơ chế hoạt động của Object pool tương tự như một kho văn phòng. Khi một nhân viên mới được tuyển dụng, quản lý văn phòng phải chuẩn bị một không gian làm việc cho anh ta. Nếu các thiết bị phụ tùng đã có sẵn trong kho, quản lý sẽ đến kho và lấy các thiết bị đó. Nếu không, quản lý sẽ phải đặt mua các thiết bị mới. Trong trường hợp nếu một nhân viên bị sa thải, thiết bị của anh ta được chuyển tới nhà kho, các thiết bị đó có thể sử dụng cho một nhân viên mới nào đó sau này.
 Nhìn từ ví dụ thực tế trên, chúng ta có thể thấy ngay vấn đề của object pool: Thứ nhất, sử dụng object pool đồng nghĩa với việc chúng ta phải tốn thêm tài nguyên cho đối tượng object pool. Quá rõ ràng, muốn lưu trữ thiết bị thì phải có nhà kho (trong thực tế công ty lại tốn chi phí, diện tích, nhân viên quản lý nhà kho). Thứ hai, nếu đồ trong kho quá cũ đến một thời điểm nào đó sẽ không sử dụng được. Ví dụ cần 1 Iphone 7s cho nhân viên mới, trong khi đó trong kho chỉ có Nokia 1080 ...(RIP). Trong trường hợp này, chúng ta vừa tốn tài nguyên mà lại không thể sử dụng được tài nguyên đó.
 Ý tưởng chung cho mô hình Connection Pool là nếu các instances của một lớp có thể được tái sử dụng, thay vì khởi tạo một instances mới khi cần, bạn có thể tái sử dụng chúng.
-### Ưu điểm
+### 6.2. Ưu điểm
 - Tăng hiệu suất của ứng dụng.
 - Hiệu quả trong một vài tình huống cần tốc độ khởi tạo một object cao.
 - Quản lý các kết nối và cung cấp một cách để tái sử dụng và chia sẻ chúng.
 - Có thể giới hạn số lượng tối đa các đối tượng có thể được tạo ra.
 
-### Nhược điểm
+### 6.3. Nhược điểm
 - Có thể tạo ra rác. Do đó cần dọn dẹp trong một khoảng thời gian cài đặt trước
 - Khi triển khai mô hình Object pool, chúng ta phải cẩn thận để đảm bảo rằng trạng thái của các đối tượng quay trở lại object pool phải được đặt ở trạng thái hợp lý cho việc sử dụng tiếp theo của đối tượng. Nếu không kiểm soát được điều này, đối tượng sẽ thường ở trong một số trạng thái mà chương trình client không mong đợi và có thể làm cho chương trình client lỗi (failed), không nhất quán, rò rỉ thông tin.
 
-### Sử dụng mẫu Object Pool khi
+### 6.4. Sử dụng Object Pool khi
 - Các đối tượng được tạo ra một cách khá tốn kém. Ví dụ: truy vấn database ... (phân bổ chi phí)
 - Bạn cần tạo một số lượng lớn các đối tượng trong thời gian ngắn (phân mảnh bộ nhớ)
 - Khi cần tạo và hủy một số lượng lớn các đối tượng trong thời gian ngắn, liên tục.
 - Khi cần sử dụng các object tương tự thay vì khởi tạo một object mới không có kiểm soát.
 - Các đối tượng tốn nhiều chi phí để tạo ra.
 - Khi có một số client cần cùng một tài nguyên tại các thời điểm khác nhau.
-### Cấu trúc
+### 6.5. Cấu trúc
 ![](./../images/object_pool_structure.png)
 
 - **Reusable**: Các đối tượng có thể tái sử dụng
 - **Client**: Các lớp có vai trò sử dụng các đối tượng có thể tái sử dụng được
 - **ReusablePool**: Các lớp có vai trò quản lý các đối tượng có thể tái sử dụng để cung cấp cho các đối tượng Client
 
-### Ví dụ Object Pool thông qua ứng dụng Taxi
+### 6.6. Ví dụ Object Pool thông qua ứng dụng Taxi
 Một hãng taxi A chỉ hữu hạn N chiếc taxi, hãng taxi chịu trách nhiệm quản lý trạng thái các xe (đang rảnh hay đang chở khách), phân phối các xe đang rảnh đi đón khách, chăm sóc, kéo dài thời gian chờ đợi của khách hàng cho trong trường hợp tất cả các xe đều đang bận (để chờ một trong số các xe đó rảnh thì điều đi đón khách luôn), hủy khi việc chờ đợi của khách hàng là quá lâu.
 
 Ta mô phỏng và thiết kế thành các lớp sau:
@@ -604,10 +605,10 @@ Served the client: 1196
 
 Tần suất sử dụng: Cao
 
-### Cấu trúc
+### 7.1. Cấu trúc
 ![](./../images/prototype_structure.png)
 
-### Các thành phần tham gia pattern này gồm có
+### 7.2. Các thành phần tham gia
 - **Prototype - CustomerPrototype**: Tạo ra 1 giao diện để clone chính nó
 - **Clones - Customer**: Các object đã được tạo bằng việc clone
 

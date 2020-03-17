@@ -162,6 +162,7 @@ Thêm các loại hình dáng và màu sắc mới vào sẽ phát triển hệ 
 ![](./../images/bridge_pattern_example_1.png)
 
 Do đó chúng ta cần đến **Bridge pattern**
+
 ![](./../images/bridge_pattern_example_2.png)
 
 ### 2.2. Khi nào nên dùng Bridge pattern
