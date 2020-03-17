@@ -1,23 +1,42 @@
 "use strict";
-class Adaptee {
-    specificRequest() {
-        return ".eetpadA eht fo roivaheb laicepS";
+/**
+ * Tạo một tham chiếu đến một instance của interface Implementation
+ * Phân cấp và ủy thác tất cả các công việc thực sự cho đối tượng này
+ */
+class Abstraction {
+    constructor(iA) {
+        this.iA = iA;
+    }
+    operation() {
+        return `Abstraction - Base operation with: \n${this.iA.operation_implementation()}`;
     }
 }
-class Adapter {
-    constructor(obj) {
-        this.obj = obj;
-    }
-    request() {
-        return "Adapter: (TRANSLATED) " + this.obj.specificRequest().split("").reverse().join("");
+class ConcreteAImplementationA {
+    operation_implementation() {
+        return `Concrete A of Implementation A`;
     }
 }
-function clientCode(target) {
-    console.log(target.request());
+class ConcreteBImplementationA {
+    operation_implementation() {
+        return `Concrete B of ImplementationA`;
+    }
 }
-let adaptee = new Adaptee();
-console.log("Client: The Adaptee class has a weird interface. See, I don't understand it");
-console.log("Adaptee: " + adaptee.specificRequest());
-console.log("Client: But I can work with it via the Adapter");
-let adapter = new Adapter(adaptee);
-clientCode(adapter);
+// Có thể mở rộng Abstraction mà không cần thay đổi lớp Implementation
+class ExtendedAbstraction extends Abstraction {
+    constructor(iA) {
+        super(iA);
+        this.iA = iA;
+    }
+    operation() {
+        return `ExtendedAbstraction - Extended operation with: \n${this.iA.operation_implementation()}`;
+    }
+}
+function client_code(abstraction) {
+    console.log(abstraction.operation());
+}
+// let concreteAimplementationA = new ConcreteAImplementationA();
+// let abstraction = new Abstraction(concreteAimplementationA);
+// client_code(abstraction);
+let concreteBimplementationA = new ConcreteBImplementationA();
+let extendedAbstraction = new ExtendedAbstraction(concreteBimplementationA);
+client_code(extendedAbstraction);

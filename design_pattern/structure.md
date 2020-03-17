@@ -152,3 +152,101 @@ Adapter: (TRANSLATED) Special behavior of the Adaptee.
 
 ### 1.5. Lời kết
 Adapter Design pattern thực sự rất hữu ích khi bạn code với ứng dụng lớn có sử dụng nhiều API từ bên ngoài, nó giúp bạn giảm thiểu tối đa nhưng thay đổi từ nhà cung cấp API. Nhìn thì thực sự nó hơi phức tạp vì phải tạo ra nhiều lớp và interface khác nhau nhưng nếu hệ thống lớn thì nó lại có rất nhiều hữu ích.
+
+## 2. Bridge Pattern
+>Bridge pattern được sử dụng khi chúng ta muốn tách một lớp lớn với các tính năng phức tạp thành một lớp chính (Abstraction) và nhiều giao diện của các tính năng khác nhau (Implementation) để phát triển độc lập với nhau. Chúng được nối với nhau bởi việc lớp chính trỏ đến giao diện của các tính năng gọi là bridge (cầu nối). Nhờ đó việc chỉnh sửa Abstraction sẽ không tác động đến Implementation và ngược lại.
+
+### 2.1. Vấn đề
+Giả sử bạn có một lớp **Shape** với một cặp lớp con: **Circle** và **Square**. Bạn muốn mở rộng hệ thống phân cấp lớp này để kết hợp các màu. Tuy nhiên, vì bạn đã có hai lớp con, bạn sẽ cần tạo bốn kết hợp lớp như **BlueCircle** và **RedSquare**.
+Thêm các loại hình dáng và màu sắc mới vào sẽ phát triển hệ thống phân cấp của Shape theo cấp số nhân. Ví dụ: để thêm hình tam giác (Triangle), bạn phải tạo hai lớp con, mỗi lớp cho một màu. Và sau đó, việc thêm một màu mới sẽ yêu cầu tạo ba lớp con, mỗi lớp cho một loại hình dạng. Càng mở rộng, nó càng trở nên rối rắm phức tạp.
+![](./../images/bridge_pattern_example_1.png)
+
+Do đó chúng ta cần đến **Bridge pattern**
+![](./../images/bridge_pattern_example_2.png)
+
+### 2.2. Khi nào nên dùng Bridge pattern
+- Dùng Bridge pattern khi bạn muốn phân chia và tổ chức một lớp có biến thể của các chức năng (Ví dụ: Muốn lớp có thể hoạt động với các máy chủ cơ sở dữ liệu khác nhau)
+- Khi bạn cần mở rộng một lớp theo nhiều chiều trực giao (độc lập)
+- Có thể chuyển đổi các Implementation trong thời gian chạy
+
+### 2.3. Cấu trúc
+![](./../images/bridge_pattern_structure.png)
+
+- **Abstraction**: Cung cấp logic điều khiển mức cao. Nó dựa vào các đối tượng của Implementation để thực hiện các công việc cơ bản
+- **Implementation**: Khai báo interface cho tính năng
+- **Concrete Implementations**: Biến thể của Implementation
+- **Refined Abstractions**: Biến thể của Abstraction
+- **Client**: Người sử dụng khai báo Abstraction và các Implementation
+
+### 2.4. Các bước thực hiện
+- Xác định kích thước trực giao trong các lớp của bạn. Có thể là abstraction/platform, domain/infrastructure, front-end/back-end, hay interface/implementation
+- Liệt kê những hoạt động nào client cần và khai báo chúng chúng trong lớp Abstraction
+- Xác định các hoạt động cần thiết của các biến thể của Implementation mà Abstraction cần và khai báo chúng trong interface Implementation
+- Đối với tất cả các biến thể, hãy tạo các lớp triển khai cụ thể, nhưng hãy đảm bảo tất cả chúng đều tuân theo interface Implementation.
+- Trong lớp Abstraction, thêm trường tham chiếu cho kiểu Implementation. Abstraction đưa hầu hết các phương thức cần thiết cho đối tượng implementation được tham chiếu
+- Nếu có một vài biến thể của Abstraction, hãy tạo các Refined Abstraction cho từng biến thể bằng cách extend lớp base Abstraction
+- Client sẽ chuyển một đối tượng của Implementation vào constructor của Abstraction để liên kết chúng. Sau đó, Client không cần đụng đến Implementation nữa mà chỉ làm việc với đối tượng Abstraction thôi
+
+### 2.5. Ví dụ
+- Khai báo lớp Abstraction
+```javascript
+class Abstraction {
+    constructor(protected iA : ImplementationA) { }
+    operation() : string {
+        return `Abstraction - Base operation with: \n${this.iA.operation_implementation()}`;
+    }
+}
+```
+- Tạo giao diện cho tính năng ImplementationA (một tính năng có nhiều biến thể)
+```javascript
+interface ImplementationA {
+    operation_implementation() : string;
+}
+```
+- Khai báo các biến thể của tính năng ImplementationA (Mở rộng theo chiều ngang)
+```javascript
+class ConcreteAImplementationA implements ImplementationA {
+    operation_implementation() : string {
+        return `Concrete A of Implementation A`;
+    }
+}
+class ConcreteBImplementationA implements ImplementationA {
+    operation_implementation() : string {
+        return `Concrete B of ImplementationA`;
+    }
+}
+```
+- Client sử dụng
+```javascript
+function client_code(abstraction: Abstraction) {
+    console.log(abstraction.operation());
+}
+let concreteAimplementationA = new ConcreteAImplementationA();
+let abstraction = new Abstraction(concreteAimplementationA);
+client_code(abstraction);
+```
+- Kết quả
+```
+Abstraction - Base operation with: 
+Concrete A of Implementation A
+```
+- Ta có thể mở rộng class Abstraction (Mở rộng theo chiều dọc)
+```javascript
+class ExtendedAbstraction extends Abstraction {
+    constructor(protected iA: ImplementationA) {
+        super(iA);
+    }
+    operation() : string {
+        return `ExtendedAbstraction - Extended operation with: \n${this.iA.operation_implementation()}`;
+    }
+}
+
+let concreteBimplementationA = new ConcreteBImplementationA();
+let extendedAbstraction = new ExtendedAbstraction(concreteBimplementationA);
+client_code(extendedAbstraction);
+```
+- Kết quả
+```
+ExtendedAbstraction - Extended operation with: 
+Concrete B of ImplementationA
+```

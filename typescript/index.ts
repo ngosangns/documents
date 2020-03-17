@@ -1,27 +1,48 @@
-interface Target {
-    request(): string;
+/**
+ * Tạo một tham chiếu đến một instance của interface Implementation
+ * Phân cấp và ủy thác tất cả các công việc thực sự cho đối tượng này
+ */
+class Abstraction {
+    constructor(protected iA : ImplementationA) { }
+    operation() : string {
+        return `Abstraction - Base operation with: \n${this.iA.operation_implementation()}`;
+    }
+}
+/**
+ * Thông thường, interface Implementation chỉ cung cấp các phương thức cơ bản trong khi
+ * Abstraction định nghĩa các phương thức cấp cao hơn dựa trên các phương thức cơ bản này
+ */
+interface ImplementationA {
+    operation_implementation() : string;
 }
 
-class Adaptee {
-    specificRequest() : string {
-        return ".eetpadA eht fo roivaheb laicepS";
+class ConcreteAImplementationA implements ImplementationA {
+    operation_implementation() : string {
+        return `Concrete A of Implementation A`;
+    }
+}
+class ConcreteBImplementationA implements ImplementationA {
+    operation_implementation() : string {
+        return `Concrete B of ImplementationA`;
     }
 }
 
-class Adapter implements Target {
-    constructor(private obj: Adaptee) { }
-    request(){
-        return "Adapter: (TRANSLATED) "+this.obj.specificRequest().split("").reverse().join("");
+// Có thể mở rộng Abstraction mà không cần thay đổi lớp Implementation
+class ExtendedAbstraction extends Abstraction {
+    constructor(protected iA: ImplementationA) {
+        super(iA);
+    }
+    operation() : string {
+        return `ExtendedAbstraction - Extended operation with: \n${this.iA.operation_implementation()}`;
     }
 }
-
-function clientCode(target: Target) {
-    console.log(target.request());
+function client_code(abstraction: Abstraction) {
+    console.log(abstraction.operation());
 }
-let adaptee = new Adaptee();
-console.log("Client: The Adaptee class has a weird interface. See, I don't understand it");
-console.log("Adaptee: "+adaptee.specificRequest());
 
-console.log("Client: But I can work with it via the Adapter");
-let adapter = new Adapter(adaptee);
-clientCode(adapter);
+// let concreteAimplementationA = new ConcreteAImplementationA();
+// let abstraction = new Abstraction(concreteAimplementationA);
+// client_code(abstraction);
+let concreteBimplementationA = new ConcreteBImplementationA();
+let extendedAbstraction = new ExtendedAbstraction(concreteBimplementationA);
+client_code(extendedAbstraction);
