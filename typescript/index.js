@@ -1,42 +1,65 @@
 "use strict";
-/**
- * Tạo một tham chiếu đến một instance của interface Implementation
- * Phân cấp và ủy thác tất cả các công việc thực sự cho đối tượng này
- */
-class Abstraction {
-    constructor(iA) {
-        this.iA = iA;
-    }
-    operation() {
-        return `Abstraction - Base operation with: \n${this.iA.operation_implementation()}`;
+class TomatoPizza {
+    doPizza() {
+        return "I am a Tomato Pizza";
     }
 }
-class ConcreteAImplementationA {
-    operation_implementation() {
-        return `Concrete A of Implementation A`;
+class ChickenPizza {
+    doPizza() {
+        return "I am a Chicken Pizza";
     }
 }
-class ConcreteBImplementationA {
-    operation_implementation() {
-        return `Concrete B of ImplementationA`;
+class PizzaDecorator {
+    constructor(mPizza) {
+        this.mPizza = mPizza;
+    }
+    getPizza() {
+        return this.mPizza;
+    }
+    setPizza(mPizza) {
+        this.mPizza = mPizza;
     }
 }
-// Có thể mở rộng Abstraction mà không cần thay đổi lớp Implementation
-class ExtendedAbstraction extends Abstraction {
-    constructor(iA) {
-        super(iA);
-        this.iA = iA;
+class CheeseDecorator extends PizzaDecorator {
+    constructor(pizza) {
+        super(pizza);
     }
-    operation() {
-        return `ExtendedAbstraction - Extended operation with: \n${this.iA.operation_implementation()}`;
+    doPizza() {
+        let type = this.mPizza.doPizza();
+        return type + this.addCheese();
+    }
+    // This is additional functionality
+    // It adds cheese to an existing pizza
+    addCheese() {
+        return " + Cheese";
     }
 }
-function client_code(abstraction) {
-    console.log(abstraction.operation());
+class PepperDecorator extends PizzaDecorator {
+    constructor(pizza) {
+        super(pizza);
+    }
+    doPizza() {
+        let type = this.mPizza.doPizza();
+        return type + this.addPepper();
+    }
+    // This is additional functionality
+    // It adds cheese to an existing pizza
+    addPepper() {
+        return " + Pepper";
+    }
 }
-// let concreteAimplementationA = new ConcreteAImplementationA();
-// let abstraction = new Abstraction(concreteAimplementationA);
-// client_code(abstraction);
-let concreteBimplementationA = new ConcreteBImplementationA();
-let extendedAbstraction = new ExtendedAbstraction(concreteBimplementationA);
-client_code(extendedAbstraction);
+let tomato = new TomatoPizza();
+let chicken = new ChickenPizza();
+console.log(tomato.doPizza());
+console.log(chicken.doPizza());
+// Use Decorator pattern to extend existing pizza dynamically
+// Add pepper to tomato-pizza
+let pepperDecorator = new PepperDecorator(tomato);
+console.log(pepperDecorator.doPizza());
+// Add cheese to tomato-pizza
+let cheeseDecorator = new CheeseDecorator(tomato);
+console.log(cheeseDecorator.doPizza());
+// Add cheese and pepper to tomato-pizza
+// We combine functionalities together easily.
+let cheeseDecorator2 = new CheeseDecorator(pepperDecorator);
+console.log(cheeseDecorator2.doPizza());
