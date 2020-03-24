@@ -442,24 +442,24 @@ I am a Tomato Pizza + Pepper + Cheese
 ## 5. Facade
 > Bao bọc một hệ thống con phức tạp với một giao diện đơn giản
 
-### Ưu điểm của Facade Pattern?
+### 5.1. Ưu điểm của Facade Pattern?
 - Giúp cho một thư viện của bạn trở nên đơn giản hơn trong việc sử dụng và đọc hiểu
 - Giảm sự phụ thuộc của các mã code bên ngoài với code bên trong của thư viện, vì hầu hết các code đều dùng Facade, vì thế cho phép sự linh động trong phát triển các hệ thống
 - Đóng gói tập nhiều hàm API được thiết kế không tốt bằng một hàm API có thiết kế tốt hơn
 
-### Vấn đề
+### 5.2. Vấn đề
 Giả sử bạn có chuỗi các hành động được thực hiện theo thứ tự, và các hành động này lại được yêu cầu ở nhiều nơi trong phạm vi ứng dụng của bạn, vậy mỗi lúc bạn cần dùng đến nó bạn lại phải copy-paste hoặc viết lại đoạn code đó vào những nơi cần sử dụng trong ứng dụng. Điều này có vẻ ok, copy cũng nhanh nên chẳng sao, nhưng nếu bỗng nhiên làm xong bạn nhận ra cần phải thay đổi lại cấu trúc và mã xử lý trong hầu hết chuỗi hành động đó, vậy bạn sẽ làm gì ?
 Đây chính là mấu chốt của vấn đề, bạn sẽ lại đi lục lại đoạn code đó ở tất cả các nơi, rồi lại sửa nó. Điều này quá tốn thời gian và hơn nữa dường như bạn đang mất đi sự kiểm soát các đoạn mã của mình và trong quá trình đó còn có nguy cơ phát sinh lỗi. Do vậy ta cần dùng đến Facade Pattern.
 
-### Giải pháp
+### 5.3. Giải pháp
 Những gì bạn cần phải làm chỉ là thiết kế một Facade, và trong đó phương thức facade sẽ xử lý các đoạn code dùng đi dùng lại. Từ xu hướng quan điểm trên, chúng ta sẽ chỉ cần gọi Facade để thực thi các hành động dựa trên các parameters được cung cấp.
 Bây giờ nếu chúng ta cần bất kỳ thay đổi nào trong quá trình trên, công việc sẽ đơn giản hơn rất nhiểu, chỉ cần thay đổi các xử lý trong phương thức facade của bạn và mọi thứ sẽ được đồng bộ thay vì thực hiện sự thay đổi ở những nơi sử dụng cả chuỗi các mã code đó.
 
-### Cấu trúc
+### 5.4. Cấu trúc
 ![](./../images/facade_pattern_structure.png)
 
 *Các subsystem bên trong Facade cũng sử dụng Facade*
-### Ví dụ
+### 5.5. Ví dụ
 Hãy cùng xét một ví dụ khi người dùng mua hàng online trên trang web của bạn. Một quá trình kiểm tra đơn giản bao gồm các bước sau:
 - Thêm sản phẩm vào giỏ hàng
 - Tính toán chi phí vận chuyển
@@ -532,5 +532,12 @@ order.generateOrder();
 ```
 Như vậy đoạn mã phức tạp trên đã được gói gọn trong phương thức **generateOrder** và giờ mỗi khi chúng ta có thay đổi không cần phải lục lại những đoạn code như trong ví dụ ban đầu mà chỉ cần thay đổi xử lý trong Facade, và cũng không cần đem cả đoạn code dài ban đầu đi sử dụng khi cần, mà chỉ cần gọi method **generateOrder()**.
 
-### Kết
+### 5.6. Kết
 Facade Pattern chỉ nên thực hiện trong tình huống mà bạn cần một interface duy nhất để hoàn thành nhiều nhiệm vụ, tưởng tượng giống như bạn có một thư ký và cô ấy sẽ lên kế hoạch công việc theo trình tự giống như cách một Facade object làm để giúp bạn hoàn thành nhiều nhiệm vụ.
+
+## 6. Proxy
+> Proxy cung cấp một class ảo đứng trước class thực sự mà chúng ta muốn làm việc để xử lí, tăng thêm tính bảo mật và cải thiện performance cho hệ thống khi xử lí dữ liệu liên quan đến class mà chúng ta làm việc
+
+### 6.1. Khi nào nên sử dụng Proxy Pattern?
+- Khi muốn thêm một số bước bảo mật, quản lí sự truy cập/truy xuất dữ liệu ra vào đối tượng
+- Linh hoạt cách truy xuất/truy cập dữ liệu (Lazy Loading,...)
