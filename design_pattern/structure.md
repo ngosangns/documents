@@ -1,26 +1,3 @@
-# Design Pattern là gì?
-Design Pattern ban đầu đơn giản là một khái niệm kiến trúc do Christopher Alexander gây dựng. Lần đầu tiên được ứng dụng vào phần mềm vào năm 1987 bởi Kent Beck and Ward Cunningham. Hai ông trình bày ý tưởng của mình trong một hội nghị. Sau đó Design Pattern trở thành khái niệm phổ biến và tiếp tuc phát triển cho đến ngày nay. Design Pattern lần đầu tiên được tổng hợp thành cuốn sách hoàn chỉnh vào năm 1995 trong cuốn `Design Patterns: Elements of Reusable Object-Oriented Software`.
-Trong phát triển phần mềm, Design Pattern là giải pháp thiết kế mã để tái sử dụng chúng. Design Pattern được sử dụng mạnh mẽ nhất trong OOP qua Object và Class. Có rất nhiều Design Pattern, theo tổng kết của Gang of Four, hiện tại có hơn 250 mẫu đang được sử dụng trong phát triển phần mềm, tuy nhiên bạn không cần sử dụng hết 250 mẫu này, một lập trình viên giỏi Desgin Pattern chỉ cần sử dụng thành thạo khoảng 35 mẫu.
-
-*Lưu ý: Design Pattern không phải thuật toán, không phải một component.*
-| Creational | Structure | Behavioral |
-| --- | --- | --- |
-| Singleton | Adapter/ Wrapper | Chain of responsibility |
-| Factory | Bridge | Command |
-| Method Factory | Composite | Interpreter |
-| Abstract Factory | Decorator | Iterator |
-| Builder | Facade | Mediator |
-| Object Pool | Proxy | Memento |
-| Prototype | Flyweight | Observer |
-| | Registry | Strategy |
-| | Data Mapper | Template Method |
-| | Dependency Injection | Visitor |
-| | Fluent Interface | Null Object |
-| | Delegation | Specification |
-| | | State |
-| | | Repository |
-| | | Entity-Attribute-Value (EAV) |
-
 # II. Structure
 ## 1. Adapter/ Wrapper
 >Adapter Pattern là pattern giữ vai trò trung gian giữa hai lớp, chuyển đổi giao diện của một hay nhiều lớp có sẵn thành một giao diện khác, thích hợp cho lớp đang viết. Điều này cho phép các lớp có các giao diện khác nhau có thể dễ dàng giao tiếp tốt với nhau thông qua giao diện trung gian, không cần thay đổi code của lớp có sẵn cũng như lớp đang viết. Adapter Pattern còn gọi là Wrapper Pattern do cung cấp một giao diện “bọc ngoài” tương thích cho một hệ thống có sẵn, có dữ liệu và hành vi phù hợp nhưng có giao diện không tương thích với lớp đang viết
@@ -338,3 +315,222 @@ Employee :[ Name : Michel, dept : Head Marketing, salary : 20000 ]
 Employee :[ Name : Laura, dept : Marketing, salary : 10000 ]
 Employee :[ Name : Bob, dept : Marketing, salary : 10000 ]
 ```
+## 4. Decorator
+> Decorator thường được dùng khi ta muốn thêm chức năng cho một đối tượng đã tồn tại trước đó, mà không muốn ảnh hưởng đến các đối tượng khác
+
+### 4.1. Vấn đề
+Đôi khi chúng ta cần mở rộng một phương thức trong đối tượng, và cách thông thường là chúng ta sẽ kế thừa đối tượng đó. Nhưng trong một vài trường hợp sẽ làm cho mã nguồn trở lên phức tạp hơn chúng ta mong muốn. Do đó ta cần sử dụng đến Decorator Pattern để mở rộng phương thức một cách linh hoạt.
+
+### 4.2. Khác biệt giữa mở rộng phương thức theo cách linh động với mở rộng theo cách tĩnh
+- Mở rộng theo cách tĩnh: Chúng ta thường kế thừa lại class đó và mở rộng một cách cứng nhắc, vì cách mở rộng đó đã áp dụng cho class kế thừa đó rồi nên khi cần mở rộng thêm ta lại phải kế thừa (nếu muốn lược bỏ bớt tính năng ta cũng phải làm thế), khiến hệ thống trở nên phức tạp
+- Mở rộng theo cách động: Mở rộng theo cách linh động là chúng ta sẽ cung cấp một cơ cấu mà cơ cấu này cho phép chúng ta thay đổi một đối tượng đã tồn tại nhưng không làm ảnh hưởng đến các đối tượng khác của cùng lớp đó 
+
+### 4.3. Ví dụ
+Tưởng tượng rằng bạn đang làm việc cho một cửa hàng bánh **Pizza**, cửa hàng của bạn vừa làm **pizza cà chua** và **pizza phô mai**. Sau đó bạn cần đặt thêm một vài nguyên liệu nữa lên phần trên của bánh vì khách hàng có quyền lựa chọn thêm gà hoặc tiêu cho chiếc bánh của họ. Về cơ bản bạn có một số loại pizza như: **pizza gà cà chua**, **pizza cà chua hạt tiêu**, **pizza gà phô mai**, **pizza phô mai hồ tiêu**, **pizza cà chua gà hồ tiêu** và **phô mai gà hồ tiêu**. Nếu chúng ta giải quyết vấn đề này với cách mở rộng tĩnh thì bạn sẽ cần tạo ra một số lượng lớn các lớp như **TomatoChickenPizza**, **TomatoPepperPizza**... nó có nghĩa là một số lượng lớn các kết hợp sẽ bị thêm vào. Do đó chúng ta cần giải quyết theo cách động.
+
+### 4.4. Cấu trúc
+![](./../images/decorator_pattern_structure.png)
+
+Những thành phần trong mẫu thiết kế Decorator:
+- **Component (IPizza)**: Giao diện (interface) chung được dùng để triển khai các đối tượng
+- **ConcreteComponent (TomatoPizza, ChickenPizza)**: Các đối tượng triển khai giao diện Component
+- **Decorator (PizzaDecorator)**: Lớp trừu tượng có duy trì một tham chiếu đến đối tượng gốc và đồng thời cài đặt các phần cần thiết cho Decorator
+- **ConcreteDecorator (PepperDecorator, CheeseDecorator)**: Một cài đặt của Decorator, nó cài đặt các phần mở rộng cho đối tượng được đưa vào
+
+### 4.5. Thực hành
+- Tạo giao diện Component (IPizza):
+```javascript
+interface IPizza {
+    doPizza() : string;
+}
+```
+- Tạo ra 2 concrete của Component:
+```javascript
+class TomatoPizza implements IPizza {
+    doPizza(): string {
+        return "I am a Tomato Pizza";
+    }
+}
+class ChickenPizza implements IPizza {
+    doPizza(): string {
+        return "I am a Chicken Pizza";
+    }
+}
+```
+- Tạo ra một lớp trừu tượng Decorator làm xương sống cho các concrete Decorator khác
+```javascript
+abstract class PizzaDecorator implements IPizza {
+    constructor(protected mPizza: IPizza) { }
+
+    getPizza(): IPizza {
+        return this.mPizza;
+    }
+
+    setPizza(mPizza: IPizza): void {
+        this.mPizza = mPizza;
+    }
+
+    abstract doPizza(): string;
+}
+```
+- Tạo ra 2 concrete của Decorator là **PepperDecorator** và **CheeseDecorator** và cài đặt các phương thức mở rộng. Ví dụ PepperDecorator sẽ thêm tiêu vào pizza. Tính năng mở rộng là được cài đặt trong phương thức **addPepper()**
+```javascript
+class CheeseDecorator extends PizzaDecorator {
+    constructor(pizza: IPizza) {
+        super(pizza);
+    }
+
+    doPizza(): string {
+        let type: string = this.mPizza.doPizza();
+        return type + this.addCheese();
+    }
+
+    // This is additional functionality
+    // It adds cheese to an existing pizza
+    addCheese(): string {
+        return " + Cheese";
+    }
+}
+class PepperDecorator extends PizzaDecorator {
+    constructor(pizza: IPizza) {
+        super(pizza);
+    }
+
+    doPizza(): string {
+        let type: string = this.mPizza.doPizza();
+        return type + this.addPepper();
+    }
+
+    // This is additional functionality
+    // It adds cheese to an existing pizza
+    addPepper(): string {
+        return " + Pepper";
+    }
+}
+```
+- Và cuối cùng sử dụng Decorator để thêm tính năng (tiêu, sốt) cho Pizza
+```javascript
+let tomato : IPizza = new TomatoPizza();
+let chicken : IPizza = new ChickenPizza();
+
+console.log(tomato.doPizza());
+console.log(chicken.doPizza());
+
+// Use Decorator pattern to extend existing pizza dynamically
+// Add pepper to tomato-pizza
+let pepperDecorator : PepperDecorator = new PepperDecorator(tomato);
+console.log(pepperDecorator.doPizza());
+
+// Add cheese to tomato-pizza
+let cheeseDecorator : CheeseDecorator = new CheeseDecorator(tomato);
+console.log(cheeseDecorator.doPizza());
+
+// Add cheese and pepper to tomato-pizza
+// We combine functionalities together easily.
+let cheeseDecorator2 : CheeseDecorator = new CheeseDecorator(pepperDecorator);
+console.log(cheeseDecorator2.doPizza());
+```
+- Kết quả
+```
+I am a Tomato Pizza
+I am a Chicken Pizza
+I am a Tomato Pizza + Pepper
+I am a Tomato Pizza + Cheese
+I am a Tomato Pizza + Pepper + Cheese
+```
+
+## 5. Facade
+> Bao bọc một hệ thống con phức tạp với một giao diện đơn giản
+
+### Ưu điểm của Facade Pattern?
+- Giúp cho một thư viện của bạn trở nên đơn giản hơn trong việc sử dụng và đọc hiểu
+- Giảm sự phụ thuộc của các mã code bên ngoài với code bên trong của thư viện, vì hầu hết các code đều dùng Facade, vì thế cho phép sự linh động trong phát triển các hệ thống
+- Đóng gói tập nhiều hàm API được thiết kế không tốt bằng một hàm API có thiết kế tốt hơn
+
+### Vấn đề
+Giả sử bạn có chuỗi các hành động được thực hiện theo thứ tự, và các hành động này lại được yêu cầu ở nhiều nơi trong phạm vi ứng dụng của bạn, vậy mỗi lúc bạn cần dùng đến nó bạn lại phải copy-paste hoặc viết lại đoạn code đó vào những nơi cần sử dụng trong ứng dụng. Điều này có vẻ ok, copy cũng nhanh nên chẳng sao, nhưng nếu bỗng nhiên làm xong bạn nhận ra cần phải thay đổi lại cấu trúc và mã xử lý trong hầu hết chuỗi hành động đó, vậy bạn sẽ làm gì ?
+Đây chính là mấu chốt của vấn đề, bạn sẽ lại đi lục lại đoạn code đó ở tất cả các nơi, rồi lại sửa nó. Điều này quá tốn thời gian và hơn nữa dường như bạn đang mất đi sự kiểm soát các đoạn mã của mình và trong quá trình đó còn có nguy cơ phát sinh lỗi. Do vậy ta cần dùng đến Facade Pattern.
+
+### Giải pháp
+Những gì bạn cần phải làm chỉ là thiết kế một Facade, và trong đó phương thức facade sẽ xử lý các đoạn code dùng đi dùng lại. Từ xu hướng quan điểm trên, chúng ta sẽ chỉ cần gọi Facade để thực thi các hành động dựa trên các parameters được cung cấp.
+Bây giờ nếu chúng ta cần bất kỳ thay đổi nào trong quá trình trên, công việc sẽ đơn giản hơn rất nhiểu, chỉ cần thay đổi các xử lý trong phương thức facade của bạn và mọi thứ sẽ được đồng bộ thay vì thực hiện sự thay đổi ở những nơi sử dụng cả chuỗi các mã code đó.
+
+### Cấu trúc
+![](./../images/facade_pattern_structure.png)
+
+*Các subsystem bên trong Facade cũng sử dụng Facade*
+### Ví dụ
+Hãy cùng xét một ví dụ khi người dùng mua hàng online trên trang web của bạn. Một quá trình kiểm tra đơn giản bao gồm các bước sau:
+- Thêm sản phẩm vào giỏ hàng
+- Tính toán chi phí vận chuyển
+- Tính toán tiền chiết khấu
+- Tạo đơn đặt hàng
+```javascript
+// Xử lý checkout
+let productId = "123456";
+let product = Product.find(productId);
+if(product.length > 0) {
+    // Thêm vào giỏ hàng
+    let cart = new Cart();
+    cart.addItem(product);
+    // Tính phí ship hàng
+    let shipping = new ShippingCharge(product);
+    shipping.calculateCharge();
+    // Tính mã giảm giá
+    let discount = new Discount(product);
+    discount.applyDiscount();
+    // Tạo mã đơn hàng
+    let order = new Order();
+    order.generateOrder();
+    ...
+}
+```
+- Giả sử bạn sử dụng đoạn mã trên để xử lý đặt hàng của người dùng, có rất nhiều object sử dụng để hoàn thành chuỗi xử lý order nên việc mỗi nơi trong ứng dụng cần chuỗi xử lý này lại bê đoạn code này theo là điều hoàn toàn không nên làm
+- Vậy chúng ta thử áp dụng Facade vào ví dụ trên
+```javascript
+class OrderFacade {
+        private product: any;
+        constructor(productId: string) {
+            this.product = Product.find(productId);
+        }
+        generateOrder() {
+            // Xử lý toàn bộ logic
+            if(this.checkQuantity()) {
+                this.addToCart();
+                this.calulateShipping();
+                this.applyDiscount();
+                this.placeOrder();
+            }
+
+        }
+        private addToCart () {
+            let cart : Cart = new Cart();
+            cart.addItem(this.product);
+        }
+        private checkQuantity() {
+            return this.product.length != 0 ? true : false;
+        }
+        private function calulateShipping() {
+            let shipping : ShippingCharge = new ShippingCharge(this.product);
+            shipping.calculateCharge();
+        }
+        private applyDiscount() {
+            let discount : Discount = new Discount();
+            discount.applyDiscount(this.product);
+        }
+        private placeOrder() {
+            let order : Order = new Order();
+            order.generateOrder();
+        }
+    }
+```
+- Sử dụng
+```javascript
+let productId = "123456";
+let order = new OrderFacade(productId);
+order.generateOrder();
+```
+Như vậy đoạn mã phức tạp trên đã được gói gọn trong phương thức **generateOrder** và giờ mỗi khi chúng ta có thay đổi không cần phải lục lại những đoạn code như trong ví dụ ban đầu mà chỉ cần thay đổi xử lý trong Facade, và cũng không cần đem cả đoạn code dài ban đầu đi sử dụng khi cần, mà chỉ cần gọi method **generateOrder()**.
+
+### Kết
+Facade Pattern chỉ nên thực hiện trong tình huống mà bạn cần một interface duy nhất để hoàn thành nhiều nhiệm vụ, tưởng tượng giống như bạn có một thư ký và cô ấy sẽ lên kế hoạch công việc theo trình tự giống như cách một Facade object làm để giúp bạn hoàn thành nhiều nhiệm vụ.
