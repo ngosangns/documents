@@ -1,105 +1,80 @@
 "use strict";
-class Employee {
-    constructor(name, dept, salary) {
-        this.name = name;
-        this.dept = dept;
-        this.salary = salary;
-        this.subordinates = new Array();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+class Item {
+    constructor() {
+        this._content = Math.round(Math.random() * 10);
     }
-    add(e) {
-        this.subordinates.push(e);
+    get content() {
+        return this._content;
     }
-    remove(e) {
-        this.subordinates.splice(this.subordinates.indexOf(e), 1);
+    set content(n) {
+        this._content = n;
     }
-    getChildren() {
-        return this.subordinates;
+    delaytoResponseContent() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.sleep(1000);
+            return this.content;
+        });
     }
-    toString() {
-        return (`Employee :[ Name : ${this.name}, dept : ${this.dept}, salary : ${this.salary} ]`);
-    }
-}
-let CEO = new Employee("John", "CEO", 30000);
-let headSales = new Employee("Robert", "Head Sales", 20000);
-let headMarketing = new Employee("Michel", "Head Marketing", 20000);
-let clerk1 = new Employee("Laura", "Marketing", 10000);
-let clerk2 = new Employee("Bob", "Marketing", 10000);
-let salesExecutive1 = new Employee("Richard", "Sales", 10000);
-let salesExecutive2 = new Employee("Rob", "Sales", 10000);
-CEO.add(headSales);
-CEO.add(headMarketing);
-headSales.add(salesExecutive1);
-headSales.add(salesExecutive2);
-headMarketing.add(clerk1);
-headMarketing.add(clerk2);
-//print all employees of the organization
-console.log(CEO);
-for (let headEmployee of CEO.getChildren()) {
-    console.log(headEmployee);
-    for (let employee of headEmployee.getChildren())
-        console.log(employee);
-}
-class TomatoPizza {
-    doPizza() {
-        return "I am a Tomato Pizza";
+    sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }
-class ChickenPizza {
-    doPizza() {
-        return "I am a Chicken Pizza";
+class RealSubject {
+    constructor(_data) {
+        this._data = _data;
+    }
+    get data() {
+        return this._data;
+    }
+    Request(index) {
+        return this.data[index].delaytoResponseContent();
     }
 }
-class PizzaDecorator {
-    constructor(mPizza) {
-        this.mPizza = mPizza;
+class SubjectProxy {
+    // Kết nối đến host thông qua RealSubject
+    constructor(data) {
+        this.realSubject = new RealSubject(data);
     }
-    getPizza() {
-        return this.mPizza;
-    }
-    setPizza(mPizza) {
-        this.mPizza = mPizza;
-    }
-}
-class CheeseDecorator extends PizzaDecorator {
-    constructor(pizza) {
-        super(pizza);
-    }
-    doPizza() {
-        let type = this.mPizza.doPizza();
-        return type + this.addCheese();
-    }
-    // This is additional functionality
-    // It adds cheese to an existing pizza
-    addCheese() {
-        return " + Cheese";
+    // - Ghi đè lại phương thức Request
+    // - Thay vì lấy về giá trị content mất nhiều chi phí
+    //   thì ta chỉ lấy về index/id của giá trị đó
+    // - Khi nào người dùng cần giá trị content thì mới
+    //   sử dụng phương thức delaytoResponseContent để
+    //   lấy giá trị content về
+    Request(index) {
+        return this.realSubject.data[index];
     }
 }
-class PepperDecorator extends PizzaDecorator {
-    constructor(pizza) {
-        super(pizza);
+// Tạo một host giả có chứa content và index Item
+let data = [
+    new Item(),
+    new Item(),
+    new Item(),
+    new Item(),
+    new Item(),
+    new Item(),
+];
+let proxy = new SubjectProxy(data);
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    let wanted = 3;
+    let results = new Array();
+    for (let i = 0; i < 5; i++) {
+        results.push(proxy.Request(i));
+        if (i == wanted)
+            results[i].delaytoResponseContent()
+                .then(res => console.log("Wanted result via proxy: " + res));
     }
-    doPizza() {
-        let type = this.mPizza.doPizza();
-        return type + this.addPepper();
-    }
-    // This is additional functionality
-    // It adds cheese to an existing pizza
-    addPepper() {
-        return " + Pepper";
-    }
-}
-let tomato = new TomatoPizza();
-let chicken = new ChickenPizza();
-console.log(tomato.doPizza());
-console.log(chicken.doPizza());
-// Use Decorator pattern to extend existing pizza dynamically
-// Add pepper to tomato-pizza
-let pepperDecorator = new PepperDecorator(tomato);
-console.log(pepperDecorator.doPizza());
-// Add cheese to tomato-pizza
-let cheeseDecorator = new CheeseDecorator(tomato);
-console.log(cheeseDecorator.doPizza());
-// Add cheese and pepper to tomato-pizza
-// We combine functionalities together easily.
-let cheeseDecorator2 = new CheeseDecorator(pepperDecorator);
-console.log(cheeseDecorator2.doPizza());
+    for (let i = 0; i < 5; i++)
+        if (i != wanted)
+            results[i].delaytoResponseContent()
+                .then(res => console.log("Result via proxy: " + res));
+}))();
