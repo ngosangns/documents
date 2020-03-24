@@ -1,42 +1,41 @@
 "use strict";
-/**
- * Tạo một tham chiếu đến một instance của interface Implementation
- * Phân cấp và ủy thác tất cả các công việc thực sự cho đối tượng này
- */
-class Abstraction {
-    constructor(iA) {
-        this.iA = iA;
+class Employee {
+    constructor(name, dept, salary) {
+        this.name = name;
+        this.dept = dept;
+        this.salary = salary;
+        this.subordinates = new Array();
     }
-    operation() {
-        return `Abstraction - Base operation with: \n${this.iA.operation_implementation()}`;
+    add(e) {
+        this.subordinates.push(e);
     }
-}
-class ConcreteAImplementationA {
-    operation_implementation() {
-        return `Concrete A of Implementation A`;
+    remove(e) {
+        this.subordinates.splice(this.subordinates.indexOf(e), 1);
     }
-}
-class ConcreteBImplementationA {
-    operation_implementation() {
-        return `Concrete B of ImplementationA`;
+    getChildren() {
+        return this.subordinates;
+    }
+    toString() {
+        return (`Employee :[ Name : ${this.name}, dept : ${this.dept}, salary : ${this.salary} ]`);
     }
 }
-// Có thể mở rộng Abstraction mà không cần thay đổi lớp Implementation
-class ExtendedAbstraction extends Abstraction {
-    constructor(iA) {
-        super(iA);
-        this.iA = iA;
-    }
-    operation() {
-        return `ExtendedAbstraction - Extended operation with: \n${this.iA.operation_implementation()}`;
-    }
+let CEO = new Employee("John", "CEO", 30000);
+let headSales = new Employee("Robert", "Head Sales", 20000);
+let headMarketing = new Employee("Michel", "Head Marketing", 20000);
+let clerk1 = new Employee("Laura", "Marketing", 10000);
+let clerk2 = new Employee("Bob", "Marketing", 10000);
+let salesExecutive1 = new Employee("Richard", "Sales", 10000);
+let salesExecutive2 = new Employee("Rob", "Sales", 10000);
+CEO.add(headSales);
+CEO.add(headMarketing);
+headSales.add(salesExecutive1);
+headSales.add(salesExecutive2);
+headMarketing.add(clerk1);
+headMarketing.add(clerk2);
+//print all employees of the organization
+console.log(CEO);
+for (let headEmployee of CEO.getChildren()) {
+    console.log(headEmployee);
+    for (let employee of headEmployee.getChildren())
+        console.log(employee);
 }
-function client_code(abstraction) {
-    console.log(abstraction.operation());
-}
-// let concreteAimplementationA = new ConcreteAImplementationA();
-// let abstraction = new Abstraction(concreteAimplementationA);
-// client_code(abstraction);
-let concreteBimplementationA = new ConcreteBImplementationA();
-let extendedAbstraction = new ExtendedAbstraction(concreteBimplementationA);
-client_code(extendedAbstraction);

@@ -251,3 +251,90 @@ client_code(extendedAbstraction);
 ExtendedAbstraction - Extended operation with: 
 Concrete B of ImplementationA
 ```
+
+## 3. Composite
+> Composite pattern cho phép bạn làm việc với các đối tượng tương tự nhau với cấu trúc dạng cây
+
+### 3.1. Khi nào nên dùng Composite pattern
+- Khi bạn muốn xây dựng các hệ thống có cấu trúc dạng cây như sơ đồ nhân viên, danh sách bài hát...
+- Khi muốn client xử lý đồng nhất cả hai yếu tố đơn giản và phức tạp thông qua một đoạn code duy nhất
+### 3.2. Cấu trúc
+![](./../images/composite_pattern_structure.png)
+
+Với cách kiểu thiết kế này ta chia làm 3 loại classes chính:
+- **Component**: Là những base class chúng nhằm mục đích định nghĩa các interface tổng quát cho tất cả các components khác
+- **Leaf**: Là những thành phần độc lập không thể phân chia ra được những component nhỏ hơn nữa
+- **Composite**: Là những loại compoments còn lại nghĩa là xếp ở vị trí higher-level, hiểu một cách đơn giản là nó đóng 2 vai trò: vừa là component và cũng là tập hợp của các component
+
+### 3.3. Cách cài đặt
+- Đảm bảo rằng mô hình cốt lõi của ứng dụng có thể được biểu diễn dưới dạng cấu trúc cây. Cố gắng chia nó thành các yếu tố đơn giản và container. Hãy nhớ rằng các container phải có khả năng chứa cả các yếu tố đơn giản và các container khác
+- Khai báo `Component interface` với một danh sách các phương thức có ý nghĩa cho cả các thành phần đơn giản và phức tạp
+- Tạo `Leaf` class để đại diện cho các yếu tố đơn giản. Một chương trình có thể có nhiều leaf class khác nhau
+- Tạo `Container` class để biểu diễn các phần tử phức tạp. Trong class này, cung cấp một trường mảng để lưu trữ các tham chiếu đến các thành phần phụ. Mảng phải có khả năng lưu trữ cả lá và Container, vì vậy hãy chắc chắn rằng nó được khai báo với Component interface
+- Cuối cùng, viết các phương thức để thêm và loại bỏ các phần tử con trong container
+
+### 3.4. Ví dụ
+- Tạo interface cho Component
+```js
+class Employee {
+    private subordinates: Array<Employee>;
+    constructor(
+        private name: string,
+        private dept: string,
+        private salary: number
+    ) {
+        this.subordinates = new Array<Employee>();
+    }
+    add(e: Employee): void {
+        this.subordinates.push(e);
+    }
+    remove(e: Employee): void {
+        this.subordinates.splice(this.subordinates.indexOf(e), 1);
+    }
+    getChildren(): Array<Employee> {
+        return this.subordinates;
+    }
+    toString(): string {
+        return (`Employee :[ Name : ${this.name}, dept : ${this.dept}, salary : ${this.salary} ]`);
+    }
+}
+```
+- Triển khai Component và thêm các node cho cây (các nhân viên), với người đứng đầu là CEO
+```js
+let CEO: Employee = new Employee("John", "CEO", 30000);
+let headSales : Employee = new Employee("Robert", "Head Sales", 20000);
+let headMarketing : Employee = new Employee("Michel", "Head Marketing", 20000);
+
+let clerk1 : Employee = new Employee("Laura", "Marketing", 10000);
+let clerk2 : Employee = new Employee("Bob", "Marketing", 10000);
+
+let salesExecutive1 : Employee = new Employee("Richard", "Sales", 10000);
+let salesExecutive2 : Employee = new Employee("Rob", "Sales", 10000);
+
+CEO.add(headSales);
+CEO.add(headMarketing);
+
+headSales.add(salesExecutive1);
+headSales.add(salesExecutive2);
+
+headMarketing.add(clerk1);
+headMarketing.add(clerk2);
+
+//print all employees of the organization
+console.log(CEO);
+for (let headEmployee of CEO.getChildren()) {
+    console.log(headEmployee);
+    for (let employee of headEmployee.getChildren())
+        console.log(employee);
+}
+```
+- Kết quả
+```
+Employee :[ Name : John, dept : CEO, salary : 30000 ]
+Employee :[ Name : Robert, dept : Head Sales, salary : 20000 ]
+Employee :[ Name : Richard, dept : Sales, salary : 10000 ]
+Employee :[ Name : Rob, dept : Sales, salary : 10000 ]
+Employee :[ Name : Michel, dept : Head Marketing, salary : 20000 ]
+Employee :[ Name : Laura, dept : Marketing, salary : 10000 ]
+Employee :[ Name : Bob, dept : Marketing, salary : 10000 ]
+```
