@@ -700,3 +700,192 @@ Ta có thể thấy Proxy Pattern khá giống với **Adapter Patern** và **De
     - **Protection Proxy, Smart Proxy**: Có thể được cài đặt như một Decorator
     - **Remote Proxy**: Sẽ không tham chiếu trực tiếp đến đối tượng thực sự tham chiếu gián tiếp, giống như ID của host và địa chỉ trên host vậy
     - **Virtural Proxy**: Tham chiếu gián tiếp chẳng hạn như tên file, index và sẽ tham chiếu trực tiếp khi cần thiết
+
+## 7. Flyweight
+>Được dùng như một object chia sẻ, có thể được sử dụng đồng thời ở nhiều ngữ cảnh khác nhau, hoạt động như một đối tượng độc lập tại mỗi ngữ cảnh. Mỗi đối tượng cụ thể sẽ tham chiếu đến cùng một instance được chia sẻ ở trong pool của Flyweight object
+
+### 7.1. Vấn đề
+Bạn có ý tưởng xây dựng một trò chơi bắn súng sinh tồn tương tự như PUBG. Nhưng sau khi hoàn thành, bạn push commit, build trò chơi và gửi nó cho bạn của bạn để chơi thử, nhưng trò chơi liên tục bị sập sau vài phút chơi. Sau khi dành vài giờ để đào bới các bản error log, bạn phát hiện ra rằng trò chơi đã bị sập vì không đủ RAM do vấn đề liên quan đến hệ thống con! Mỗi hệ thống con, chẳng hạn như một viên đạn, một tên lửa hoặc một mảnh đạn được đại diện bởi một đối tượng riêng biệt chứa nhiều dữ liệu. Tại một số thời điểm, khi cuộc chiến bước vào giai đoạn căng thẳng, các mảnh đạn, tên lửa mới được tạo ra liên tục cho đến khi RAM không thể chứa được nữa. Do đó trò chơi bị sập.
+
+![](./../images/flyweight_pattern_example_1.png)
+
+### 7.2. Giải quyết
+Khi kiểm tra kỹ hơn lớp **Particle** (hệ thống con), bạn có thể nhận thấy rằng các trường *color* và *sprite* sử dụng nhiều bộ nhớ hơn các trường khác. Điều tệ hơn nữa là hai trường này lưu trữ dữ liệu gần như giống hệt nhau trên tất cả các đối tượng **(Intrinsic state)**. Ví dụ, tất cả các viên đạn có cùng color và sprite và chỉ khác giá trị ở các trường coord, vector và speed **(Extrinsic state)**.
+
+- **Intrinsic state (trạng thái nội tại)**: Dữ liệu không đổi của một đối tượng
+- **Extrinsic state (trạng thái bên ngoài)**: Trạng thái của đối tượng, thường thay đổi trong từng ngữ cảnh khác nhau
+
+Cách giải quyết cho vấn đề này là bạn nên ngừng lưu trữ *extrinsic state* bên trong đối tượng. Thay vào đó, bạn nên chuyển các state này sang các phương thức cụ thể, sao cho chỉ còn *intrinsic state* được lưu trong đối tượng và sử dụng lại các đối tượng này (chứa *intrinsic state*) kết hợp với các *extrinsic state* trong từng ngữ cảnh để tiết kiệm bộ nhớ nhưng vẫn đảm bảo đối tượng có đầy đủ các state như một đối tượng thông thường. Đối tượng khi được loại bỏ các *extrinsic state* và chỉ giữ lại các *intrinsic state* được gọi là **flyweight**.
+
+*Lưu ý: Vì đối tượng *flyweight* được sử dụng lại trong nhiều ngữ cảnh khác nhau thế nên bạn phải chắc rằng các thuộc tính bên trong flyweight không được sửa đổi. Một flyweight chỉ nên khởi tạo các thuộc tính một lần.*
+
+![](./../images/flyweight_pattern_example_2.png)
+
+Quay lại vấn đề, giả sử rằng có ba loại hệ thống con trong trò chơi: viên đạn, tên lửa và mảnh đạn. Chúng được tạo ra rất nhiều trong game nên ta cần phải tối ưu nó. Và sau khi loại bỏ các trường *extrinsic state* ra khỏi các lớp của chúng (biến chúng thành *flyweight*), vậy còn *extrinsic state* được chuyển đến đâu? Vì nó là trạng thái riêng của từng đối tượng nên ta vẫn phải lưu trữ nó đúng không? Trong hầu hết trường hợp, *extrinsic state* đưa vào **Container** - nơi tổng hợp và quản lí các *extrinsic state* và *flyweight*, Container trong ví dụ này là lớp **Game**. Để đưa *extrinsic state* vào Container, bạn cần đưa vào thông qua đối tượng của lớp **Context**. Bên trong Context chứa:
+- *Extrinsic state*
+- Một tham chiếu đến đối tượng *flyweight* phù hợp với *extrinsic state*
+
+Ngoài ra để quản lí và truy nhập/xuất các *flyweight* một cách tốt hơn, chúng ta sử dụng **FlyweightFactory** để quản lí các *flyweight* thay cho sử dụng mảng (trong ví dụ là mảng *particles*).
+
+- **FlyweightFactory**: Nhận đầu vào là các *intrinsic state*, sau đó tìm kiếm đối tượng *flyweight* phù hợp, nếu tìm thấy thì trả về *flyweight* đó, nếu không tìm thấy, nó sẽ tạo ra một *flyweight* mới.
+
+### 7.3. Khi nào nên sử dụng Flyweight Pattern?
+Chỉ sử dụng Flyweight Pattern khi chương trình phải chứa một số lượng lớn các đối tượng gần giống nhau trong khi bạn muốn tối ưu bộ nhớ.
+
+### 7.4. Cấu trúc
+![](./../images/flyweight_pattern_structure.png)
+
+Các thành phần của Flyweight Pattern:
+- **Flyweight**: Chứa các *intrinsic state*
+- **FlyweightFactory**: Quản lí các *Flyweight*
+- **Context**: Chứa *extrinsic state* và một tham chiếu đến *flyweight* phù hợp nằm trong FlyweightFactory
+- **Client**: Đóng vai trò như Container. Client quản lí các FlyweightFactory và Context
+
+### 7.5. Cài đặt Flyweight Pattern
+- Chia các trường của một lớp sẽ trở thành một *flyweight* thành hai phần: *intrinsic state* và *extrinsic state*
+- Để lại các trường đại diện cho *intrinsic state* trong lớp và chắc chắn rằng chúng chỉ có giá trị khi khởi tạo và không thay đổi
+- Loại bỏ các trường *extrinsic state*. Thay chúng bằng các phương thức đại diện với tham số truyền vào là các giá trị của trường *extrinsic state*
+- (Tùy chọn) Tạo một lớp Factory để quản lý các *flyweight* và chỉ truy cập các vào các *flyweight* thông qua Factory
+- Client phải lưu trữ hoặc tính toán các giá trị của *extrinsic state* trong Context để có thể gọi các phương thức của các đối tượng *flyweight*. Để thuận tiện, *extrinsic state* cùng với trường tham chiếu tới flyweight có thể được đưa vào một lớp Context riêng
+
+### 7.6. Thực hành
+- Đầu tiên chúng ta tạo lớp **Flyweight** (lớp này được các lớp khác chỉa vào nhiều nhất nên ta bắt đầu từ đây :D)
+```js
+class Flyweight {
+    constructor(
+        public model: string,
+        public processor: string
+    ) { }
+    operation(memory: number, tag: string) {
+        return `Computer: Model = ${this.model}, Proccessor = ${this.processor}, Memory = ${memory}, Tag = ${tag}`;
+    }
+}
+```
+- Tiếp đến là **FlyweightFactory** để quản lí các Flyweight
+```js
+class FlyWeightFactory {
+    constructor() { }
+    // Quản lí các flyweight
+    public cache: any = {};
+    getFlyweight(
+        model: string,
+        processor: string
+    ) {
+        if (!this.cache[model + processor]) {
+            this.cache[model + processor] =
+                new Flyweight(model, processor);
+        }
+        return this.cache[model + processor];
+    }
+    count() {
+        var count = 0;
+        for (var f in this.cache) count++;
+        return count;
+    }
+}
+```
+- Tạo lớp **Context** nhằm đồng bộ *intrinsic state* trong flyweight với *extrinsic state* bên ngoài thông qua một con trỏ tham chiếu đến flyweight phù hợp
+```js
+class Context {
+    constructor(
+        public flyweight: Flyweight,
+        public memory: number, // Unique state
+        public tag: string // Unique state
+    ) { }
+    operation() {
+        return this.flyweight.operation(this.memory, this.tag);
+    }
+}
+```
+- Cuối cùng là lớp **Client** đóng vai trò như một lớp **Container**
+```js
+class Client {
+    constructor() {}
+    public flyweightFactory : FlyWeightFactory = new FlyWeightFactory();
+    public contexts : Array<Context> = new Array<Context>();
+    public countContext : number = 0;
+    add(
+        model: string, 
+        processor: string, 
+        memory: number, 
+        tag: string
+    ) {
+        this.contexts.push(
+            new Context(
+                this.flyweightFactory.getFlyweight(
+                    model, processor
+                ),
+                memory, tag
+            )
+        );
+        this.countContext++;
+    }
+    getContext(
+        model: string, 
+        processor: string, 
+        memory: number, 
+        tag: string
+    ) {
+        return this.flyweightFactory.getFlyweight(
+            model, processor
+        ).operation(memory, tag);
+    }
+    getCountContext() {
+        return this.countContext;
+    }
+}
+```
+- Sử dụng Flyweight Pattern. Đầu tiên ta thử thêm vào các máy tính có *model* và *proccessor* tương tự nhau
+```js
+var computers = new Client();
+
+computers.add("Studio XPS", "Intel", 5, "Y755P");
+computers.add("Studio XPS", "Intel", 6, "X997T");
+computers.add("Studio XPS", "Intel", 2, "U8U80");
+computers.add("Studio XPS", "Intel", 2, "NT777");
+computers.add("Studio XPS", "Intel", 2, "0J88A");
+computers.add("Envy", "Intel", 4, "CNU883701");
+computers.add("Envy", "Intel", 2, "TXU003283");
+
+console.log("Computer counting: " + computers.getCountContext());
+console.log("Flyweight counting: " + computers.flyweightFactory.count());
+```
+- Kết quả
+```
+Computer counting: 7
+Flyweight counting: 2
+```
+- Vì Flyweight Pattern sử dụng con trỏ khá nhiều để tiết kiệm bộ nhớ cho các *intrinsic state* nên ta phải cẩn thận không nên sửa đổi các *instrinsic state* vì nó sẽ dẫn đến thay đổi toàn bộ các context. Ví dụ mình sẽ thay đổi *proccessor* (*intricsic state*) của các máy tính *Studio XPS Intel* thành *Studio XPS AMD* thông qua việc chỉnh sửa flyweight trong FlyweightFactory
+```js
+console.log("Before changes: ")
+for(let [k, v] of computers.contexts.entries()) {
+    console.log(`(${k+1}) => `+v.operation());
+}
+
+computers.flyweightFactory
+    .getFlyweight("Studio XPS", "Intel").processor = "AMD";
+
+console.log("After changes: ")
+for(let [k, v] of computers.contexts.entries()) {
+    console.log(`(${k+1}) => `+v.operation());
+}
+```
+- Kết quả
+```
+Before changes: 
+(1) => Computer: Model = Studio XPS, Proccessor = Intel, Memory = 5, Tag = Y755P
+(2) => Computer: Model = Studio XPS, Proccessor = Intel, Memory = 6, Tag = X997T
+(3) => Computer: Model = Studio XPS, Proccessor = Intel, Memory = 2, Tag = U8U80
+(4) => Computer: Model = Studio XPS, Proccessor = Intel, Memory = 2, Tag = NT777
+(5) => Computer: Model = Studio XPS, Proccessor = Intel, Memory = 2, Tag = 0J88A
+(6) => Computer: Model = Envy, Proccessor = Intel, Memory = 4, Tag = CNU883701
+(7) => Computer: Model = Envy, Proccessor = Intel, Memory = 2, Tag = TXU003283
+After changes: 
+(1) => Computer: Model = Studio XPS, Proccessor = AMD, Memory = 5, Tag = Y755P
+(2) => Computer: Model = Studio XPS, Proccessor = AMD, Memory = 6, Tag = X997T
+(3) => Computer: Model = Studio XPS, Proccessor = AMD, Memory = 2, Tag = U8U80
+(4) => Computer: Model = Studio XPS, Proccessor = AMD, Memory = 2, Tag = NT777
+(5) => Computer: Model = Studio XPS, Proccessor = AMD, Memory = 2, Tag = 0J88A
+(6) => Computer: Model = Envy, Proccessor = Intel, Memory = 4, Tag = CNU883701
+(7) => Computer: Model = Envy, Proccessor = Intel, Memory = 2, Tag = TXU003283
+```

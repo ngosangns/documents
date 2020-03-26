@@ -1,80 +1,78 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-class Item {
+class Flyweight {
+    constructor(model, processor) {
+        this.model = model;
+        this.processor = processor;
+    }
+    operation(memory, tag) {
+        return `Computer: Model = ${this.model}, Proccessor = ${this.processor}, Memory = ${memory}, Tag = ${tag}`;
+    }
+}
+class FlyWeightFactory {
     constructor() {
-        this._content = Math.round(Math.random() * 10);
+        // Quản lí các flyweight
+        this.cache = {};
     }
-    get content() {
-        return this._content;
+    getFlyweight(model, processor) {
+        if (!this.cache[model + processor]) {
+            this.cache[model + processor] =
+                new Flyweight(model, processor);
+        }
+        return this.cache[model + processor];
     }
-    set content(n) {
-        this._content = n;
-    }
-    delaytoResponseContent() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.sleep(1000);
-            return this.content;
-        });
-    }
-    sleep(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-}
-class RealSubject {
-    constructor(_data) {
-        this._data = _data;
-    }
-    get data() {
-        return this._data;
-    }
-    Request(index) {
-        return this.data[index].delaytoResponseContent();
+    count() {
+        var count = 0;
+        for (var f in this.cache)
+            count++;
+        return count;
     }
 }
-class SubjectProxy {
-    // Kết nối đến host thông qua RealSubject
-    constructor(data) {
-        this.realSubject = new RealSubject(data);
+class Context {
+    constructor(flyweight, memory, // Unique state
+    tag // Unique state
+    ) {
+        this.flyweight = flyweight;
+        this.memory = memory;
+        this.tag = tag;
     }
-    // - Ghi đè lại phương thức Request
-    // - Thay vì lấy về giá trị content mất nhiều chi phí
-    //   thì ta chỉ lấy về index/id của giá trị đó
-    // - Khi nào người dùng cần giá trị content thì mới
-    //   sử dụng phương thức delaytoResponseContent để
-    //   lấy giá trị content về
-    Request(index) {
-        return this.realSubject.data[index];
+    operation() {
+        return this.flyweight.operation(this.memory, this.tag);
     }
 }
-// Tạo một host giả có chứa content và index Item
-let data = [
-    new Item(),
-    new Item(),
-    new Item(),
-    new Item(),
-    new Item(),
-    new Item(),
-];
-let proxy = new SubjectProxy(data);
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    let wanted = 3;
-    let results = new Array();
-    for (let i = 0; i < 5; i++) {
-        results.push(proxy.Request(i));
-        if (i == wanted)
-            results[i].delaytoResponseContent()
-                .then(res => console.log("Wanted result via proxy: " + res));
+// Container
+class Client {
+    constructor() {
+        this.flyweightFactory = new FlyWeightFactory();
+        this.contexts = new Array();
+        this.countContext = 0;
     }
-    for (let i = 0; i < 5; i++)
-        if (i != wanted)
-            results[i].delaytoResponseContent()
-                .then(res => console.log("Result via proxy: " + res));
-}))();
+    add(model, processor, memory, tag) {
+        this.contexts.push(new Context(this.flyweightFactory.getFlyweight(model, processor), memory, tag));
+        this.countContext++;
+    }
+    getContext(model, processor, memory, tag) {
+        return this.flyweightFactory.getFlyweight(model, processor).operation(memory, tag);
+    }
+    getCountContext() {
+        return this.countContext;
+    }
+}
+var computers = new Client();
+computers.add("Studio XPS", "Intel", 5, "Y755P");
+computers.add("Studio XPS", "Intel", 6, "X997T");
+computers.add("Studio XPS", "Intel", 2, "U8U80");
+computers.add("Studio XPS", "Intel", 2, "NT777");
+computers.add("Studio XPS", "Intel", 2, "0J88A");
+computers.add("Envy", "Intel", 4, "CNU883701");
+computers.add("Envy", "Intel", 2, "TXU003283");
+console.log("Computer counting: " + computers.getCountContext());
+console.log("Flyweight counting: " + computers.flyweightFactory.count());
+console.log("Before changes: ");
+for (let [k, v] of computers.contexts.entries()) {
+    console.log(`(${k + 1}) => ` + v.operation());
+}
+computers.flyweightFactory.getFlyweight("Studio XPS", "Intel").processor = "AMD";
+console.log("After changes: ");
+for (let [k, v] of computers.contexts.entries()) {
+    console.log(`(${k + 1}) => ` + v.operation());
+}
