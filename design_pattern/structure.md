@@ -746,7 +746,7 @@ Các thành phần của Flyweight Pattern:
 - Để lại các trường đại diện cho *intrinsic state* trong lớp và chắc chắn rằng chúng chỉ có giá trị khi khởi tạo và không thay đổi
 - Loại bỏ các trường *extrinsic state*. Thay chúng bằng các phương thức đại diện với tham số truyền vào là các giá trị của trường *extrinsic state*
 - (Tùy chọn) Tạo một lớp Factory để quản lý các *flyweight* và chỉ truy cập các vào các *flyweight* thông qua Factory
-- Client phải lưu trữ hoặc tính toán các giá trị của *extrinsic state* trong Context để có thể gọi các phương thức của các đối tượng *flyweight*. Để thuận tiện, *extrinsic state* cùng với trường tham chiếu tới flyweight có thể được đưa vào một lớp Context riêng
+- Tạo lớp Client để lưu trữ FlyweightFactory và các *extrinsic state* cùng với trường tham chiếu tới *flyweight* phù hợp trong các context
 
 ### 7.6. Thực hành
 - Đầu tiên chúng ta tạo lớp **Flyweight** (lớp này được các lớp khác chỉa vào nhiều nhất nên ta bắt đầu từ đây :D)
