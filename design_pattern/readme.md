@@ -1,5 +1,6 @@
 # Design Pattern Documents
 Tham khảo từ nhiều nguồn. Chủ yếu là các bài viết trên Viblo.
+
 Ngôn ngữ diễn tả: Typescript
 
 # Design Pattern là gì?
@@ -8,7 +9,7 @@ Trong phát triển phần mềm, Design Pattern là giải pháp thiết kế m
 
 *Lưu ý: Design Pattern không phải thuật toán, không phải một component.*
 
-| Creational | Structure | Behavioral |
+| [Creational](./creational.md) | [Structural](./structural.md) | [Behavioral](./behavioral.md) |
 | --- | --- | --- |
 | Singleton | Adapter/ Wrapper | Chain of responsibility |
 | Factory | Bridge | Command |
