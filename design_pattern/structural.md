@@ -855,7 +855,7 @@ console.log("Flyweight counting: " + computers.flyweightFactory.count());
 Computer counting: 7
 Flyweight counting: 2
 ```
-- Vì Flyweight Pattern sử dụng con trỏ khá nhiều để tiết kiệm bộ nhớ cho các *intrinsic state* nên ta phải cẩn thận không nên sửa đổi các *instrinsic state* vì nó sẽ dẫn đến thay đổi toàn bộ các context. Ví dụ mình sẽ thay đổi *proccessor* (*intricsic state*) của các máy tính *Studio XPS Intel* thành *Studio XPS AMD* thông qua việc chỉnh sửa flyweight trong FlyweightFactory
+- Vì Flyweight Pattern sử dụng con trỏ để tiết kiệm bộ nhớ cho các *intrinsic state* nên ta phải cẩn thận không nên sửa đổi các *instrinsic state* vì nó sẽ dẫn đến thay đổi toàn bộ các context. Ví dụ mình sẽ thay đổi *proccessor* (*intricsic state*) của các máy tính *Studio XPS Intel* thành *Studio XPS AMD* thông qua việc chỉnh sửa flyweight trong FlyweightFactory
 ```js
 console.log("Before changes: ")
 for(let [k, v] of computers.contexts.entries()) {
