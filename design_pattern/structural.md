@@ -889,3 +889,57 @@ After changes:
 (6) => Computer: Model = Envy, Proccessor = Intel, Memory = 4, Tag = CNU883701
 (7) => Computer: Model = Envy, Proccessor = Intel, Memory = 2, Tag = TXU003283
 ```
+
+## 8. Delegate
+> Loại bỏ các chức năng phức tạp từ class chính bằng cách đưa chúng vào class khác xử lí
+
+### 8.1. Vấn đề
+Chúng ta cùng xem một ví dụ rất thực tế sau về Delegate, để vận chuyển hàng chúng ta có thể vận chuyển bằng xe khách, tàu hỏa và máy bay, mỗi loại vận chuyển một loại hàng hóa khác nhau, các hàng nhẹ và cần gấp thì vận chuyển bằng hàng không, hàng cồng kềnh và cần vận chuyển nhanh dùng xe khách, hàng có thể vận chuyển chậm dùng tàu hỏa. Như vậy bạn có 3 class là **RailShipper**, **BusShipper** và **PlaneShipper**, cả ba class này đều có phương thức vận chuyển *delivery*, thông thường chúng ta cần phải qua các bước xử lí điều kiện để lựa chọn được loại hình vận chuyển. Nhưng dần rồi càng nhiều loại mô hình vận chuyển được thêm vào và chúng ta phải code nhiều hơn là cho class phình ra và trở nên phức tạp.
+
+### 8.2. Giải quyết
+Do đó để tối ưu class chúng ta sẽ đưa các bước lựa chọn phương thức vận chuyển vào lớp **ShipperHandler** để xử lí, lớp này sẽ giúp bạn gọi phương thức *delivery* phù hợp cho kiện hàng của bạn.
+
+### 8.3. Cấu trúc
+![](./../images/delegate_pattern_structure.png)
+
+Các thành phần tham gia vào Delegate Pattern:
+- **Shipper**: interface làm xương sống cho các loại hình vận chuyển
+- **RailShipper, BusShipper, PlaneShipper**: Các loại hình vận chuyển triển khai từ Shipper
+- **ShipperHandler**: Triển khai từ interface Shipper chúng ta sẽ đưa các code xử lí vào trong class này
+
+### Thực hành
+```js
+interface Shipper {
+    delivery(): string;
+}
+
+class RailShipper implements Shipper {
+    delivery() {
+        return `Package is delivering by train`;
+    }
+}
+
+class BusShipper implements Shipper {
+    delivery() {
+        return `Package is delivering by bus`;
+    }
+}
+
+class PlaneShipper implements Shipper {
+    delivery() {
+        return `Package is delivering by plane`;
+    }
+}
+
+class ShipperHandler implements Shipper {
+    private shipper!: Shipper;
+    constructor(type: string) {
+        this.shipper = eval(`new ${type}Shipper();`);
+    }
+    delivery() {
+        return this.shipper.delivery()
+    }
+}
+```
+### Lời kết
+**Delegate Pattern** có nhiều điểm giống với kế thừa trong lập trình hướng đối tượng nhưng nó được mở rộng hơn, nó cũng có những điểm tương đồng với **Proxy Pattern** tuy nhiên mỗi pattern hữu ích trong những tình huống khác nhau. Các Design Pattern giúp cho bạn phát triển ứng dụng nhanh hơn với kinh nghiệm được đúc kết trong các pattern sẽ giải quyết được nhiều vấn đề chung. Việc sử dụng các Desgin Pattern cũng cần linh hoạt, không áp dụng dập khuôn, cứng nhắc để có hiệu quả cao nhất.

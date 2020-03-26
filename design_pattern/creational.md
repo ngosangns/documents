@@ -706,3 +706,72 @@ Warrior.prototype = {
 }
 ```
 *Tuy nhiên với cách này sẽ làm mất đi constructor Warrrior đó nhé. Trên đây chính là cách mà prototype đã thực hiện khả năng thừa kế và chia sẻ của mình như thế nào trong javascript*
+
+## 8. Dependency Injection
+> Khởi tạo một đối tượng với kiểu dữ liệu là interface của class đó. Mục đích nhằm giảm sự phụ thuộc vào class, làm cho chương trình mềm dẻo linh hoạt hơn trong khai báo dữ liệu
+
+### 8.1. Ưu điểm
+- Dễ viết Unit test
+- Dễ dàng thay đổi
+- Dể mở rộng khi dự án tăng về quy mô
+
+### 8.2. Đặt vấn đề
+Giả sử bạn có một chiếc xe máy. Trong chiếc xe máy có nhiều loại linh kiện, ví dụ như lốp xe. Ứng với lốp xe có nhiều loại lốp với giá tiền khác nhau. Ví dụ loại A giá 1000\$, loại B giá 500\$. Giả sử khi mua xe bạn chọn chiếc lốp loại B để tiết kiệm chi phí
+```js
+class LopA {
+    public price : number = 1000;
+}
+class LopB {
+    public price : number = 500;
+}
+class Xe {
+    public lop : LopA = new LopA();
+}
+```
+Khi bạn tạo một object xe, nội tại class sẽ tạo ra một thực thể lốp. Điều này tạo nên sự phụ thuộc cho giữa 2 lớp, gây nên 2 vấn đề:
+- Bạn không thể thay đổi phần tử trong trong lớp phụ thuộc. Ví dụ trường hợp bạn có tiền và muốn thay lớp loại B thành loại A
+- Trong trường hợp bạn muốn thay đổi bên trong class bắt buộc bạn phải tác động vào class để thay đổi. Điều này vi phạm nguyên tắc Open-close trong SOLID
+
+### 8.3. Giải quyết
+Để giải quyết vấn để trên DI là một biện pháp hiệu quả. Bản chất của DI là tạo ra đối tượng với kiểu dữ liệu phụ thuộc như là interface. Ta không cố ràng buộc đối tượng phụ thuộc vào class và không khởi tạo thực thể bên trong hàm. Khi khởi tạo một đối tượng, ta khởi tạo thực thể bên ngoài và truyền vào bên trong hàm cho đối tượng. Điều này sẽ giảm áp lực phụ thuộc vào class.
+
+Quay trở lại ví dụ thay vì khởi tạo sẵn thực thể bên trong class **Xe**. Ta chỉ khai báo cho đối tượng interface của thực thể và truyền thực thể từ bên ngoài vào. Do đó việc thay đổi trở nên dễ dàng hơn.
+```js
+interface Lop {
+    price: number;
+}
+class LopA implements Lop {
+    public price : number = 1000;
+}
+class LopB implements Lop {
+    public price : number = 500;
+}
+class Xe {
+    constructor(public lop: Lop) {}
+}
+
+// run
+let xe : Xe = new Xe(new LopB());
+console.log(xe.lop.price); // Kết quả: 500
+```
+Giả sử nếu ta muốn thay đổi lốp loại B sang A. Ta rất đơn giản thay đổi như sau:
+```js
+xe.lop = new LopA();
+console.log(xe.lop.price); // Kết quả: 1000
+```
+Như vậy ta đã dễ dàng thay từ lớp A sang lớp B mà không sửa code bên trong của class Xe, điều này phù hợp với quy tắc của SOLID.
+
+### 8.4. Các dạng DI
+DI có 2 dạng:
+- Khởi tạo thông qua constructor (Constructor Injection), ví dụ bên trên là Constructor Injection
+- Khởi tạo thông qua setter (Setter Injection)
+```js
+class Xe {
+    public _lop!: Lop;
+    set lop(lop: Lop) {
+        this._lop = lop;
+    }
+}
+let xe : Xe = new Xe();
+xe.lop = new LopB();
+```
