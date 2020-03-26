@@ -940,6 +940,13 @@ class ShipperHandler implements Shipper {
         return this.shipper.delivery()
     }
 }
+
+let shipper: Shipper = new ShipperHandler('Bus');
+console.log(shipper.delivery());
+```
+- Kết quả
+```
+Package is delivering by bus
 ```
 ### Lời kết
 **Delegate Pattern** có nhiều điểm giống với kế thừa trong lập trình hướng đối tượng nhưng nó được mở rộng hơn, nó cũng có những điểm tương đồng với **Proxy Pattern** tuy nhiên mỗi pattern hữu ích trong những tình huống khác nhau. Các Design Pattern giúp cho bạn phát triển ứng dụng nhanh hơn với kinh nghiệm được đúc kết trong các pattern sẽ giải quyết được nhiều vấn đề chung. Việc sử dụng các Desgin Pattern cũng cần linh hoạt, không áp dụng dập khuôn, cứng nhắc để có hiệu quả cao nhất.
