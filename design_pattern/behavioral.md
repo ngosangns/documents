@@ -85,20 +85,20 @@ class Client {
 ## 2. Command
 > Command Pattern (còn gọi là Action Pattern hoặc Transaction Pattern) tạo ra một đối tượng có thể triển khai một phương thức xác định nào đó từ một đối tượng đầu vào khác mà không cần biết đối tượng đầu vào khác có tính chất gì
 
-### Vấn đề
+### 2.1. Vấn đề
 Bạn đang code một website bán hàng. Hàng tuần website sẽ gửi tin nhắn gồm thông tin những sản phẩm bán chạy nhất trong tuần này thông qua email hoặc SMS. Việc thông báo qua email hay SMS là do người dùng setting, đã chọn thông báo qua email thì không được chọn thông báo qua SMS và ngược lại. Câu hỏi đặt ra ở đây là làm sao xây dựng một đối tượng có thể gửi tin nhắn đầu vào thông qua 2 channels khác nhau (email channel và SMS channel) tùy theo setting của người dùng? 2 channel này cách thức hoạt động logic khác nhau.
 
 Tưởng tượng bạn đang xây dựng SlickUI (là một framework GUI). Bạn đang bận rộn tạo ra những button đẹp, những dialogs tuyệt vời và những icon bắt mắt. Nhưng mỗi lần bạn kết thúc công việc tạo ra framework giao diện bắt mắt, bạn lại phải đối mặt với một vấn đề : "Làm thế nào bạn dùng giao diện đó để làm vài thứ có ích khác". Bạn hy vọng SlickUI sẽ phổ biến và được sử dụng bởi hàng nghìn lập trình viên trên thế giới, những người sẽ tạo ra hàng triệu instances của SlickButton. Một giải pháp cho vấn đề này rất phổ biến đó là *inheritance*. Bạn có thể yêu cầu người phát triển tạo một subclass cho mỗi loại button khác nhau. Nhưng thật không may, vì một ứng dụng GUI phức tạp sẽ có khoảng 10 với hàng trăm buttons, và như thế chúng ta phải có 10 tới hàng trăm subclass của SlickButton ư ? Hơn nữa, còn có những loại element GUI khác, như menu items, radio button. Bạn có thể hoặc muốn các nhà phát triển mã nguồn của mình phải làm những việc như thế không? Nếu không thì phải làm thế nào mới tốt nhất?
 
-### Giải quyết
+### 2.2. Giải quyết
 Phương án cho vấn đề này là đóng gói ý tưởng, những action cần làm khi button được ấn hoặc menu item được chọn. Tức là gom code xử lý việc ấn button hoặc chọn menu trong object riêng. Những action này chính là những commands của Command Pattern.
 
-### Khi nào nên sử dụng Command Pattern?
+### 2.3. Khi nào nên sử dụng Command Pattern?
 - Khi cần tham số hóa các đối tượng theo một hành động
 - Khi cần tạo và thực thi các yêu cầu vào các thời điểm khác nhau
 - Khi cần hỗ trợ tính năng undo, log , callback hoặc transaction
 
-### Cấu trúc
+### 2.4. Cấu trúc
 ![](./../images/command_pattern_structure_2.png)
 
 ![](./../images/command_pattern_structure_1.png)
@@ -110,7 +110,7 @@ Các thành phần tham gia vào Command Pattern:
 - **Receiver**: Đây là thành phần thực sự xử lý business logic cho request/yêu cầu. Trong phương thức execute() của ConcreteCommand chúng ta sẽ gọi method thích hợp trong Receiver
 - **Client**: Tiếp nhận request/yêu cầu từ phía người dùng, đóng gói request/yêu cầu thành ConcreteCommand thích hợp và thiết lập receiver của nó
 
-### Thực hành
+### 2.5. Thực hành
 - Tạo request/yêu cầu thực hiện hành động cho bóng đèn từ người dùng
 ```js
 class Light {
@@ -161,4 +161,122 @@ class RemoteControl {
 let remote = new RemoteControl()
 remote.setCommand(new CommandOn(new Light()))
 remote.run() // light on
+```
+
+## 3. Mediator
+> Cung cấp một lớp trung gian có nhiệm vụ xử lý thông tin liên lạc giữa các lớp
+
+Sử dụng mối quan hệ many-to-many giữa các đối tượng tượng tương đồng để đạt đến được trạng thái "full object".
+
+### Vấn đề
+Chúng ta muốn thiết kế các thành phần có thể tái sử dụng được, nhưng sự phụ thuộc giữa các thành phần có thể tái sử dụng lại cho thấy hiện tượng "spaghetti code".
+
+"Spaghetti code" là một cụm từ chỉ mã nguồn có cấu trúc điều khiển phức tạp và rắc rối, đặc biệt là sử dụng nhiều câu lệnh GOTO, ngoại lệ, luồng hoặc các cấu trúc phân nhánh khác "không có cấu trúc". Nó được đặt tên như vậy bởi vì luồng chương trình được sắp xếp giống như một bát spaghetti, tức là bị xoắn và rối.
+
+"Spaghetti code" có thể do nhiều yếu tố, chẳng hạn như việc sửa đổi liên tục của một số người có phong cách lập trình khác nhau trong một thời gian dài. Các chương trình có cấu trúc giảm đáng kể tỉ lệ "spaghetti code".
+
+### Giải quyết
+Do đó ta sử dụng Mediator Pattern. Các Component trong Mediator Pattern thay vì tương tác trực tiếp với nhau trong quá trình hoạt động thì sẽ đều phải tương tác với nhau thông qua một đối tượng là Mediator. Đối tượng Mediator này sẽ tiếp nhận các sự kiện được gửi tới từ các Component khác nhau và xử lý chúng. Mediator đóng vai trò như một người điều phối các công việc được gửi tới và giải quyết các công việc đó tập trung tại một chỗ.
+
+### Mediator được sử dụng khi nào?
+- Trường hợp có nhiều các đối tượng tương tác trực tiếp với nhau. Nó giúp các sự kiện của các đối tượng được điều tiết một cách rõ ràng, loại bỏ đi sự cồng kềnh và chồng chéo nhau của source code
+- Điều chỉnh hành vi giữa các lớp một cách dễ dàng, không cần chỉnh sửa ở nhiều lớp
+
+### Ví dụ
+![](./../images/mediator_pattern_example_1.png)
+
+Tháp điều khiển tại sân bay có kiểm soát là một ví dụ về hoạt động của Mediator Pattern. Các phi công của các máy bay đang cất cánh hoặc hạ cánh kết nối với tháp chứ không phải giao tiếp rõ ràng với nhau. Những khó khăn về việc ai có thể cất hoặc hạ cánh được thi hành bởi tháp điều khiển. Điều quan trọng cần lưu ý là tháp không kiểm soát toàn bộ chuyến bay. Nó tồn tại chỉ để thực thi các quy định an toàn trong lúc cất và hạ cánh.
+
+### Cấu trúc
+![](./../images/mediator_pattern_structure.png)
+
+Các thành phần tham gia vào Mediator Pattern:
+- **Components**: Là các đối tượng chứa đựng các business logic và cần phải tương tác với nhau trong quá trình hoạt động
+- **Mediator**: Là lớp trừu tượng để khai báo các phương thức giúp cho các Component có thể tương tác với nhau
+- **ConcreteMediator**: Là đối tượng chung gian được triển khia từ interface Mediator giúp cho các Component tương tác qua lại với nhau
+
+### Thực hành
+- Khai báo interface BaseComponent có một tham chiếu đến một ConcreteMediator và từ đó tạo ra 2 ConcreteComponent mẫu có các phương thức hành động
+```js
+abstract class BaseComponent {
+    protected mediator?: Mediator
+    constructor(mediator?: Mediator) {
+        this.mediator = mediator
+    }
+    update(mediator?: Mediator) {
+        this.mediator = mediator
+    }
+}
+
+class Component1 extends BaseComponent {
+    constructor(mediator?: Mediator) {
+        super(mediator)
+    }
+    update(mediator?: Mediator) {
+        super.update(mediator)
+    }
+    doA() {
+        console.log("Component 1 does A.")
+        this.mediator?.notify("A")
+    }
+    doB() {
+        console.log("Component 1 does B.\n")
+        this.mediator?.notify("B")
+    }
+}
+
+class Component2 extends BaseComponent {
+    constructor(mediator?: Mediator) {
+        super(mediator)
+    }
+    update(mediator?: Mediator) {
+        super.update(mediator)
+    }
+    doC() {
+        console.log("Component 1 does C")
+        this.mediator?.notify("C")
+    }
+    doD() {
+        console.log("Component 1 does D")
+        this.mediator?.notify("D")
+    }
+}
+```
+- Tạo ra interface Mediator có phương thức in ra thông báo tùy theo event đầu vào được gửi từ các ConcreteComponent và triển khai một ConcreteMediator
+```js
+interface Mediator {
+    notify(event: String): void
+}
+
+class ConcreteMediator implements Mediator {
+    constructor(...components: BaseComponent[]) {
+        for(let component of components) {
+            component.update(this)
+        }
+    }
+    updateMediator(component: BaseComponent) {
+        component.update(this)
+    }
+    notify(event: String) {
+        console.log(`Mediator reacts on ${event}`)
+    }
+}
+```
+- Sử dụng Mediator Pattern
+```js
+let component1 = new Component1()
+let component2 = new Component2()
+let mediator = new ConcreteMediator(component1, component2)
+
+component1.doA()
+console.log('\n')
+component2.doC()
+```
+- Kết quả
+```
+Component 1 does A.
+Mediator reacts on A
+
+Component 1 does C
+Mediator reacts on C
 ```

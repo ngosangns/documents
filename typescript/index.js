@@ -1,37 +1,64 @@
 "use strict";
-class Light {
-    constructor() {
-        this.light = "light";
+class BaseComponent {
+    constructor(mediator) {
+        this.mediator = mediator;
+    }
+    update(mediator) {
+        this.mediator = mediator;
     }
 }
-class CommandOn {
-    constructor(object) {
-        this.object = object;
+class Component1 extends BaseComponent {
+    constructor(mediator) {
+        super(mediator);
     }
-    execute() {
+    update(mediator) {
+        super.update(mediator);
+    }
+    doA() {
         var _a;
-        console.log(((_a = this.object) === null || _a === void 0 ? void 0 : _a.light) + ' on');
+        console.log("Component 1 does A.");
+        (_a = this.mediator) === null || _a === void 0 ? void 0 : _a.notify("A");
     }
-}
-class CommandOff {
-    constructor(object) {
-        this.object = object;
-    }
-    execute() {
+    doB() {
         var _a;
-        console.log(((_a = this.object) === null || _a === void 0 ? void 0 : _a.light) + ' off');
+        console.log("Component 1 does B.\n");
+        (_a = this.mediator) === null || _a === void 0 ? void 0 : _a.notify("B");
     }
 }
-class RemoteControl {
-    setCommand(command) {
-        this.command = command;
+class Component2 extends BaseComponent {
+    constructor(mediator) {
+        super(mediator);
     }
-    run() {
+    update(mediator) {
+        super.update(mediator);
+    }
+    doC() {
         var _a;
-        (_a = this.command) === null || _a === void 0 ? void 0 : _a.execute();
+        console.log("Component 1 does C");
+        (_a = this.mediator) === null || _a === void 0 ? void 0 : _a.notify("C");
+    }
+    doD() {
+        var _a;
+        console.log("Component 1 does D");
+        (_a = this.mediator) === null || _a === void 0 ? void 0 : _a.notify("D");
     }
 }
-let remote = new RemoteControl();
-let commandOff = new CommandOn(new Light());
-remote.setCommand(commandOff);
-remote.run();
+class ConcreteMediator {
+    constructor(...components) {
+        for (let component of components) {
+            component.update(this);
+        }
+    }
+    updateMediator(component) {
+        component.update(this);
+    }
+    notify(event) {
+        console.log(`Mediator reacts on ${event}`);
+    }
+}
+let component1 = new Component1();
+let component2 = new Component2();
+let mediator = new ConcreteMediator(component1, component2);
+component1.doA();
+console.log('\n');
+component2.doC();
