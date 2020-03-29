@@ -1,26 +1,37 @@
 "use strict";
-class RailShipper {
-    delivery() {
-        return `Package is delivering by train`;
+class Light {
+    constructor() {
+        this.light = "light";
     }
 }
-class BusShipper {
-    delivery() {
-        return `Package is delivering by bus`;
+class CommandOn {
+    constructor(object) {
+        this.object = object;
+    }
+    execute() {
+        var _a;
+        console.log(((_a = this.object) === null || _a === void 0 ? void 0 : _a.light) + ' on');
     }
 }
-class PlaneShipper {
-    delivery() {
-        return `Package is delivering by plane`;
+class CommandOff {
+    constructor(object) {
+        this.object = object;
+    }
+    execute() {
+        var _a;
+        console.log(((_a = this.object) === null || _a === void 0 ? void 0 : _a.light) + ' off');
     }
 }
-class ShipperHandler {
-    constructor(type) {
-        this.shipper = eval(`new ${type}Shipper();`);
+class RemoteControl {
+    setCommand(command) {
+        this.command = command;
     }
-    delivery() {
-        return this.shipper.delivery();
+    run() {
+        var _a;
+        (_a = this.command) === null || _a === void 0 ? void 0 : _a.execute();
     }
 }
-let shipper = new ShipperHandler('Bus');
-console.log(shipper.delivery());
+let remote = new RemoteControl();
+let commandOff = new CommandOn(new Light());
+remote.setCommand(commandOff);
+remote.run();

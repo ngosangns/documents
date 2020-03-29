@@ -1,35 +1,42 @@
-
-interface Shipper {
-    delivery(): string;
+class Light {
+    public light: string = "light";
 }
 
-class RailShipper implements Shipper {
-    delivery() {
-        return `Package is delivering by train`;
+interface Command {
+    execute(): any;
+}
+
+class CommandOn implements Command {
+    private object?: Light;
+    constructor(object?: Light) {
+        this.object = object;
+    }
+    execute() {
+        console.log(this.object?.light + ' on')
     }
 }
 
-class BusShipper implements Shipper {
-    delivery() {
-        return `Package is delivering by bus`;
+class CommandOff implements Command {
+    private object?: Light;
+    constructor(object?: Light) {
+        this.object = object;
+    }
+    execute() {
+        console.log(this.object?.light + ' off')
     }
 }
 
-class PlaneShipper implements Shipper {
-    delivery() {
-        return `Package is delivering by plane`;
+class RemoteControl {
+    private command?: Command;
+    setCommand(command: Command) {
+        this.command = command
+    }
+    run() {
+        this.command?.execute()
     }
 }
 
-class ShipperHandler implements Shipper {
-    private shipper!: Shipper;
-    constructor(type: string) {
-        this.shipper = eval(`new ${type}Shipper();`);
-    }
-    delivery() {
-        return this.shipper.delivery()
-    }
-}
-
-let shipper: Shipper = new ShipperHandler('Bus');
-console.log(shipper.delivery());
+let remote = new RemoteControl()
+let commandOff = new CommandOn(new Light())
+remote.setCommand(commandOff)
+remote.run()

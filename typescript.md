@@ -344,3 +344,287 @@ export class AppComponent {
     <my-app></my-app>
 </body>
 ```
+---
+Từ đoạn này sẽ là sưu tầm bên ngoài
+# 8. Tips
+## 8.1. Arguments
+Arguments là một biến cục bộ trong function, chứa toàn bộ các tham số được truyền vào
+```js
+function test(firstParam, secondParam, thirdParam){
+  var args = Array.apply(null, arguments);
+  console.log(args);
+}
+test(1, 2, 3); // [1, 2, 3]
+```
+
+## 8.2. Cài đặt "this" khi gọi hàm
+Từ khóa this dùng để trỏ tới chính object gọi hàm đó.
+```js
+var person = {
+  firstName: 'Hoang',
+  lastName: 'Pham',
+  showName: function() {
+    console.log(this.firstName + ' ' + this.lastName);
+  }
+};
+//Ở đây this sẽ là object person
+person.showName(); // Hoang Pham
+```
+Khi ta khai báo biến global và hàm global, toàn bộ các biến và hàm đó sẽ nằm trong một object có tên là *window*. Lúc này, khi ta gọi hàm *showName*, chính object window là object gọi hàm đó, *this* trỏ tới chính object *window*.
+```js
+var firstName = 'Hoang', lastName = 'Pham';
+// 2 biến này nằm trong object window
+function showName()
+{
+  console.log(this.firstName + ' '+ this.lastName);
+}
+window.showName(); // Hoang Pham. this trỏ tới object window
+showName(); // Hoang Pham
+```
+Trong nhiều trường hợp, khi ta gọi hàm mà code (bên trong hàm có chứa *this*) bên trong các đối tượng, thì *this* bên trong hàm sẽ trỏ về đối tượng đó
+```js
+var person = {
+  firstName: 'Hoang',
+  lastName: 'Pham',
+  showName: function() {
+    console.log(this.firstName + ' ' + this.lastName);
+  }
+};
+$('button').click(person.showName);
+// showName truyền vào như callback
+// Ở đây this chính là button 
+// nên không thể hiện được this.firstname và this.lastname
+```
+Để sửa lỗi ta có thể dùng 2 cách
+- Dùng **anonymous function** để gọi hàm đó (Lưu ý: Mặc định bên trong anonymous function thì từ khóa this luôn trỏ về window)
+- Dùng **bind()**
+```js
+// Dùng anonymous function
+$('button').click(function(){ person.showName() });
+
+// Dùng bind
+$('button').click(person.showName.bind(person));
+// this ở đây vẫn là object person
+```
+Cú pháp hàm **bind()** (tương tự hàm **call()**):
+```js
+funcName.bind(thisName[, arg1[, arg2[,..]]])
+```
+Ngoài ra còn có hàm **apply()** tương tự **bind()** với cú pháp:
+```js
+funcName.apply(thisName[, argsArray])
+```
+Hàm **bind()**, **call()** và **apply()** có thể được dùng để viết **partial function** (tạo ra 1 function mới từ 1 function cũ bằng cách gán mặc định một số tham số cho function cũ đó)
+**Partial function** không dùng **bind()**:
+```js
+function log(level, time, message) {
+  console.log(level + ' - ' + time + ': ' + message);
+}
+function logErrToday(message) {
+  log("Error", "Today", message);
+}
+
+logErrToday("Server die."); // Error - Today: Server die.
+
+function log(level, time, message) {
+  console.log(level + ' - ' + time + ': ' + message);
+}
+```
+**Partial function** dùng **bind()**:
+```js
+function log(level, time, message) {
+  console.log(level + ' - ' + time + ': ' + message);
+}
+
+// Không có this nên set this là null
+// Set mặc định 2 tham số level và time
+var logErrToday = log.bind(null, 'Error', 'Today');
+
+// Hàm này tương ứng với log('Error', 'Today', 'Server die.')
+logErrToday("Server die."); 
+// Error - Today: Server die.
+```
+**call()** và **apply()** còn được dùng để mượn hàm (**borrowing function**)
+```js
+function test(firstParam, secondParam, thirdParam){
+  var args = Array.apply(null, arguments);
+  console.log(args);
+}
+test(1, 2, 3); // [1, 2, 3]
+```
+*arguments* là một object giống array nhưng không phải là array. *arguments* giống array vì nó có field length, có thể truy cập các giá trị nó chứa thông qua index 0,1,2. Tuy nhiên, do *arguments* không phải là array nên nó không thể gọi các hàm của *Array.prototype*. Do đó ta dùng **apply()** để chuyển object *arguments* thành Array.
+
+Ngoài ra, **call()** và **apply()** còn được dùng để *monkey-patching* hoặc tạo *spy*. Ta có thể mở rộng chức năng của một hàm mà không cần sửa source code của hàm đó.
+```js
+var computer = {
+  accessWeb : function(site) {
+    console.log ('Go to: ' + site);
+  }
+};
+
+var oldFunction = computer.accessWeb;
+// Tráo function accessWeb bằng hàm mới
+computer.accessWeb = function() {
+  console.log('Con gà bắt đầu vào web');
+  oldFunction.apply(this, arguments); // giữ nguyên hàm cũ
+  console.log('Con gà đã vào web');
+}
+
+computer.accessWeb('thiend*a.com'); 
+// Con gà bắt đầu vào web
+// Go to: thiend*a.com
+// Con gà đã vào web
+```
+
+## 8.3. Map và Set
+- **Map** là cấu trúc dữ liệu cho phép ta lưu dữ liệu dưới dạng Key-Value. 
+- **Set** là một mảng mà trong đó không có phần tử nào trùng nhau.
+```js
+// Maps
+var m = new Map();
+m.set("hello", 42);
+m.set(s, 34);
+m.get(s) == 34;
+
+// Sets
+var s = new Set();
+s.add("hello").add("goodbye").add("hello");
+s.size === 2;
+s.has("hello") === true;
+```
+
+## 8.4. Array reduce
+Method **reduce()** cho phép chúng ta lặp qua tất cả các phần tử và áp dụng một function nào đó vào mỗi phần tử, function này có các tham số:
+- **accumulator**: giá trị trả về từ các lần call callback trước
+- **currentValue**: giá trị của phần tử hiện tại trong array
+- **currentIndex**: index của phần tử hiện tại
+- **array**: chính là mảng hiện tại
+```js
+const arr = [1, 2, 3, 4, 5];
+const val = arr.reduce((acc, current) => acc * current, 1);
+console.log(val); // 120
+```
+Ngoài ra, chúng ta còn có thể cung cấp giá trị ban đầu *initialValue* sau tham số function đầu tiên.
+
+## 8.5 Flatten Array
+Trong nhiều tình huống, chúng ta có các array, bên trong mỗi phần tử có thể là các array khác, lúc này chúng ta có nhiệm vụ làm giảm số chiều (*flatten*) đi chẳng hạn, chúng ta có thể có đoạn code xử lý sau trong Javascript.
+```js
+Array.prototype.concatAll = function() {
+  return [].concat.apply([], this);
+};
+const arr = [1, [2, 3], [4, 8, 0], [5]];
+const flatten = arr.concatAll();
+
+console.log(arr, flatten);
+// [1, [2, 3], [4, 8, 0], [5]]
+// [1, 2, 3, 4, 8, 0, 5]
+```
+
+# 9. Bất đồng bộ 
+Bất đồng bộ là một cơ chế đặc biệt trong Javascript, trong đó khi hàm xử lí đến câu lệnh bất đồng bộ, thì các câu lệnh phía sau sẽ chạy luôn mà không cần đợi câu lệnh bất đồng bộ xử lí xong. Sau đó hàm sẽ quay lại xử lí **callback** của câu lệnh bất đồng bộ.
+Ví dụ: Javascript kết nối với server theo cơ chế bất đồng bộ
+```js
+// Truyền callback vào hàm ajax
+var callback =  function(image){
+  console.log(image);
+};
+ajax.get("gaixinh.info", callback);
+
+// Có thể viết gọn như sau
+ajax.get("gaixinh.info", function(image) {
+  console.log(image);
+})
+```
+Cách làm này có gì không ổn? Sử dụng **callback** chồng chéo sẽ làm code trở nên rối rắm, khó đọc; việc bắt *exception*, hiển thị lỗi trở cũng nên phức tạp.
+```js
+// Do những hàm dưới chạy bất đồng bộ, bạn không thể lấy dữ liệu lần lượt kiểu này
+var xe = xin_mẹ_mua_xe(); // Chờ cả năm mới có xe
+var gái = chở_gái_đi_chơi(xe); // Lấy xe chở gái đi chơi
+var abcd = chở_gái_vào_hotel(y); // Đi chơi xong chở gái đi đâu đó
+
+// Mà phải sử dụng đống callback "gớm ghiếc", tạo thành callback hell
+xin_mẹ_mua_xe(function(xe) {
+    chở_gái_đi_chơi(xe, function(gái) {
+        chở_gái_vào_hotel(hotel, function(z) { 
+            // Làm gì đó, ai biết
+        });
+    });
+});
+```
+Do đó, để giải quyết vấn đề này ta sử dụng **Promise**
+
+## 9.1. Promise
+Promise có 3 trạng thái sau:
+- **pending**: Hiện lời hứa chỉ là lời hứa suông, còn đang chờ người khác thực hiện
+- **fulfilled**: Lời hứa đã được thực hiện
+- **reject**: Bạn đã bị thất hứa, hay còn gọi là bị “xù”
+```js
+function hứa_cho_có() {
+  return Promise((thuc_hien_loi_hua, that_hua) => {
+    if (vui) {
+      thuc_hien_loi_hua("Xe BMW");
+    } else {
+      that_hua("Xe dap");
+    }
+  });
+}
+
+var promise = hứa_cho_có(); 
+promise
+  .then((xe_bmw) => {
+    console.log("Được chiếc BMW vui quá");
+  })
+  .catch((xe_dap) => {
+    console.log("Được chiếc xe đạp ....");
+  });
+```
+Khi lời hứa được thực hiện, **Promise** sẽ gọi **callback** trong hàm *then*. Ngược lại, khi bị thất hứa, **Promise** sẽ gọi **callback** trong hàm *catch*.
+
+### 9.1.1. Ưu điểm của Promise
+- Hỗ trợ “chaining”
+- Giúp bắt lỗi dễ dàng hơn
+- Xử lý bất đồng bộ
+
+## 9.2. Promise chaining
+Giá trị trả về của hàm **then** là 1 **promise** khác. Do vậy ta có thể dùng **promise** gọi liên tiếp các hàm bất đồng bộ.
+```js
+xin_mẹ_mua_xe
+  .then(chở_gái_đi_chơi)
+  .then(chở_gái_vào_hotel)
+  .then(function() { /*Làm gì đó, ai biết*/ });
+```
+## 9.3. Promise all
+Chạy cùng lúc nhiều hàm bất đồng bộ và đợi cho tất cả đều trả về kết quả
+```js
+// Ba hàm này phải được thực hiện "cùng lúc"
+// chứ không phải "lần lượt"
+var sờ_trên = new Promise((resolve, reject) => {
+    resolve("Phê trên");
+});
+var sờ_dưới = new Promise((resolve, reject) => {
+    resolve("Phê dưới");
+});
+var sờ_tùm_lum = new Promise((resolve, reject) => {
+    resolve("Phê tùm lum chỗ");
+});
+
+// Truyền 1 array chứa toàn bộ promise vào hàm Promise.all
+// Hàm này trả ra 1 promise array, tổng hợp kết quả của các promise đưa vào
+Promise.all([sờ_trên, sờ_dưới, sờ_tùm_lum])
+  .then(function(result) {
+    console.log(result); // ["Phê trên", "Phê dưới", "Phê tùm lum chỗ"]
+  }) 
+```
+
+# 10. Prototype
+Là khuôn hoặc là cha của một object.
+- Trong JavaScript, trừ **undefined**, toàn bộ các kiểu còn lại đều là object
+- Trong JavaScript, việc kế thừa được hiện thực thông qua **prototype**. Khi ta gọi *property* hoặc *function* của một object, JavaScript sẽ tìm trong chính object đó, nếu không có thì tìm lên cha của nó. Ví dụ: Ta có thể gọi các hàm *toUpperCase*, *trim* trong String là do các hàm đó đã tồn tại trong String.prototype
+- Khi ta thêm function cho prototype, toàn bộ những thằng con của nó cũng học được function tương tự
+```js
+var str = 'abc'; // str là string, cha nó là String.prototype
+// nhân đôi chuỗi đưa vào
+String.prototype.duplicate = function() { return this + this; }
+console.log(str.duplicate()); // Tìm thấy hàm duplicate trong prototype
+```
+- *Array*, *Number* hay *String* có cha là Object, do đó chúng đều có các hàm như *constructor*, *hasOwnProperty*, *toString* thuộc về của *Object.prototype*
