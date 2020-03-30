@@ -1,64 +1,34 @@
 "use strict";
-class BaseComponent {
-    constructor(mediator) {
-        this.mediator = mediator;
+class ConcreteObserver {
+    constructor(beforeMessage) {
+        this.beforeMessage = beforeMessage;
     }
-    update(mediator) {
-        this.mediator = mediator;
-    }
-}
-class Component1 extends BaseComponent {
-    constructor(mediator) {
-        super(mediator);
-    }
-    update(mediator) {
-        super.update(mediator);
-    }
-    doA() {
-        var _a;
-        console.log("Component 1 does A.");
-        (_a = this.mediator) === null || _a === void 0 ? void 0 : _a.notify("A");
-    }
-    doB() {
-        var _a;
-        console.log("Component 1 does B.\n");
-        (_a = this.mediator) === null || _a === void 0 ? void 0 : _a.notify("B");
+    update(message) {
+        console.log(this.beforeMessage + " " + message);
     }
 }
-class Component2 extends BaseComponent {
-    constructor(mediator) {
-        super(mediator);
+class ConcreteSubject {
+    constructor() {
+        this.observers = new Array();
     }
-    update(mediator) {
-        super.update(mediator);
+    attach(observer) {
+        this.observers.push(observer);
     }
-    doC() {
-        var _a;
-        console.log("Component 1 does C");
-        (_a = this.mediator) === null || _a === void 0 ? void 0 : _a.notify("C");
+    detach(observer) {
+        this.observers.splice(this.observers.indexOf(observer), 1);
     }
-    doD() {
-        var _a;
-        console.log("Component 1 does D");
-        (_a = this.mediator) === null || _a === void 0 ? void 0 : _a.notify("D");
-    }
-}
-class ConcreteMediator {
-    constructor(...components) {
-        for (let component of components) {
-            component.update(this);
+    notifyChange(message) {
+        for (let observer of this.observers) {
+            observer.update(message);
         }
     }
-    updateMediator(component) {
-        component.update(this);
-    }
-    notify(event) {
-        console.log(`Mediator reacts on ${event}`);
-    }
 }
-let component1 = new Component1();
-let component2 = new Component2();
-let mediator = new ConcreteMediator(component1, component2);
-component1.doA();
-console.log('\n');
-component2.doC();
+let subject = new ConcreteSubject();
+let observer1 = new ConcreteObserver("Message 1 updated:");
+let observer2 = new ConcreteObserver("Message 2 updated:");
+subject.attach(observer1);
+subject.attach(observer2);
+subject.notifyChange('Subject notify!');
+subject.detach(observer1);
+console.log("Removed Observer 1\n");
+subject.notifyChange('Subject notify!');

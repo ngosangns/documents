@@ -168,26 +168,26 @@ remote.run() // light on
 
 Sử dụng mối quan hệ many-to-many giữa các đối tượng tượng tương đồng để đạt đến được trạng thái "full object".
 
-### Vấn đề
+### 3.1. Vấn đề
 Chúng ta muốn thiết kế các thành phần có thể tái sử dụng được, nhưng sự phụ thuộc giữa các thành phần có thể tái sử dụng lại cho thấy hiện tượng "spaghetti code".
 
 "Spaghetti code" là một cụm từ chỉ mã nguồn có cấu trúc điều khiển phức tạp và rắc rối, đặc biệt là sử dụng nhiều câu lệnh GOTO, ngoại lệ, luồng hoặc các cấu trúc phân nhánh khác "không có cấu trúc". Nó được đặt tên như vậy bởi vì luồng chương trình được sắp xếp giống như một bát spaghetti, tức là bị xoắn và rối.
 
 "Spaghetti code" có thể do nhiều yếu tố, chẳng hạn như việc sửa đổi liên tục của một số người có phong cách lập trình khác nhau trong một thời gian dài. Các chương trình có cấu trúc giảm đáng kể tỉ lệ "spaghetti code".
 
-### Giải quyết
+### 3.2. Giải quyết
 Do đó ta sử dụng Mediator Pattern. Các Component trong Mediator Pattern thay vì tương tác trực tiếp với nhau trong quá trình hoạt động thì sẽ đều phải tương tác với nhau thông qua một đối tượng là Mediator. Đối tượng Mediator này sẽ tiếp nhận các sự kiện được gửi tới từ các Component khác nhau và xử lý chúng. Mediator đóng vai trò như một người điều phối các công việc được gửi tới và giải quyết các công việc đó tập trung tại một chỗ.
 
-### Mediator được sử dụng khi nào?
+### 3.3. Mediator được sử dụng khi nào?
 - Trường hợp có nhiều các đối tượng tương tác trực tiếp với nhau. Nó giúp các sự kiện của các đối tượng được điều tiết một cách rõ ràng, loại bỏ đi sự cồng kềnh và chồng chéo nhau của source code
 - Điều chỉnh hành vi giữa các lớp một cách dễ dàng, không cần chỉnh sửa ở nhiều lớp
 
-### Ví dụ
+### 3.4. Ví dụ
 ![](./../images/mediator_pattern_example_1.png)
 
 Tháp điều khiển tại sân bay có kiểm soát là một ví dụ về hoạt động của Mediator Pattern. Các phi công của các máy bay đang cất cánh hoặc hạ cánh kết nối với tháp chứ không phải giao tiếp rõ ràng với nhau. Những khó khăn về việc ai có thể cất hoặc hạ cánh được thi hành bởi tháp điều khiển. Điều quan trọng cần lưu ý là tháp không kiểm soát toàn bộ chuyến bay. Nó tồn tại chỉ để thực thi các quy định an toàn trong lúc cất và hạ cánh.
 
-### Cấu trúc
+### 3.5. Cấu trúc
 ![](./../images/mediator_pattern_structure.png)
 
 Các thành phần tham gia vào Mediator Pattern:
@@ -195,7 +195,7 @@ Các thành phần tham gia vào Mediator Pattern:
 - **Mediator**: Là lớp trừu tượng để khai báo các phương thức giúp cho các Component có thể tương tác với nhau
 - **ConcreteMediator**: Là đối tượng chung gian được triển khia từ interface Mediator giúp cho các Component tương tác qua lại với nhau
 
-### Thực hành
+### 3.6. Thực hành
 - Khai báo interface BaseComponent có một tham chiếu đến một ConcreteMediator và từ đó tạo ra 2 ConcreteComponent mẫu có các phương thức hành động
 ```js
 abstract class BaseComponent {
@@ -279,4 +279,173 @@ Mediator reacts on A
 
 Component 1 does C
 Mediator reacts on C
+```
+
+## 4. Memento
+> Cho phép chúng ta lưu trữ và khôi phục trạng thái của một đối tượng mà không tiết lộ chi tiết bên trong của nó
+
+### 4.1. Memento Pattern được sử dụng khi nào?
+Memento Pattern được sử dụng bất cứ khi nào chúng ta muốn lưu và sau đó khôi phục trạng thái của một Object. Ví dụ như khi chúng ta chơi game, chúng ta muốn lưu lại tất cả những trạng thái chúng ta đã chơi trước đó để sau khi quit game và mở lại thì chúng ta có thể tiếp tục chơi. Các ứng dụng cần chức năng cần Undo/ Redo: Lưu trạng thái của một đối tượng bên ngoài và có thể restore/rollback sau này. Thích hợp với các ứng dụng cần quản lý transaction.
+
+### 4.2. Cách thức hoạt động
+Memento Pattern sẽ cấu trúc các dữ liệu cần lưu của một Object thành một **State**, sau đó sẽ lưu lại State này. Các State sau khi được lưu lại sẽ được gọi là các **Memento**. **CareTaker** sẽ đóng vai trò lưu trữ các State thành Memento và xuất các Memento thành State để có thể sử dụng. Do trạng thái của các Object đều được lưu trữ trong State nên khi State này được truyền qua các Object khác nhau thì sẽ không để lộ các implement chi tiết của các Object đó.
+
+### 4.3. Ưu điểm
+- Bảo bảo nguyên tắc đóng gói: sử dụng trực tiếp trạng thái của đối tượng có thể làm lộ thông tin chi tiết bên trong đối tượng và vi phạm nguyên tắc đóng gói
+
+### 4.4. Nhược điểm
+- Khi có một số lượng lớn Memento được tạo ra có thể gặp vấn đề về bộ nhớ, performance của ứng dụng
+- Khó đảm bảo trạng thái bên trong của Memento không bị thay đổi
+
+### 4.5. Cấu trúc
+![](./../images/memento_pattern_structure.png)
+
+Các thành phần tham gia vào Memento Pattern:
+- **Originator**: Là Object có trạng thái được lưu trữ hoặc khôi phục
+- **Mementor**: Là trạng thái (State) của Object khi đang được lưu trữ
+- **CareTaker**: Đóng vai trò lưu trữ và cấp phát các Memento. Nó có trách nghiệm lưu trữ các State ở dạng Memento và cấp phát các State cho các Object khi cần
+
+### 4.6. Ví dụ
+- Khai báo cấu trúc Memento
+```js
+class Memento {
+    constructor(private readonly state: string) { }
+    getSavedState(): string {
+        return this.state
+    }
+}
+```
+- Tạo class Originator hỗ trợ lưu trữ và restore state từ Memento
+```js
+class Originator {
+    private state!: string
+    set(state: string): void {
+        console.log("Originator: Setting state to " + state)
+        this.state = state
+    }
+    saveToMemento(): Memento {
+        console.log("Originator: Saving to Memento.")
+        return new Memento(this.state)
+    }
+    restoreFromMemento(memento: Memento): void {
+        this.state = memento.getSavedState()
+        console.log("Originator: State after restoring from Memento: " + this.state)
+    }
+}
+```
+- Tạo CareTaker có nhiệm vụ lưu trữ state và lấy ra khi cần
+```js
+ // CareTaker
+let savedStates : Array<Memento> = new Array<Memento>()
+```
+- Client sử dụng
+```js
+originator.set("State #1")
+originator.set("State #2")
+savedStates.push(originator.saveToMemento())
+originator.set("State #3")
+savedStates.push(originator.saveToMemento())
+originator.set("State #4")
+
+// Restore lại state cũ nhất đã lưu
+originator.restoreFromMemento(savedStates[0])
+```
+- Kết quả
+```
+Originator: Setting state to State #1
+Setting state to State #2
+Saving to Memento.
+Setting state to State #3
+Saving to Memento.
+Setting state to State #4
+State after restoring from Memento: State #2
+```
+
+## 5. Observer
+> Một đối tượng, gọi là subject, duy trì một danh sách các thành phần phụ thuộc nó, gọi là observer, và thông báo tới chúng một cách tự động về bất cứ thay đổi nào, thường thì bằng cách gọi một hàm của chúng
+
+### 5.1. Vấn đề
+Giả sử chúng ta có một bảng tính excel với nhiều trang tính chứa các dữ liệu cần để thống kê. Ta có thể tạo ra vô số biểu đồ sử dụng dữ liệu ở các trang tính đó để hiển thị ra kết quả thống kê. Khi ta thay đổi dữ liệu ở một trang tính, các biểu đồ có sử dụng dữ liệu đó cũng phải được cập nhật để có số liệu thống kê chính xác. Ta có thể thấy là số lượng biểu đồ có thể dùng dữ liệu ở một trang tính là không giới hạn.
+![](./../images/observer_pattern_example_1.png)
+
+### 5.2. Giải quyết
+Hướng giải quyết khi sử dụng Observer Pattern: Trang tính ở đây đóng vai trò là subject, còn các biểu đồ chính là các observer. Mỗi khi trang tính được cập nhật dữ liệu, ta sẽ gọi cập nhật đến các biểu đồ phụ thuộc dữ liệu với trang tính đó.
+
+### 5.3. Khi nào nên dùng Observer Pattern?
+- Sử dụng mối quan hệ 1 - many khi mà một đối tượng có sự thay đổi trạng thái, tất các thành phần phụ thuộc của nó sẽ được thông báo và cập nhật một cách tự động
+- Một đối tượng có thể thông báo đến một số lượng không giới hạn các đối tượng khác
+
+### 5.4. Cấu trúc
+![](./../images/observer_pattern_structure.png)
+
+Các thành phần tham gia vào Observer Pattern:
+- **Subject**:
+    - Biết danh sách không giới hạn các observers của nó
+    - Cung cấp một giao diện để có thể thêm và loại bỏ observer
+- **Observer**:
+    - Định nghĩa một giao diện cập nhật cho các đối tượng sẽ được subject thống báo đến khi có sự thay đổi trạng thái
+- **ConcreteSubject**:
+    - Lưu trữ trạng thái danh sách các ConcreateObserver.
+    - Gửi thông báo đến các observer của nó khi có sự thay đổi trạng thái
+- **ConcreteObserver**: 
+    - Có thể duy trì một liên kết đến đối tượng ConcreteSubject
+    - Lưu trữ trạng thái của subject
+    - Thực thi việc cập nhật để giữ cho trạng thái đồng nhất với subject gửi thông báo đến
+
+### 5.5. Thực hành
+- Khai báo interface Observer và triển khai ConcreteObserver
+```js
+interface Observer {
+    update(mesage: string): void
+}
+
+class ConcreteObserver implements Observer {
+    constructor(private beforeMessage: string) {}
+    update(message: string) {
+        console.log(this.beforeMessage + " " + message)
+    }
+}
+```
+- Tạo interface Subject và triển khai ConcreteSubject có chức năng gửi thông báo đến các ConcreteObserver khi có sự thay đổi
+```js
+interface Subject {
+    observers : Array<Observer>
+    attach(observer: Observer) : void
+    detach(observer: Observer): void
+    notifyChange(message: string): void
+}
+class ConcreteSubject implements Subject {
+    observers: Array<Observer> = new Array<Observer>()
+    attach(observer: Observer): void {
+        this.observers.push(observer)
+    }
+    detach(observer: Observer): void {
+        this.observers.splice(this.observers.indexOf(observer), 1)
+    }
+    notifyChange(message: string): void {
+        for (let observer of this.observers) {
+            observer.update(message)
+        }
+    }
+}
+```
+- Sử dụng
+```js
+let subject : Subject = new ConcreteSubject()
+let observer1 : Observer = new ConcreteObserver("Message 1 updated:")
+let observer2 : Observer = new ConcreteObserver("Message 2 updated:")
+subject.attach(observer1)
+subject.attach(observer2)
+
+subject.notifyChange('Subject notify!')
+subject.detach(observer1)
+console.log("Removed Observer 1\n")
+subject.notifyChange('Subject notify!')
+```
+- Kết quả
+```
+Message 1 updated: Subject notify!
+Message 2 updated: Subject notify!
+Removed Observer 1
+Message 2 updated: Subject notify!
 ```

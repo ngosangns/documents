@@ -1,69 +1,41 @@
-abstract class BaseComponent {
-    protected mediator?: Mediator
-    constructor(mediator?: Mediator) {
-        this.mediator = mediator
-    }
-    update(mediator?: Mediator) {
-        this.mediator = mediator
-    }
+interface Observer {
+    update(mesage: string): void
 }
 
-class Component1 extends BaseComponent {
-    constructor(mediator?: Mediator) {
-        super(mediator)
-    }
-    update(mediator?: Mediator) {
-        super.update(mediator)
-    }
-    doA() {
-        console.log("Component 1 does A.")
-        this.mediator?.notify("A")
-    }
-    doB() {
-        console.log("Component 1 does B.\n")
-        this.mediator?.notify("B")
+class ConcreteObserver implements Observer {
+    constructor(private beforeMessage: string) {}
+    update(message: string) {
+        console.log(this.beforeMessage + " " + message)
     }
 }
-
-class Component2 extends BaseComponent {
-    constructor(mediator?: Mediator) {
-        super(mediator)
-    }
-    update(mediator?: Mediator) {
-        super.update(mediator)
-    }
-    doC() {
-        console.log("Component 1 does C")
-        this.mediator?.notify("C")
-    }
-    doD() {
-        console.log("Component 1 does D")
-        this.mediator?.notify("D")
-    }
+interface Subject {
+    observers : Array<Observer>
+    attach(observer: Observer) : void
+    detach(observer: Observer): void
+    notifyChange(message: string): void
 }
-
-interface Mediator {
-    notify(event: String): void
-}
-
-class ConcreteMediator implements Mediator {
-    constructor(...components: BaseComponent[]) {
-        for(let component of components) {
-            component.update(this)
+class ConcreteSubject implements Subject {
+    observers: Array<Observer> = new Array<Observer>()
+    attach(observer: Observer): void {
+        this.observers.push(observer)
+    }
+    detach(observer: Observer): void {
+        this.observers.splice(this.observers.indexOf(observer), 1)
+    }
+    notifyChange(message: string): void {
+        for (let observer of this.observers) {
+            observer.update(message)
         }
     }
-    updateMediator(component: BaseComponent) {
-        component.update(this)
-    }
-    notify(event: String) {
-        console.log(`Mediator reacts on ${event}`)
-    }
 }
 
-let component1 = new Component1()
-let component2 = new Component2()
-let mediator = new ConcreteMediator(component1, component2)
+let subject : Subject = new ConcreteSubject()
+let observer1 : Observer = new ConcreteObserver("Message 1 updated:")
+let observer2 : Observer = new ConcreteObserver("Message 2 updated:")
+subject.attach(observer1)
+subject.attach(observer2)
 
-component1.doA()
-console.log('\n')
-component2.doC()
+subject.notifyChange('Subject notify!')
+subject.detach(observer1)
+console.log("Removed Observer 1\n")
+subject.notifyChange('Subject notify!')
