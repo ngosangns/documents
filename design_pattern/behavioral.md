@@ -453,10 +453,10 @@ Message 2 updated: Subject notify!
 ## 6. Strategy
 > Cho phép chúng ta định nghĩa các business logic thành các đối tượng khác nhau và các đối tượng này có thể thay thế cho nhau trong quá trình runtime
 
-### Strategy Pattern được sử dụng khi nào?
+### 6.1. Strategy Pattern được sử dụng khi nào?
 Strategy Pattern được sử dụng khi có hai hoặc nhiều hành vi có thể thay thế nhau trong quá trình runtime của project.
 
-### Cấu trúc
+### 6.2. Cấu trúc
 ![](./../images/strategy_pattern_structure.png)
 
 Các thành phần tham gia vào Strategy Pattern:
@@ -464,7 +464,7 @@ Các thành phần tham gia vào Strategy Pattern:
 - **Strategy Protocol**: Định nghĩa các thuộc tính và phương thức mà tất cả các Concrete Strategy bắt buộc phải có và implement chúng
 - **Concrete Strategy**: Là các class triển khai từ Strategy Protocol. Nó sẽ chứa đựng các business logic đặc thù của từng class
 
-### Thực hành
+### 6.3. Thực hành
 - Khai báo interface Strategy và triển khai 3 ConcreteStrategy thực hiện 3 phép toán khác nhau
 ```js
 interface Strategy {
@@ -512,7 +512,7 @@ console.log("10 * 5 = " + context.executeStrategy(10, 5))
 10 - 5 = 5
 10 * 5 = 50
 ```
-## 6. Visitor
+## 7. Visitor
 > Cho phép thay đổi, mở rộng các thao tác cho đối tượng mà không thay đổi cấu trúc, nội dung bên trong đối tượng
 
 Để làm được điều này, các đối tượng (**Element**) phải tách các thao tác đó ra phương thức riêng và định nghĩa chúng trên các lớp tách biệt gọi là các lớp **Visitor**. Nhờ vậy các thao tác được tách độc lập ra khỏi cấu trúc đối tượng, giúp cho việc thay đổi thao tác trở nên linh hoạt. 
@@ -521,7 +521,7 @@ Với mỗi một thao tác mới cho đối tượng được tạo ra, một l
 
 Ngoài ra đây cũng là một kỹ thuật giúp chúng ta phục hồi lại **kiểu dữ liệu** bị mất của đối số truyền vào. Vì nó thực hiện gọi phương thức tương ứng dựa trên kiểu dữ liệu của cả đối tượng gọi và của đối số truyền vào (**Double Dispatch**).
 
-### 1. Double Dispatch và Single Dispatch là gì?
+### 7.1. Double Dispatch và Single Dispatch là gì?
 - **Single Dispatch**: Tên phương thức được gọi chỉ dựa vào kiểu dữ liệu của đối tượng gọi nó
 ```js
 class TestClass {
@@ -549,16 +549,16 @@ class Element {
 new Element().accept(new Visitor())
 ```
 
-### 2. Ưu điểm
+### 7.2. Ưu điểm
 - Cho phép một hoặc nhiều hành vi được áp dụng cho một tập hợp các đối tượng tại thời điểm run-time, tách rời các hành vi khỏi cấu trúc đối tượng
 - Đảm bảo nguyên tắc Open/Close: Đối tượng gốc không bị thay đổi, dễ dàng thêm hành vi mới cho đối tượng thông qua visitor
 
-### 3. Khi nào nên dùng Visitor Pattern?
+### 7.3. Khi nào nên dùng Visitor Pattern?
 - Khi có một cấu trúc đối tượng phức tạp với nhiều class và interface. Người dùng cần thực hiện một số hành vi cụ thể của riêng đối tượng, tùy thuộc vào concrete class của chúng
 - Chúng ta muốn di chuyển logic hành vi từ các đối tượng sang một lớp khác để xử lí để giảm phức tạp
 - Khi cấu trúc dữ liệu của đối tượng ít khi thay đổi nhưng hành vi của chúng được thay đổi thường xuyên
 - Khi muốn tránh sử dụng toán tử `instanceof`
-### 4. Cấu trúc
+### 7.4. Cấu trúc
 ![](https://images.viblo.asia/ccd166c4-dd34-457b-a6ab-0e8e391c4b72.png)
 
 Các thành phần tham gia vào Visitor Pattern:
@@ -567,7 +567,7 @@ Các thành phần tham gia vào Visitor Pattern:
 - **Visitor**: Interface khai báo khung xương cho các visitor hỗ trợ định nghĩa và đưa các thao tác thay thế vào ConcreteElement
 - **ConcreteVisitor**: Lớp hỗ trợ gọi các thao tác thay thế trên ConcreteElement được triển khai từ Visitor
 
-### 5. Ví dụ
+### 7.5. Ví dụ
 Giả sử chúng ta có một bài toán như sau: Bạn là một ladykiller, bạn muốn tỏ tình với một cô gái nhưng không biết quốc tịch của cô gái ấy là gì, đơn giản là chúng ta không thể nói "anh yêu em" với một cô gái người Nhật Bản được, vì cô ấy sẽ chẳng hiểu gì cả, thay vì vậy chúng ta sẽ nói "Aishite imasu" 😃. Do đó ta sẽ viết một hàm chung để nói lời yêu thương của ta đó là `saylove()` và truyền vào lời yêu tùy theo quốc tịch của mỗi nàng.
 ```js
 interface Lady {
@@ -645,14 +645,14 @@ let lady: Lady = new JapanLady()
 lady.accept(new SayGoodByeVisitor()) // Kết quả: Sayounara!
 ```
 
-### 6. Kết luận
+### 7.6. Kết luận
 Khi muốn mở rộng thao tác của đối tượng xử lí ConcreteElement thì ta chỉ cập nhật trên Visitor mà không cần sửa đổi ConcreteElement. Điều này thỏa mã quy tắc Open/Close.
 
 Hạn chế lớn nhất của Visitor Pattern đó là không hỗ trợ cho việc mở rộng Element, do việc mở rộng Element sẽ dẫn đến cập toàn bộ interface và class của Visitor. Nhưng ta có thể sửa lỗi này bằng các tinh chỉnh khác nhau cho Pattern cộng với một chút khéo léo trong chỉnh sửa cấu trúc dữ liệu và xử lí dữ liệu.
 
-## 7. Template Method
-## 8. Null Object
-## 9. Specification
-## 10. State
-## 11. Repository
-## 12. Entity-Attribute-Value (EAV)
+## 8. Template Method
+## 9. Null Object
+## 10. Specification
+## 11. State
+## 12. Repository
+## 13. Entity-Attribute-Value (EAV)
