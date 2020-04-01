@@ -1,41 +1,34 @@
-interface Observer {
-    update(mesage: string): void
+interface Strategy {
+    doOperation(num1: number, num2: number): number
 }
-
-class ConcreteObserver implements Observer {
-    constructor(private beforeMessage: string) {}
-    update(message: string) {
-        console.log(this.beforeMessage + " " + message)
+class OperationAdd implements Strategy {
+    doOperation(num1: number, num2: number): number {
+        return num1 + num2
     }
 }
-interface Subject {
-    observers : Array<Observer>
-    attach(observer: Observer) : void
-    detach(observer: Observer): void
-    notifyChange(message: string): void
+class OperationSubstract implements Strategy {
+    doOperation(num1: number, num2: number) : number {
+        return num1 - num2
+    }
 }
-class ConcreteSubject implements Subject {
-    observers: Array<Observer> = new Array<Observer>()
-    attach(observer: Observer): void {
-        this.observers.push(observer)
-    }
-    detach(observer: Observer): void {
-        this.observers.splice(this.observers.indexOf(observer), 1)
-    }
-    notifyChange(message: string): void {
-        for (let observer of this.observers) {
-            observer.update(message)
-        }
+class OperationMultiply implements Strategy {
+    doOperation(num1: number, num2: number) : number {
+        return num1 * num2
     }
 }
 
-let subject : Subject = new ConcreteSubject()
-let observer1 : Observer = new ConcreteObserver("Message 1 updated:")
-let observer2 : Observer = new ConcreteObserver("Message 2 updated:")
-subject.attach(observer1)
-subject.attach(observer2)
+class Context {
+    constructor(private strategy: Strategy) { }
+    executeStrategy(num1: number, num2: number) : number {
+        return this.strategy.doOperation(num1, num2)
+    }
+}
 
-subject.notifyChange('Subject notify!')
-subject.detach(observer1)
-console.log("Removed Observer 1\n")
-subject.notifyChange('Subject notify!')
+let context : Context = new Context(new OperationAdd())
+console.log("10 + 5 = " + context.executeStrategy(10, 5))
+
+context = new Context(new OperationSubstract())
+console.log("10 - 5 = " + context.executeStrategy(10, 5))
+
+context = new Context(new OperationMultiply())
+console.log("10 * 5 = " + context.executeStrategy(10, 5))

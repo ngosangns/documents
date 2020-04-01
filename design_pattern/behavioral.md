@@ -449,3 +449,66 @@ Message 2 updated: Subject notify!
 Removed Observer 1
 Message 2 updated: Subject notify!
 ```
+
+## 6. Strategy
+> Cho phép chúng ta định nghĩa các business logic thành các đối tượng khác nhau và các đối tượng này có thể thay thế cho nhau trong quá trình runtime
+
+### Strategy Pattern được sử dụng khi nào?
+Strategy Pattern được sử dụng khi có hai hoặc nhiều hành vi có thể thay thế nhau trong quá trình runtime của project.
+
+### Cấu trúc
+![](./../images/strategy_pattern_structure.png)
+
+Các thành phần tham gia vào Strategy Pattern:
+- **Object using Strategy**: Là đối tượng sử dụng các Concrete Strategy. Bên trong đối tượng sẽ chứa một tham chiếu có kiểu dữ liệu là Strategy Protocol
+- **Strategy Protocol**: Định nghĩa các thuộc tính và phương thức mà tất cả các Concrete Strategy bắt buộc phải có và implement chúng
+- **Concrete Strategy**: Là các class triển khai từ Strategy Protocol. Nó sẽ chứa đựng các business logic đặc thù của từng class
+
+### Thực hành
+- Khai báo interface Strategy và triển khai 3 ConcreteStrategy thực hiện 3 phép toán khác nhau
+```js
+interface Strategy {
+    doOperation(num1: number, num2: number): number
+}
+class OperationAdd implements Strategy {
+    doOperation(num1: number, num2: number): number {
+        return num1 + num2
+    }
+}
+class OperationSubstract implements Strategy {
+    doOperation(num1: number, num2: number) : number {
+        return num1 - num2
+    }
+}
+class OperationMultiply implements Strategy {
+    doOperation(num1: number, num2: number) : number {
+        return num1 * num2
+    }
+}
+```
+- Tạo class Context có tham chiếu đến ConcreteStrategy tương ứng tùy theo ngữ cảnh và sử dụng Strategy đó
+```js
+class Context {
+    constructor(private strategy: Strategy) { }
+    executeStrategy(num1: number, num2: number) : number {
+        return this.strategy.doOperation(num1, num2)
+    }
+}
+```
+- Sử dụng
+```js
+let context : Context = new Context(new OperationAdd())
+console.log("10 + 5 = " + context.executeStrategy(10, 5))
+
+context = new Context(new OperationSubstract())
+console.log("10 - 5 = " + context.executeStrategy(10, 5))
+
+context = new Context(new OperationMultiply())
+console.log("10 * 5 = " + context.executeStrategy(10, 5))
+```
+- Kết quả
+```
+10 + 5 = 15
+10 - 5 = 5
+10 * 5 = 50
+```
