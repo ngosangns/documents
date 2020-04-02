@@ -1,38 +1,15 @@
 "use strict";
-class LowerCaseState {
-    writeName(context, name) {
-        console.log(name.toLowerCase());
-        context.setState(new MultipleUpperCaseState());
+class PostRepository {
+    getPostById() {
+        return Post.orderBy('id', 'desc').get();
     }
 }
-class MultipleUpperCaseState {
-    constructor() {
-        this.count = 0;
+class PostController extends Controller {
+    constructor(postRepository) {
+        this.postRepository = postRepository;
     }
-    writeName(context, name) {
-        console.log(name.toUpperCase());
-        /* Change state after StateMultipleUpperCase's writeName() gets invoked twice */
-        if (++this.count > 1) {
-            context.setState(new LowerCaseState());
-        }
+    getPost() {
+        let posts = this.postRepository.getPostById();
+        return posts;
     }
 }
-class StateContext {
-    constructor() {
-        this.state = new LowerCaseState();
-    }
-    setState(newState) {
-        this.state = newState;
-    }
-    writeName(name) {
-        this.state.writeName(this, name);
-    }
-}
-let context = new StateContext();
-context.writeName("Monday");
-context.writeName("Tuesday");
-context.writeName("Wednesday");
-context.writeName("Thursday");
-context.writeName("Friday");
-context.writeName("Saturday");
-context.writeName("Sunday");

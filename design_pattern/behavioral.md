@@ -742,8 +742,105 @@ sunday
 - **Singleton Pattern**: Thông thường, những đối tượng State được thiết kế theo mẫu Singleton, vì bản thân các state chúng ta chỉ cần một thể hiện duy nhất
 - **Strategy Pattern**: Trong State Pattern, các state cụ thể được liên kết với nhau thông qua cài đặt bên trong phương thức của đối tượng, nhờ đó các state có thể tự động chuyển đổi cho nhau trong quá trình run-time. Còn Strategy Pattern không quan tâm các state khác mà chỉ nhận state được Client đưa vào
 
-## 8. Repository
+## 9. Repository
+> Repository Pattern là lớp trung gian giữa việc truy cập dữ liệu và xử lý logic, giúp cho việc truy cập dữ liệu chặt chẽ và bảo mật hơn
 
+### 9.1. Cấu trúc
+![](./../images/repository_pattern_structure.png)
 
-## 9. Entity-Attribute-Value (EAV)
+Repository Pattern là lớp trung gian giữa tầng Data Access và Business Logic. giúp cho việc truy cập dữ liệu chặt chẽ và bảo mật hơn.
 
+Bình thường để lấy dữ liệu thì chúng ta đơn giản viết một `Controller` query đến database để lấy ra dữ liệu. Nhưng với Repository Pattern chúng ta thấy `Repository` là trung gian giữa `Controller` và `Model`. Hiểu đơn giản thì khi có request gọi tới `Controller`, `Controller` gọi tới `Repository` rồi thằng này gọi tới `Model` lấy data và xử lý, `Controller` lấy dữ liệu thì chỉ việc gọi đến `Repository`.
+
+### 9.2. Ưu điểm
+- Dễ bảo trì và mở rộng code
+- Tăng tính bảo mật và rõ ràng cho code
+- Lỗi ít hơn
+- Tránh việc lặp code
+
+### 9.3. Ví dụ
+
+```js
+getPost() {
+    let posts = Post.orderBy('id', 'desc').get();
+    return posts;
+}
+```
+Khá là dễ phải không? Nhưng vấn đề ở chỗ nếu khách hàng muốn sắp xếp các post theo bảng chữ cái thì sao? Chúng ta phải vào hàm và sửa lại đoạn code đó. Hay khi cấu trúc bảng thay đổi, chúng ta cũng bắt buộc phải sửa lại phương thức `getPost()` trong hằng hà các phương thức khác. Hoặc trường hợp xấu là quản lí muốn thay thế bằng database khác và chúng ta buộc phải viết hàm get mới. Do đó chúng ta sử dụng đến Repository Pattern.
+
+Chúng ta sẽ phải tạo thêm một lớp là `PostRepository` có thể đặt trong một thư mục khác tên là Repositories. Ở đây chúng ta viết hàm lấy post theo ý chúng ta muốn, và khi có sự sửa đổi hay mở rộng thì chúng ta chỉ việc sửa ở đây thôi.
+```js
+class PostRepository {
+    getPostById() {
+        return Post.orderBy('id', 'desc').get();
+    }
+}
+```
+Và lúc này trong class `PostController` chúng ta sẽ viết
+```js
+import { PostRepository } from './../Repositories';
+class PostController extends Controller {
+    constructor(private postRepository: PostRepository) { }
+    getPost() {
+        let posts = this.postRepository.getPostById();
+        return posts;
+    }
+}
+```
+
+## 10. Entity-Attribute-Value (EAV)
+> Entity-Attribute-Value viết tắt là EAV, là 1 mô hình dữ liệu, làm việc với các thực thể (entity) có số lượng các thuộc tính (attribute) có thể mở rộng
+
+EAV Là một kỹ thuật thiết kế CSDL để đáp ứng được việc xây dựng, phát triển và mở rộng sản phẩm khi hệ thống yêu cầu có sự tùy biến cao.
+
+### 10.1. Cấu trúc
+![](./../images/eav_pattern_structure.png)
+Các phần phần tham gia vào EAV:
+- **Entity (entities)**: Bảng chứa thông tin cơ bản của đối tượng
+- **Attribute (attributes)**: Bảng chứa các thuộc tính ta có thể thêm vào
+- **Value (attribute_values)**: Bảng chứa tổng hợp giá trị của cả Entity và Attribute với 2 khóa ngoại được tham chiếu đến
+
+Mối quan hệ giữa các bảng:
+- **Value - Attribute**: 1-n (một Attribute có nhiều Value)
+- **Value - Entity**: n-n (một Entity có nhiều Attribute, một Value thuộc nhiều Entity)
+- **Entity - Attribute**: n-n (một sản phẩm có nhiều Attribute, một Attribute thuộc nhiều sản phẩm)
+
+Ví dụ về mối quan hệ giữa Entity-Attribute-Value:
+| value_id | entity_id | value | attribute_id |
+| - | - | - | - |
+| 1 | 1 | "S" | 1 |
+| 2 | 1 | "Trắng" | 2 |
+| 3 | 1 | 30 | 3 |
+| 4 | 1 | 100 | 4 |
+| 5 | 2 | "S" | 1 |
+| 6 | 2 | "Đen" | 2 |
+| 7 | 2 | 20 | 3 |
+| 8 | 2 | 200 | 4 |
+
+### 10.2. Ví dụ
+Khi muốn quản lý sản phẩm của website bán hàng. Có 2 bảng cơ bản sau:
+- **products**: Để lưu trữ thông tin về sản phẩm
+- **categories**: Để lưu trữ thông tin loại sản phẩm(để phân loại)
+![](./../images/eav_pattern_example_1.png)
+
+Đây là cách thiết kế đơn giản nhất để chúng ta dễ dàng tiếp cận với kiến thức nhưng nó cũng là cách thiết kế yếu kém và khó mở rộng khi hệ thống phức tạp. 
+
+Ví dụ khi công ty mở rộng, bán nhiều sản phẩm hơn, với nhiều sản phẩm chủng loại khác nhau do đó có nhiều trường hơn cần được thêm vào như *color*, *size*, *weight*,... Và đó là lúc mà cấu trúc bảng như trên bộc lộ điểm yếu do khó mở rộng. Chúng ta không thể thêm vài chục trường vào một bảng được, điều đó gây việc tốn tài nguyên không cần thiết. Do đó chúng ta cần sử dụng EAV.
+
+Khi chúng ta sử dụng EAV, cấu trúc bảng được chia ra như sau:
+![](./../images/eav_pattern_example_2.png)
+
+Tất cả những thuộc tính mong muốn thêm thì giờ chúng ta có thể thêm từ trang quản trị mà không cần sửa lại cấu trúc database.
+
+1. Thêm vào bảng **attributes** một record cho thuộc tính `color`:
+```
+id=1, name="color"
+```
+2. Thêm các giá trị của thuộc tính (value) và id sản phẩm tương ứng với giá trị đó (product_id) vào bảng **attribute_value**:
+```
+id = 1, attribute_id = 1, value = "Đỏ", product_id = 1
+id = 2, attribute_id = 1, value = "Xanh Lam", product_id = 2
+id = 3, attribute_id = 1, value = "Vàng", product_id = 7
+id = 4, attribute_id = 1, value = "Trắng", product_id = 5
+```
+Như vậy, với cách thiết kế trên chúng ta thấy hệ thóng của chúng ta đã động hơn nhiều rồi. Vấn đề thiết kế CSDL cho một hệ thống lớn là rất quan trọng, chúng ta có thể tham khảo cách thiết kê của các mã nguồn mở như Magento để từ đó có thể học hỏi thêm về tư duy thiết kế hệ thống, đặc biệt là thiết kế hệ thống thương mại điện tử.
