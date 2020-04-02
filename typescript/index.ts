@@ -1,40 +1,43 @@
-interface Lady {
-    accept(visitor: Visitor): void
+interface State {
+    writeName(context: StateContext, name: string): void;
 }
 
-class AmericanLady implements Lady {
-    accept(visitor: Visitor): void {
-        visitor.visit(this)
+class LowerCaseState implements State {
+    writeName(context: StateContext, name: string) {
+        console.log(name.toLowerCase());
+        context.setState(new MultipleUpperCaseState());
     }
 }
 
-class JapanLady implements Lady {
-    accept(visitor: Visitor): void {
-        visitor.visit(this)
+class MultipleUpperCaseState implements State {
+    private count: number = 0;
+    writeName(context: StateContext, name: string): void {
+        console.log(name.toUpperCase());
+        /* Change state after StateMultipleUpperCase's writeName() gets invoked twice */
+        if (++this.count > 1) {
+            context.setState(new LowerCaseState());
+        }
     }
 }
 
-interface Visitor {
-    visit(lady: Lady): void
-}
-
-class SayLoveVisitor implements Visitor {
-    visit(lady: Lady): void {
-        if (lady instanceof AmericanLady)
-            console.log('I love you')
-        if (lady instanceof JapanLady)
-            console.log('Aishite imasu')
+class StateContext {
+    private state!: State;
+    constructor() {
+        this.state = new LowerCaseState();
+    }
+    setState(newState: State): void {
+        this.state = newState;
+    }
+    writeName(name: string): void {
+        this.state.writeName(this, name);
     }
 }
 
-class SayGoodByeVisitor implements Visitor {
-    visit(lady: Lady): void {
-        if (lady instanceof AmericanLady)
-            console.log('Good bye!')
-        if (lady instanceof JapanLady)
-            console.log('Sayounara!')
-    }
-}
-
-let lady: Lady = new JapanLady()
-lady.accept(new SayGoodByeVisitor())
+let context: StateContext = new StateContext();
+context.writeName("Monday");
+context.writeName("Tuesday");
+context.writeName("Wednesday");
+context.writeName("Thursday");
+context.writeName("Friday");
+context.writeName("Saturday");
+context.writeName("Sunday");

@@ -1,29 +1,38 @@
 "use strict";
-class AmericanLady {
-    accept(visitor) {
-        visitor.visit(this);
+class LowerCaseState {
+    writeName(context, name) {
+        console.log(name.toLowerCase());
+        context.setState(new MultipleUpperCaseState());
     }
 }
-class JapanLady {
-    accept(visitor) {
-        visitor.visit(this);
+class MultipleUpperCaseState {
+    constructor() {
+        this.count = 0;
+    }
+    writeName(context, name) {
+        console.log(name.toUpperCase());
+        /* Change state after StateMultipleUpperCase's writeName() gets invoked twice */
+        if (++this.count > 1) {
+            context.setState(new LowerCaseState());
+        }
     }
 }
-class SayLoveVisitor {
-    visit(lady) {
-        if (lady instanceof AmericanLady)
-            console.log('I love you');
-        if (lady instanceof JapanLady)
-            console.log('Aishite imasu');
+class StateContext {
+    constructor() {
+        this.state = new LowerCaseState();
+    }
+    setState(newState) {
+        this.state = newState;
+    }
+    writeName(name) {
+        this.state.writeName(this, name);
     }
 }
-class SayGoodByeVisitor {
-    visit(lady) {
-        if (lady instanceof AmericanLady)
-            console.log('Good bye!');
-        if (lady instanceof JapanLady)
-            console.log('Sayounara!');
-    }
-}
-let lady = new JapanLady();
-lady.accept(new SayGoodByeVisitor());
+let context = new StateContext();
+context.writeName("Monday");
+context.writeName("Tuesday");
+context.writeName("Wednesday");
+context.writeName("Thursday");
+context.writeName("Friday");
+context.writeName("Saturday");
+context.writeName("Sunday");

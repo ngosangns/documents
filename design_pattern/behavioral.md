@@ -588,9 +588,100 @@ Khi muốn mở rộng thao tác của đối tượng xử lí ConcreteElement 
 
 Hạn chế lớn nhất của Visitor Pattern đó là không hỗ trợ cho việc mở rộng Element, do việc mở rộng Element sẽ dẫn đến cập toàn bộ interface và class của Visitor. Nhưng ta có thể sửa lỗi này bằng các tinh chỉnh khác nhau cho Pattern cộng với một chút khéo léo trong chỉnh sửa cấu trúc dữ liệu và xử lí dữ liệu.
 
-## 7. Template Method
-## 8. Null Object
-## 9. Specification
-## 10. State
-## 11. Repository
-## 12. Entity-Attribute-Value (EAV)
+## 8. State
+> Cho phép một đối tượng có thể thay đổi hành vi của nó khi có sự thay đổi trạng thái nội bộ trong lúc run-time
+
+### 8.1. Ưu điểm
+- Đối tượng được thay đổi trạng thái một cách rõ ràng
+- Trạng thái của những đối tượng có thể chia sẻ lẫn nhau
+- Đảm bảo nguyên tắc Single Responsibility Principle (SRP): tách biệt mỗi State tương ứng với 1 class riêng biệt
+- Đảm bảo nguyên tắc Open/Closed Principle (OCP): chúng ta có thể thêm một State mới mà không ảnh hưởng đến State khác hay Context hiện có
+- Giữ hành vi cụ thể tương ứng với trạng thái
+
+### 8.2. State Pattern được sử dụng khi nào?
+- State Pattern thường được dùng trong các hệ thống có nhiều trạng thái khác nhau và thay đổi trong suốt quá trình hoạt động. Số lượng các trạng thái (state) có thể bị giới hạn số lượng hoặc không giới hạn số lượng. Ví dụ, đèn giao thông sẽ có 3 trạng thái là "đỏ", "vàng", "xanh" thay đổi liên tục trong suốt quá trình hoạt động của nó
+- Ngoài ra, State Pattern còn được sử dụng để giảm thiểu việc sử dụng các câu lệnh if-else lồng nhau một cách phức tạp
+
+### 8.3. Cấu trúc
+![](./../images/state_pattern_structure.png)
+
+Các thần phần tham gia vào State Pattern:
+- **Context**: Là đối tượng có chứa trạng thái hoặc hành vi thay đổi
+- **State**: Là interface được sử dụng để liệt kê và khai báo các property và function cần thiết của State. Bằng cách này, chúng ta có thể xác định được các thuộc tính và các hàm cần phải có trong các ConcreteState
+- **ConcreteState**: Triển khai từ State, lưu trữ trạng thái của Context. Có thể có nhiều ConcreteState, mỗi ConcreteState sẽ đại diện cho một trạng thái của Context
+
+### 8.4. Cách thức hoạt động
+- Trong State Pattern, Context sẽ được khởi tạo cùng với trạng thái mặc định của nó
+- Mỗi khi trạng thái của Context thay đổi, nó sẽ lưu lại trạng thái mới thay cho trạng thái cũ; đồng thời sẽ xử lý các tác cụ theo trạng thái mới của nó. Điều đó có nghĩa là hoạt động của Context sẽ thay đổi tùy thuộc theo trạng thái của mình
+
+### 8.5. Luồng hoạt động
+- Context sẽ định nghĩa những hành vi có thể giao tiếp với Client, vì thế client sẽ yêu cầu các hành vi thông qua Context
+- Context sẽ chứa một thể hiện của State, State ban đầu có thể được cài đặt từ Client, nhưng khi đã cài đặt rồi thì Client không được sửa đổi nó nữa
+- Context có thể gửi chính nó như một argument tới State, vì thế State có thể truy cập vào Context để thay đổi trạng thái nếu cần thiết
+- Khi Context thực hiện hành vi, nó sẽ gọi State hiện tại để thực hiện hành vi đó, thực hiện xong, State có thể sẽ thay đổi trạng thái từ Context nếu cần
+
+### 8.6. Ví dụ
+Chúng ta sẽ định nghĩa một interface `State` và có 2 trạng thái riêng của nó là `LowerCaseState` và `MultipleUpperCaseState` tương ứng với việc in ra chữ thường hay chữ hoa.
+```js
+interface State {
+    writeName(context: StateContext, name: string): void;
+}
+
+class LowerCaseState implements State {
+    writeName(context: StateContext, name: string) {
+        console.log(name.toLowerCase());
+        context.setState(new MultipleUpperCaseState());
+    }
+}
+
+class MultipleUpperCaseState implements State {
+    private count: number = 0;
+    writeName(context: StateContext, name: string): void {
+        console.log(name.toUpperCase());
+        /* Change state after StateMultipleUpperCase's writeName() gets invoked twice */
+        if (++this.count > 1) {
+            context.setState(new LowerCaseState());
+        }
+    }
+}
+```
+Lớp `Context` sẽ chứa một biến `state`, đặc trưng là trạng thái hiện tại của `Context`, `state` sẽ được gán trạng thái mặc định khi `Context` được khởi tạo.
+
+Bên cạnh đó, lớp `Context` sẽ định nghĩa hàm setter cho state để thay đổi trạng thái mỗi khi thực hiện hành vi.
+
+Hành vi được thực hiện ở đây là `writeName()`.
+```js
+class StateContext {
+    private state!: State;
+    constructor() {
+        this.state = new LowerCaseState();
+    }
+    setState(newState: State): void {
+        this.state = newState;
+    }
+    writeName(name: string): void {
+        this.state.writeName(this, name);
+    }
+}
+```
+Sử dụng
+```
+monday
+TUESDAY
+WEDNESDAY
+thursday
+FRIDAY
+SATURDAY
+sunday
+```
+
+### 8.7. Design Pattern liên quan
+- **Flyweight Pattern**: Nếu ở bên phần trên, một trong những kết quả của State Pattern là các trạng thái của các đối tượng có thể chia sẻ cho nhau, Flyweight Pattern sẽ chỉ rõ khi nào cần chia sẻ những trạng thái và thực hiện như nào để chia sẻ được
+- **Singleton Pattern**: Thông thường, những đối tượng State được thiết kế theo mẫu Singleton, vì bản thân các state chúng ta chỉ cần một thể hiện duy nhất
+- **Strategy Pattern**: Trong State Pattern, các state cụ thể được liên kết với nhau thông qua cài đặt bên trong phương thức của đối tượng, nhờ đó các state có thể tự động chuyển đổi cho nhau trong quá trình run-time. Còn Strategy Pattern không quan tâm các state khác mà chỉ nhận state được Client đưa vào
+
+## 8. Repository
+
+
+## 9. Entity-Attribute-Value (EAV)
+
