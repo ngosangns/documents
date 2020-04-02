@@ -795,6 +795,7 @@ EAV Là một kỹ thuật thiết kế CSDL để đáp ứng được việc x
 
 ### 10.1. Cấu trúc
 ![](./../images/eav_pattern_structure.png)
+
 Các phần phần tham gia vào EAV:
 - **Entity (entities)**: Bảng chứa thông tin cơ bản của đối tượng
 - **Attribute (attributes)**: Bảng chứa các thuộc tính ta có thể thêm vào
