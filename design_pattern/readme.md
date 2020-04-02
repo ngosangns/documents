@@ -26,4 +26,4 @@ Bản chất Design Pattern là tách các thành phần khó mở rộng ra th�
 
 Một số Pattern mình đã bỏ đi:
 - **Template Method**: Đơn giản là mở rộng theo cách kế thừa khi đã clean code
-- **Null Object**: Do class con triển khai từ class cha không chỉ triển khai khung xương mà còn mở rộng thêm nhiều phương thức khác, do đó null object bắt buộc phải tạo ra cho riêng từ loại object, gây khó mở rộng hơn
+- **Null Object**: Do class con triển khai từ class cha không chỉ triển khai khung xương mà còn mở rộng thêm nhiều phương thức khác, do đó null object bắt buộc phải tạo ra cho riêng từ loại class, gây khó mở rộng hơn
