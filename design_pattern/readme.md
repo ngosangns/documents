@@ -22,8 +22,7 @@ Bản chất Design Pattern là tách các thành phần khó mở rộng ra th�
 | Object Pool | Proxy | Strategy |
 | Prototype | Flyweight | Visitor |
 | Dependency Injection | Delegation | State |
-| | | Repository |
-| | | Entity-Attribute-Value (EAV) |
+| | Entity-Attribute-Value (EAV) | Repository |
 
 
 Một số Pattern mình đã bỏ đi:
