@@ -968,7 +968,7 @@ Các phần phần tham gia vào EAV:
 
 Mối quan hệ giữa các bảng:
 - **Value - Attribute**: 1-n (một Attribute có nhiều Value)
-- **Value - Entity**: n-n (một Entity có nhiều Attribute, một Value thuộc nhiều Entity)
+- **Value - Entity**: n-n (một Entity có nhiều Value, một Value thuộc nhiều Entity)
 - **Entity - Attribute**: n-n (một sản phẩm có nhiều Attribute, một Attribute thuộc nhiều sản phẩm)
 
 Ví dụ về mối quan hệ giữa Entity-Attribute-Value:
