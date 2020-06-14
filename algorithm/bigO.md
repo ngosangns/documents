@@ -1,5 +1,3 @@
-<script src='./MathJax.js' async></script>
-
 ## Thế nào là độ hiệu quả của thuật toán?
 Giả sử chúng ta được cho một mảng dữ liệu đầu vào (mảng A và số phần tử N), ta có thể tính chính xác số bước chạy của thuật toán trên đầu vào đã cho. Tuy nhiên, có rất nhiều giá trị mà bộ dữ liệu đầu vào có thể nhận nên việc tính toán số bước như trên với mọi khả năng đầu vào là không thể.
 
@@ -110,3 +108,5 @@ Mệnh đề "thuật toán trên là $O(N^2)$" vẫn là một mệnh đề đ�
 
 ## Kết luận
 Chúng ta đã chỉ ra cách viết các cận (trên, dưới) theo độ phức tạp tính toán của thuật toán. Ta cũng đã chứng minh rằng các cận đó là các thuộc tính cơ bản và thường là hiệu quả để đánh giá các thuật toán. Trong phần sau chúng ta sẽ phân tích làm thế nào để ước lượng độ phức tạp tính toán của các thuật toán. Như ta đã thấy trong ví dụ 2 việc phân tích này có thể trở nên khá khó khăn. Một nguyên nhân khác làm cho việc phân tích khó khăn là các thuật toán đệ quy. Các vấn đề này sẽ được xử lý trong phần 2 của bài viết.
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
