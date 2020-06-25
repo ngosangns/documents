@@ -19,11 +19,7 @@ Danh sach theo chieu thuan:\
 Danh sach theo chieu nghich:\
 6 4 8 2 4
 
----
-
 ### Bài 2: Nhập 1 danh sách liên kết gồm n phần tử là các node có phần thông tin là thuộc tính của 1 sinh viên: gồm Họ tên, Mã sinh viên, năm sinh, giới tính, lớp. In ra danh sách trên dưới dạng bảng.
-
----
 
 ### Bài 3: Sử dụng struct, tạo kiểu dữ liệu Date gồm
 - Ngày
@@ -31,8 +27,6 @@ Danh sach theo chieu nghich:\
 - Năm
 
 Nhập 2 biến kiểu date là ngay1 và ngay2, tìm số ngày giữa 2 ngày trên.
-
----
 
 ### Bài 4: Sử dụng struct, tạo kiểu dữ liệu HangHoa bao gồm:
 - Tên hàng
@@ -47,8 +41,6 @@ STT  | Ten Hang | SL | Don gia | Thanh tien
 2 | Note 8 | 3 | 10000000 | 30000000
 ...
 Tong: 
-
----
 
 ### Bài 5: Sử dụng struct, tạo kiểu dữ liệu HocSinh gồm
 - Họ tên
