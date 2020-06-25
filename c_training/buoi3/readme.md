@@ -1,21 +1,21 @@
 ##### Bài 1: Tạo 1 danh sách liên kết các node có n phần tử. Thông tin mỗi node là 1 số nguyên. In ra danh sách node đó theo chiều thuận và nghịch.
-INPUT:
-Dòng đầu tiên: số nguyên dương n
+INPUT:\
+Dòng đầu tiên: số nguyên dương n\
 Dòng thứ 2: n số nguyên dương
 
-OUTPUT
-Dòng đầu tiên: danh sách liên kết theo chiều thuận
+OUTPUT\
+Dòng đầu tiên: danh sách liên kết theo chiều thuận\
 Dòng thứ 2: danh sách liên kết theo chiều nghịch
 
-Ví dụ:
-INPUT
-5
-4 2 8 4 6
-OUTPUT
-Danh sach theo chieu thuan: 
-4 2 8 4 6
-Danh sach theo chieu nghich: 
-6 4 8 2 4 
+Ví dụ:\
+INPUT\
+5\
+4 2 8 4 6\
+OUTPUT\
+Danh sach theo chieu thuan:\
+4 2 8 4 6\
+Danh sach theo chieu nghich:\
+6 4 8 2 4
 
 ---
 
@@ -27,6 +27,7 @@ Danh sach theo chieu nghich:
 - Ngày
 - Tháng
 - Năm
+
 Nhập 2 biến kiểu date là ngay1 và ngay2, tìm số ngày giữa 2 ngày trên.
 
 ---
@@ -62,6 +63,7 @@ Tạo 1 menu có các chức năng sau:
 5. Sắp xếp danh sách học sinh theo thứ tự điểm giảm dần
 6. Sắp xếp danh sách học sinh theo tên, thứ tự alphabet từ A -> Z
 0. Thoát chương trình
-** Gợi ý: để sắp xếp học sinh theo tên sử dụng hàm strcmp() trong thư viện string.h
 
-Lưu ý: Các bạn nộp bằng link dẫn đến repository chứa bài làm trên Github nhé.
+*Gợi ý: để sắp xếp học sinh theo tên sử dụng hàm strcmp() trong thư viện string.h
+
+**Lưu ý: Các bạn nộp bằng link dẫn đến repository chứa bài làm trên Github nhé.
