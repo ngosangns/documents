@@ -58,7 +58,7 @@ Tong:
 - Điểm anh
 - Điểm trung bình
 
-Tạo 1 menu có các chức năng sau:\
+Tạo 1 menu có các chức năng sau:
 1. Tạo danh sách học sinh
 2. In danh sách học sinh
 3. Thêm 1 học sinh
@@ -67,6 +67,6 @@ Tạo 1 menu có các chức năng sau:\
 6. Sắp xếp danh sách học sinh theo tên, thứ tự alphabet từ A -> Z
 0. Thoát chương trình
 
-*Gợi ý: để sắp xếp học sinh theo tên sử dụng hàm strcmp() trong thư viện string.h
+*Gợi ý: để sắp xếp học sinh theo tên sử dụng hàm strcmp() trong thư viện string.h*
 
-**Lưu ý: Các bạn nộp bằng link dẫn đến repository chứa bài làm trên Github nhé.
+**Lưu ý: Các bạn nộp bằng link dẫn đến repository chứa bài làm trên Github nhé.**
