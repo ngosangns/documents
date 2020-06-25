@@ -8,13 +8,14 @@ Dòng đầu tiên: danh sách liên kết theo chiều thuận\
 Dòng thứ 2: danh sách liên kết theo chiều nghịch
 
 Ví dụ:\
-INPUT\
+INPUT:\
 5\
-4 2 8 4 6\
+4 2 8 4 6
 
-OUTPUT\
+OUTPUT:\
 Danh sach theo chieu thuan:\
 4 2 8 4 6\
+
 Danh sach theo chieu nghich:\
 6 4 8 2 4
 
