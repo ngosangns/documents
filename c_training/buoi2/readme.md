@@ -1,39 +1,39 @@
-#### Bài tập phụ:
-Tìm hiểu về các thư viện của C trong bài học và xem các ứng dụng của nó: https://vietjack.com/thu-vien-c/
+## Bài tập phụ:
+Tìm hiểu về các thư viện của C trong bài học và xem các ứng dụng của nó: https://vietjack.com/thu-vien-c/\
 
-#### I. Bài tập làm quen
+## I. Bài tập làm quen
 
-##### Bài 1: Nhập 2 số a, b là 2 số thực. Kiểm tra hai số thực có cùng dấu hay không
-INPUT: 5.2 4.1
-OUTPUT: CUNG DAU
+### Bài 1: Nhập 2 số a, b là 2 số thực. Kiểm tra hai số thực có cùng dấu hay không
+INPUT: 5.2 4.1\
+OUTPUT: CUNG DAU\
 
-INPUT: -2.9 9.4
-OUTPUT: KHAC DAU
+INPUT: -2.9 9.4\
+OUTPUT: KHAC DAU\
 
 ---
 
 ##### Bài 2: Nhập số thực n từ bàn phím, in ra giá trị tuyệt đối của n với định dạng 2 chữ số sau dấu thập phân
-INPUT: -4
-OUTPUT: 4.00
+INPUT: -4\
+OUTPUT: 4.00\
 
-INPUT: 5.1
-OUTPUT: 5.10
+INPUT: 5.1\
+OUTPUT: 5.10\
 
 ---
 
 ##### Bài 4: Nhập 3 số nguyên a, b, c. In ra giá trị lớn nhất trong 3 số
-INPUT: 9 -2 4
-OUTPUT: max{9, -2, 4} = 9
+INPUT: 9 -2 4\
+OUTPUT: max{9, -2, 4} = 9\
 
 ---
 
 ##### Bài 6: Nhập số nguyên dương n, kiểm tra n có phải số chính phương hay không? In ra "CO" nếu đúng, "KHONG" nếu sai.
-(Số chính phương là số khai căn ra số nguyên)
-INPUT: 5
-OUTPUT: KHONG
+(Số chính phương là số khai căn ra số nguyên)\
+INPUT: 5\
+OUTPUT: KHONG\
 
-INPUT: 9
-OUTPUT: CO
+INPUT: 9\
+OUTPUT: CO\
 
 ---
 
