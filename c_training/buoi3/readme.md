@@ -10,7 +10,7 @@ Dòng thứ 2: danh sách liên kết theo chiều nghịch
 Ví dụ:\
 INPUT\
 5\
-4 2 8 4 6\
+4 2 8 4 6\\
 OUTPUT\
 Danh sach theo chieu thuan:\
 4 2 8 4 6\
@@ -55,7 +55,8 @@ Tong:
 - Điểm văn
 - Điểm anh
 - Điểm trung bình
-Tạo 1 menu có các chức năng sau:
+
+Tạo 1 menu có các chức năng sau:\
 1. Tạo danh sách học sinh
 2. In danh sách học sinh
 3. Thêm 1 học sinh
