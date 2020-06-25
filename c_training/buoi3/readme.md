@@ -1,4 +1,4 @@
-##### Bài 1: Tạo 1 danh sách liên kết các node có n phần tử. Thông tin mỗi node là 1 số nguyên. In ra danh sách node đó theo chiều thuận và nghịch.
+### Bài 1: Tạo 1 danh sách liên kết các node có n phần tử. Thông tin mỗi node là 1 số nguyên. In ra danh sách node đó theo chiều thuận và nghịch.
 INPUT:\
 Dòng đầu tiên: số nguyên dương n\
 Dòng thứ 2: n số nguyên dương
@@ -19,11 +19,11 @@ Danh sach theo chieu nghich:\
 
 ---
 
-##### Bài 2: Nhập 1 danh sách liên kết gồm n phần tử là các node có phần thông tin là thuộc tính của 1 sinh viên: gồm Họ tên, Mã sinh viên, năm sinh, giới tính, lớp. In ra danh sách trên dưới dạng bảng.
+### Bài 2: Nhập 1 danh sách liên kết gồm n phần tử là các node có phần thông tin là thuộc tính của 1 sinh viên: gồm Họ tên, Mã sinh viên, năm sinh, giới tính, lớp. In ra danh sách trên dưới dạng bảng.
 
 ---
 
-##### Bài 3: Sử dụng struct, tạo kiểu dữ liệu Date gồm
+### Bài 3: Sử dụng struct, tạo kiểu dữ liệu Date gồm
 - Ngày
 - Tháng
 - Năm
@@ -32,7 +32,7 @@ Nhập 2 biến kiểu date là ngay1 và ngay2, tìm số ngày giữa 2 ngày 
 
 ---
 
-##### Bài 4: Sử dụng struct, tạo kiểu dữ liệu HangHoa bao gồm:
+### Bài 4: Sử dụng struct, tạo kiểu dữ liệu HangHoa bao gồm:
 - Tên hàng
 - Số lượng
 - Đơn giá
@@ -48,7 +48,7 @@ Tong:
 
 ---
 
-##### Bài 5: Sử dụng struct, tạo kiểu dữ liệu HocSinh gồm
+### Bài 5: Sử dụng struct, tạo kiểu dữ liệu HocSinh gồm
 - Họ tên
 - Năm sinh
 - Điểm toán
