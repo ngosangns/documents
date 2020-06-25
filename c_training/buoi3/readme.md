@@ -10,7 +10,8 @@ Dòng thứ 2: danh sách liên kết theo chiều nghịch
 Ví dụ:\
 INPUT\
 5\
-4 2 8 4 6\\
+4 2 8 4 6\
+
 OUTPUT\
 Danh sach theo chieu thuan:\
 4 2 8 4 6\
