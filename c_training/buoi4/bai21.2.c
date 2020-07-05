@@ -20,10 +20,10 @@ int main() {
 	scanf("%d %d %d %d", &hcn2.x1, &hcn2.y1, &hcn2.x2, &hcn2.y2);
 	
 	// Ta tao mot hinh chu nhat ngoai tiep hcn1 va hcn2	
-	hcnP.x1 = abs(hcn1.x1 - hcn2.x1)/2;
-	hcnP.y1 = abs(hcn1.y1 - hcn2.y1)/2;
-	hcnP.x2 = abs(hcn1.x2 + hcn2.x2)/2;
-	hcnP.y2 = abs(hcn1.y2 + hcn2.y2)/2;
+	hcnP.x1 = abs((hcn1.x1 + hcn2.x1) - abs(hcn1.x1 - hcn2.x1))/2;
+	hcnP.y1 = abs((hcn1.y1 + hcn2.y1) - abs(hcn1.y1 - hcn2.y1))/2;
+	hcnP.x2 = abs((hcn1.x2 + hcn2.x2) + abs(hcn1.x2 - hcn2.x2))/2;
+	hcnP.y2 = abs((hcn1.y2 + hcn2.y2) + abs(hcn1.y2 - hcn2.y2))/2;
 
 	// Kiem tra hcn1 va hcn2 co de len nhau khong
 	// Neu de len nhau
