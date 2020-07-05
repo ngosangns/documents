@@ -2,27 +2,22 @@
 #include <stdlib.h>
 
 int main() {
-	long int n, n1, n2, n5;
-	scanf("%ld", &n); n/=10000;
+	long int n, x, y, c;
+	scanf("%ld", &n);
+
+	// Chia cho boi so de giam bo nho trong qua trinh xu ly
+	n/=10000;
+
 	for(int i=0; i<=n; i++) {
-		n1=n-i; n2=0; n5=0;
-		if((n-n1)>0) {
-			n5=(n-n1)/5;
-			if((n-n1-n5*5)%2!=0) {
-				if(n5>0) {
-					n5=0; n2=(n-n1)/2;
-				}
-				else n2=0;
-			}
-			else n2=(n-n1-n5*5)/2;
+		// Giai phuong trinh 2x + 5y = n - i
+		// Voi a, b khac 0
+		// => y = -(2/5)x + (n-i)/5 (y thuoc N)
+		c = n-i;
+		for(x = 0; x <= c/2; x++) {
+			y = (c - x*2)/5;
+			if(2*x + 5*y == c)
+				printf("CO %d TO 10000 DONG, CO %d TO 20000 DONG, CO %d TO 50000 DONG\n", i, x, y);
 		}
-		if(n2>0 or n5>0 or n-n1==0) {
-			printf("CO %ld TO 10000 DONG, CO %ld TO 20000 DONG, CO %ld TO 50000 DONG\n", n1, n2, n5);
-			if(n5>0 and n5%2==0) {
-				n5=0; n2=(n-n1)/2;
-				printf("CO %ld TO 10000 DONG, CO %ld TO 20000 DONG, CO %ld TO 50000 DONG\n", n1, n2, n5);
-			}
-		}		
 	}
 	return 0;
 }

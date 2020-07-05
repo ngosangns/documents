@@ -2,37 +2,42 @@
 #include <stdlib.h>
 #include <math.h>
 
-int findmax(int n1, int n2, int n3, int n4) {
-	if(n1>=n2 and n1>=n3 and n1>=n4) return n1;
-	else findmax(n2, n3, n4, n1);
-}
+typedef struct HCN {
+	int x1;
+	int y1;
+	int x2;
+	int y2;
+} HCN;
+
+int c1(HCN hcn) { return abs(hcn.x1 - hcn.x2); }
+int c2(HCN hcn) { return abs(hcn.y1 - hcn.y2); }
+int S(HCN hcn) { return c1(hcn) * c2(hcn); }
+
 int main() {
-	int x[7], y[7], c;
-	scanf("%d %d %d %d", &x[1], &y[1], &x[2], &y[2]);
-	scanf("%d %d %d %d", &x[3], &y[3], &x[4], &y[4]);
-	if(x[1]<=x[2] and x[1]<=x[3] and x[1]<=x[4]) x[0]=x[1];
-	else if(x[2]<=x[1] and x[2]<=x[3] and x[2]<=x[4]) x[0]=x[2];
-	else if(x[3]<=x[1] and x[3]<=x[2] and x[3]<=x[4]) x[0]=x[3];
-	else x[0]=x[4];
-	if(x[1]>=x[2] and x[1]>=x[3] and x[1]>=x[4]) x[5]=x[1];
-	else if(x[2]>=x[1] and x[2]>=x[3] and x[2]>=x[4]) x[5]=x[2];
-	else if(x[3]>=x[1] and x[3]>=x[2] and x[3]>=x[4]) x[5]=x[3];
-	else x[5]=x[4];
-	if(y[1]<=y[2] and y[1]<=y[3] and y[1]<=y[4]) y[0]=y[1];
-	else if(y[2]<=y[1] and y[2]<=y[3] and y[2]<=y[4]) y[0]=y[2];
-	else if(y[3]<=y[1] and y[3]<=y[2] and y[3]<=x[4]) y[0]=y[3];
-	else y[0]=y[4];
-	if(y[1]>=y[2] and y[1]>=y[3] and y[1]>=y[4]) y[5]=y[1];
-	else if(y[2]>=y[1] and y[2]>=y[3] and y[2]>=y[4]) y[5]=y[2];
-	else if(y[3]>=y[1] and y[3]>=y[2] and y[3]>=y[4]) y[5]=y[3];
-	else y[5]=y[4];
-	c = (x[2]-x[1]+1)*(y[2]-y[1]+1)+(x[4]-x[3]+1)*(y[4]-y[3]+1);
-	if(x[2]-x[1]+x[4]-x[3]+1<=x[5]-x[0] and y[2]-y[1]+y[4]-y[3]+1<=y[5]-y[0]) {
-		printf("%d", c);
+	HCN hcn1, hcn2, hcnP;
+
+	scanf("%d %d %d %d", &hcn1.x1, &hcn1.y1, &hcn1.x2, &hcn1.y2);
+	scanf("%d %d %d %d", &hcn2.x1, &hcn2.y1, &hcn2.x2, &hcn2.y2);
+	
+	// Ta tao mot hinh chu nhat ngoai tiep hcn1 va hcn2	
+	hcnP.x1 = abs(hcn1.x1 - hcn2.x1)/2;
+	hcnP.y1 = abs(hcn1.y1 - hcn2.y1)/2;
+	hcnP.x2 = abs(hcn1.x2 + hcn2.x2)/2;
+	hcnP.y2 = abs(hcn1.y2 + hcn2.y2)/2;
+
+	// Kiem tra hcn1 va hcn2 co de len nhau khong
+	// Neu de len nhau
+	if(c1(hcnP) < c1(hcn1) + c1(hcn2) && c2(hcnP) < c2(hcn1) + c2(hcn2)) {
+		// Tinh phan dien tich bi de len
+		int hieuC1 = c1(hcn1) + c1(hcn2) - c1(hcnP);
+		int hieuC2 = c2(hcn1) + c2(hcn2) - c2(hcnP);
+		int hieuS = hieuC1 * hieuC2;
+		// Do phan dien tich bi de len se bi tinh 2 lan neu ta cong dien tich cua hcn1 va hcn2
+		// Do do ta phai tru di 1 lan phan dien tich bi de len
+		printf("%d", S(hcn1) + S(hcn2) - hieuS);
 	}
-	else {
-		c -= (x[2]-x[1]+x[4]-x[3]-x[5]+x[0]+1)*(y[2]-y[1]+y[4]-y[3]-y[5]+y[0]+1);
-		printf("%d", c);
-	}
+	// Neu khong de len nhau
+	else printf("%d", S(hcn1) + S(hcn2));
+	
 	return 0;
 }

@@ -88,13 +88,13 @@ Tho va rua hoa
 ```
 
 #### *Bài 21.2
-Tương tự như bài 21.1, tuy nhiên lần này để tổ chức cho Hội khỏe Phù Đổng, nhà trường gửi 2 cặp tọa độ. Mỗi cặp tọa độ là giới hạn phần cỏ phải cắt. Phần diện tích trùng nhau sẽ tính là 1 lần cắt. Hãy tính diện tích phải cắt trên sân bóng.
+Để tổ chức cho Hội khỏe Phù Đổng, nhà trường gửi 2 cặp tọa độ. Mỗi cặp tọa độ là giới hạn phần cỏ phải cắt. Phần diện tích trùng nhau sẽ tính là 1 lần cắt. Hãy tính diện tích phải cắt trên sân bóng.
 
 Input:
 - Dòng 1: Tọa độ `(x1, y1) (x2, y2)` của cặp ô vuông thứ nhất.
 - Dòng 2: Tọa độ `(x3, y3) (x4, y4)` của cặp ô vuông thứ hai
 
-*(0 < x1, y1, x2, y2, x3, y3, x4, y4 <11)*
+*(0 <= x1, y1, x2, y2, x3, y3, x4, y4 <=10)*
 
 Output: Diện tích cần cắt
 
@@ -106,7 +106,7 @@ Input:
 ```
 Output:
 ```
-37
+24
 ```
 
 #### **Bài 16 VƯỢT SÔNG
