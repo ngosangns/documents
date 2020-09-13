@@ -79,17 +79,20 @@ if statement; condition {
 
 ## For/While loop
 ```go
-for index, value := range array {
-    ...
+for initialisation; condition; post {  
 }
 
-
-// Or
+// Example
 sum := 0
 for i := 0; i < 10; i++ {
     sum += i
 }
 fmt.Println(sum)
+
+// Or `for each`
+for index, value := range array {
+    ...
+}
 
 // Go isn't provided the while loop
 // But we cant use the for loop alternative
@@ -101,6 +104,21 @@ for sum < 1000 {
 
 ## Switch
 ```go
+// Structure
+switch (expression statement or variable) {
+    case constant_1: {
+        ...
+    }
+    ...
+    case constant_n: {
+        ...
+    }
+    default: {
+        ...
+    }
+}
+
+// Default
 i := 2
 switch i {
     case 1:
@@ -112,9 +130,88 @@ switch i {
     default:
         fmt.Println("zero")
 }
+
+// Mutilple expressions in case
+letter := "i"
+switch letter {
+    case "a", "e", "i", "o", "u": //multiple expressions in case
+        fmt.Println("Nguyên âm")
+    default:
+        fmt.Println("Không phải một nguyên âm")
+}
+
+// Expressionless switch
+num := 75
+switch {
+    case num >= 0 && num <= 50:
+        fmt.Println("num lớn hơn 0 và nhỏ hơn 50")
+    case num >= 51 && num <= 100:
+        fmt.Println("num lớn hơn 51 và nhỏ hơn 100")
+    case num >= 101:
+        fmt.Println("num lớn hơn 100")
+}
+
+// Fallthrough: By default, the switch statement will be
+// exited after the right case ran. `fallthrough` will
+// keep the switch statement running to checking in
+// the next case.
+switch num := number(); { // num không phải là một hằng số
+	case num < 50:
+		fmt.Printf("%d thì nhỏ hơn 50\n", num)
+		fallthrough
+	case num < 100:
+		fmt.Printf("%d thì nhỏ hơn 100\n", num)
+		fallthrough
+	case num < 200:
+		fmt.Printf("%d thì nhỏ hơn 200", num)
+}
 ```
 
-## Slice range
+## Array/Slice
+```go
+// Array
+var a [3]int // Int array with length 3
+// Slice
+var a []int // Int array with length 3
+
+// Or
+a := [3]int{12, 78, 50} // Short hand declaration to create array
+a := []int{12, 78, 50} // Short hand declaration to create slice
+
+// We can skip declaring an array length when creating a new array
+a := [...]int{12, 78, 50}
+
+// Slice is a type of Array.
+// But its width can be changing in running time.
+```
+*Notice: `Array` in Go is a basic type (not using pointer or preference). That's why when we assign an array/slice to a new variable, it will be create a new copy of the old array for the new variable. It is the same when we assign an array to a function as an argument.*
+```go
+a := [...]string{"USA", "China", "India", "Germany", "France"}
+b := a // a copy of a is assigned to b
+b[0] = "Singapore"
+fmt.Println("a is ", a)
+fmt.Println("b is ", b)
+```
+```
+a is [USA China India Germany France]
+b is [Singapore China India Germany France]
+```
+*Vice versa, `Slice` uses pointer and preference.*
+```go
+darr := [...]int{57, 89, 90, 82, 100, 78, 67, 69, 59}
+dslice := darr[2:5]
+fmt.Println("array before",darr)
+for i := range dslice {
+    dslice[i]++
+}
+fmt.Println("array after",darr) 
+```
+```
+array before [57 89 90 82 100 78 67 69 59]
+array after [57 89 91 83 101 78 67 69 59]
+```
+
+### Array/Slice: Slice range
 Go is used slice range syntax such as Python, MATLAB
 
 Ex: `arr[2:]`, `arr[:2]`, `arr[1:2]`,...
@@ -123,14 +220,34 @@ arr = [0, 1, 2, 3]
 arr[:3] // [0, 1, 2]
 ```
 
-## Multiple return values
+### Array/Slice: Create a slice using `make`
+```go
+i := make([]type, length, capacity)
+Ex:
+i := make([]int, 5, 5)
+```
+
+### Array/Slice: Memory improvement
+If we create a new slice from an array. The slice will keep a reference to the array. And when we don't use the array anymore, its memory won't be release because the slice still keep a reference to the array.
+
+To fix this. We should create a new copy of the slice using `copy`.
+```go
+countries := []string{"USA", "Singapore", "Germany", "India", "Australia"}
+neededCountries := countries[:len(countries)-2]
+countriesCpy := make([]string, len(neededCountries))
+copy(countriesCpy, neededCountries) //copies neededCountries to countriesCpy
+```
+
+## Function
+
+### Function: Multiple return values
 ```go
 func funcName() (string string) {
     return "one", "two"
 }
 ```
 
-## Named return values
+### Function: Named return values
 ```go
 // Named return value as varriable that It's automatically
 // declares at the fisrt line of function body and return
