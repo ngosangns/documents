@@ -238,6 +238,123 @@ countriesCpy := make([]string, len(neededCountries))
 copy(countriesCpy, neededCountries) //copies neededCountries to countriesCpy
 ```
 
+## Map
+A map is a builtin type in Go that is used to store key-value pairs.
+```go
+make(map[type of key]type of value)  
+
+// Ex:
+employeeSalary := make(map[string]int) 
+```
+Empty value of `map` called `nil`. If we are trying to add a new item to `nil map`, a `run-time panic` will occur. Hence the map has to be initialized and collected mermory before adding elements by using `make`.
+```go
+var employeeSalary map[string]int
+employeeSalary["steve"] = 12000 // run-time panic
+```
+Adding elements to a `map`
+```go
+personSalary := make(map[string]int)
+personSalary["steve"] = 12000
+personSalary["jamie"] = 15000
+personSalary["mike"] = 9000
+fmt.Println("personSalary map contents:", personSalary)
+```
+```
+personSalary map contents: map[steve:12000 jamie:15000 mike:9000]
+```
+We can add elements while declaring a new map.
+```go
+personSalary := map[string]int {
+    "steve": 12000,
+    "jamie": 15000,
+}
+personSalary["mike"] = 9000
+fmt.Println("personSalary map contents:", personSalary)
+```
+### Map: Retrieving value for a key from a map
+```go
+employeeSalary := map[string]int{
+    "steve": 12000,
+    "jamie": 15000,
+    "mike": 9000,
+}
+employee := "jamie"
+salary := employeeSalary[employee]
+fmt.Println("Salary of", employee, "is", salary)
+```
+What will happen if an `element is not present`? The map will return the zero value of the type of that element. In the case of `employeeSalary` map, if we try to access an element which is not present, the zero value of int which is 0 will be returned.
+
+### Map: Checking if a key exists
+```go
+value, ok := map[key]
+```
+
+### Map: Iterate over all elements in a map
+```go
+employeeSalary := map[string]int{
+    "steve": 12000,
+    "jamie": 15000,
+    "mike":  9000
+}
+fmt.Println("Contents of the map")
+for key, value := range employeeSalary {
+    fmt.Printf("employeeSalary[%s] = %d\n", key, value)
+}
+```
+
+## Map: Deleting items from a map
+```go
+delete(map, key)
+```
+
+## Map: Map of structs
+So far we have only been storing the `salary` of the `employee` in the map. Wouldn't it be nice if we are able to store the country of each `employee` in the map too? This can be achieved by using a `map of structs`. The employee can be represented as a struct containing fields `salary` and `country` and they will be stored in the map with a string key and struct value.
+```go
+emp1 := employee{
+    salary:  12000,
+    country: "USA",
+}
+emp2 := employee{
+    salary:  14000,
+    country: "Canada",
+}
+emp3 := employee{
+    salary:  13000,
+    country: "India",
+}
+employeeInfo := map[string]employee{
+    "Steve": emp1,
+    "Jamie": emp2,
+    "Mike":  emp3,
+}
+
+for name, info := range employeeInfo {
+    fmt.Printf("Employee: %s Salary:$%d  Country: %s\n", name, info.salary, info.country)
+}
+```
+
+## Map: Length of the map
+```go
+len(map)
+```
+
+## Map: Maps are reference types
+Similar to `slice`, `map` are reference types. When a map is assigned to a new variable, they both point to the same internal data structure. Hence changes made in one will reflect in the other.
+```go
+employeeSalary := map[string]int{
+    "steve": 12000,
+    "jamie": 15000,     
+    "mike": 9000,
+}
+fmt.Println("Original employee salary", employeeSalary)
+modified := employeeSalary
+modified["mike"] = 18000
+fmt.Println("Employee salary changed", employeeSalary)
+```
+
+## Map: Maps equality
+Maps can't be compared using the `==` operator. The `==` can be only used to check if a map is nil.
+
 ## Function
 
 ### Function: Multiple return values
@@ -256,6 +373,38 @@ func rectProps(length, width float64) (area, perimeter float64) {
     area = length * width
     perimeter = (length + width) * 2
     return //no explicit return value
+}
+```
+
+## Variadic function
+Functions in general accept only a fixed number of arguments. A variadic function is a function that accepts a variable number of arguments.
+```go
+func hello(a int, b ...int) {  
+}
+
+hello(1, 2) // Passing one argument "2" to b  
+hello(5, 6, 7, 8, 9) // Passing arguments "6, 7, 8 and 9" to b 
+hello(1) // It is also possible to pass zero arguments to a variadic function
+```
+Passing a slice to variadic function
+```go
+func find(num int, nums ...int) {  
+    fmt.Printf("type of nums is %T\n", nums)
+    found := false
+    for i, v := range nums {
+        if v == num {
+            fmt.Println(num, "found at index", i, "in", nums)
+            found = true
+        }
+    }
+    if !found {
+        fmt.Println(num, "not found in ", nums)
+    }
+    fmt.Printf("\n")
+}
+func main() {  
+    nums := []int{89, 90, 95}
+    find(89, nums...)
 }
 ```
 
