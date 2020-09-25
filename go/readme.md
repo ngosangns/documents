@@ -491,3 +491,666 @@ func main() {
 }
 ```
 
+## String
+A string is a slice of bytes in Go. Strings can be created by enclosing a set of characters inside double quotes " ".
+
+### String: Accessing individual bytes of a string
+Use as `array`, `slice`
+```go
+for i := 0; i < len(s); i++ {
+    fmt.Printf("%x ", s[i]) // %x: hex, %c: char
+}
+fmt.Printf("%s", s) // %s: string
+```
+```
+String: Hello World
+Hex: 48 65 6c 6c 6f 20 57 6f 72 6c 64
+Char: H e l l o W o r l d
+```
+
+### String: Bug in Unicode
+When using above code for a special character
+```
+String: Señor
+Char: S e Ã ± o r
+Hex: 53 65 c3 b1 6f 72
+```
+The reason is that the Unicode code point of `ñ` is `U+00F1` and its UTF-8 encoding occupies 2 bytes `c3` and `b1`. In UTF-8 encoding a code point can occupy more than 1 byte.
+
+So how do we solve this? This is where `rune` saves us.
+
+### String: Rune
+A `rune` is a builtin type in Go and it's the alias of `int32`. `rune` represents a Unicode code point in Go. It doesn't matter how many bytes the code point occupies, it can be represented by a `rune`.
+
+```go
+runes := []rune(s)
+for i := 0; i < len(runes); i++ {
+    fmt.Printf("%c ", runes[i])
+}
+```
+```
+String: Señor  
+Char: S e ñ o r
+```
+
+### String: Creating a string from a slice of bytes/runes
+```go
+// Byte
+byteSlice := []byte{0x43, 0x61, 0x66, 0xC3, 0xA9} // Hex
+// Or
+byteSlice := []byte{67, 97, 102, 195, 169} // Dec
+
+str := string(byteSlice)
+fmt.Println(str)
+
+// Rune
+runeSlice := []rune{0x0053, 0x0065, 0x00f1, 0x006f, 0x0072}
+str := string(runeSlice)
+fmt.Println(str)
+```
+
+### String: String length
+The `RuneCountInString(s string) (n int)` function of the `utf8` package can be used to find the length of the string.
+
+*Notice: The `length` is not the `number of bytes`*
+```go
+import (  
+    "fmt"
+    "unicode/utf8"
+)
+
+func main() {  
+    word1 := "Señor"
+    fmt.Printf("String: %s\n", word1)
+    fmt.Printf("Length: %d\n", utf8.RuneCountInString(word1))
+    fmt.Printf("Number of bytes: %d\n", len(word1))
+
+    fmt.Printf("\n")
+    word2 := "Pets"
+    fmt.Printf("String: %s\n", word2)
+    fmt.Printf("Length: %d\n", utf8.RuneCountInString(word2))
+    fmt.Printf("Number of bytes: %d\n", len(word2))
+}
+```
+```
+String: Señor  
+Length: 5  
+Number of bytes: 6
+
+String: Pets  
+Length: 4  
+Number of bytes: 4  
+```
+
+### String: String comparison
+The `==` operator is used to compare two strings for equality. If both the strings are equal, then the result is `true` else it's `false`.
+
+### String: String concatenation
+The most simple way to perform string concatenation is using the `+` operator.
+```go
+result := string1 + " " + string2
+```
+The second way to concatenate strings is using the `Sprintf` function of the `fmt` package.
+```go
+result := fmt.Sprintf("%s %s", string1, string2)
+```
+
+### String: Strings are immutable
+```go
+h := "hello"
+// Any valid unicode character within single quote is a rune
+h[0] = 'a'
+```
+```
+file.go:line:column:cannot assign to s[0]
+```
+To workaround this string immutability, strings are converted to a slice of runes. Then that slice is mutated with whatever changes are needed and converted back to a new string.
+```go
+func mutate(s []rune) string {  
+    s[0] = 'a' 
+    return string(s)
+}
+func main() {  
+    h := "hello"
+    fmt.Println(mutate([]rune(h)))
+}
+```
+
+## Pointer
+A pointer is a variable which stores the memory address of another variable.
+```go
+// Assign a new pointer
+b := 255
+var a *int = &b
+fmt.Printf("Type of a is %T\n", a)
+fmt.Println("address of b is", a)
+
+fmt.Println("")
+
+// Assign a new pointer and collect it memory
+size := new(int)
+fmt.Printf("Size value is %d, type is %T, address is %v\n", *size, size, size)
+*size = 85
+fmt.Println("New size value is", *size)
+```
+```
+Type of a is *int
+address of b is 0x1040a124
+
+Size value is 0, type is *int, address is 0xc000100010
+New size value is 85
+```
+The zero value of a pointer is `nil`.
+
+### Pointer: Passing pointer to a function
+```go
+func change(val *int) {  
+    *val = 55
+}
+```
+
+### Pointer: Returning pointer from a function
+```go
+func hello() *int {  
+    i := 5
+    return &i
+}
+```
+
+### Pointer: Pass a pointer to an array as a argument to a function
+```go
+func modify(arr *[3]int) {  
+    (*arr)[0] = 90
+    // Or shorthand is
+    arr[0] = 90
+}
+
+func main() {  
+    a := [3]int{89, 90, 91}
+    modify(&a)
+    fmt.Println(a)
+}
+```
+```
+[90 90 91]
+```
+*Although this way of passing a pointer to an array as a argument to a function and making modification to it works, it is not the idiomatic way of achieving this in Go. We have `slice` for this.*
+
+Lets rewrite the same program using `slice`
+```go
+func modify(sls []int) {  
+    sls[0] = 90
+}
+
+func main() {  
+    a := [3]int{89, 90, 91}
+    modify(a[:])
+    fmt.Println(a)
+}
+```
+
+## Struct
+A struct is a user-defined type that represents a collection of fields.
+```go
+type Employee struct {  
+    firstName, lastName     string
+    age                     int
+}
+
+func main() {
+    emp1 := Employee{
+        firstName: "Sam",
+        age:       25,
+        lastName:  "Anderson"
+    }
+}
+```
+### Struct: Creating anonymous structs
+```go
+emp3 := struct {
+        firstName string
+        lastName  string
+        age       int
+    }{
+        firstName: "Andreah",
+        lastName:  "Nikola",
+        age:       31
+    }
+```
+
+### Struct: Zero value of a struct
+When a struct is defined and it is not explicitly initialized with any value, the fields of the struct are assigned their zero values by default.
+```go
+type Employee struct {  
+    firstName string
+    lastName  string
+    age       int
+    salary    int
+}
+
+func main() {  
+    var emp4 Employee //zero valued struct
+    fmt.Println("First Name:", emp4.firstName)
+    fmt.Println("Last Name:", emp4.lastName)
+    fmt.Println("Age:", emp4.age)
+    fmt.Println("Salary:", emp4.salary)
+}
+```
+```
+First Name:
+Last Name:
+Age: 0
+Salary: 0
+```
+It is also possible to specify values for some fields and ignore the rest. In this case, the ignored fields are assigned zero values.
+```go
+type Employee struct {  
+    firstName string
+    lastName  string
+    age       int
+    salary    int
+}
+
+func main() {  
+    emp5 := Employee{
+        firstName: "John",
+        lastName:  "Paul"
+    }
+}
+```
+
+### Struct: Pointers to a struct
+It is also possible to create pointers to a struct.
+
+### Struct: Anonymous fields
+It is possible to create structs with fields that contain only a type without the field name. These kinds of fields are called anonymous fields.
+```go
+type Person struct {  
+    string
+    int
+}
+```
+Even though anonymous fields do not have an explicit name, by default the name of an anonymous field is the name of its type.
+```go
+type Person struct {  
+    string
+    int
+}
+
+func main() {  
+    p1 := Person{
+        string: "naveen",
+        int:    50,
+    }
+    fmt.Println(p1.string)
+    fmt.Println(p1.int)
+}
+```
+
+### Struct: Promoted fields
+Fields that belong to an anonymous struct field in a struct are called promoted fields since they can be accessed as if they belong to the struct which holds the anonymous struct field.
+```go
+type Address struct {  
+    city string
+    state string
+}
+type Person struct {  
+    name string
+    age  int
+    Address
+}
+
+func main() {  
+    p := Person{
+        name: "Naveen",
+        age:  50,
+        Address: Address{
+            city:  "Chicago",
+            state: "Illinois",
+        },
+    }
+
+    fmt.Println("Name:", p.name)
+    fmt.Println("Age:", p.age)
+    fmt.Println("City:", p.city)   // `city` is promoted field
+    fmt.Println("State:", p.state) // `state` is promoted field
+}
+```
+
+### Struct: Exported structs and fields
+If a struct type starts with a capital letter, then it is an exported type and it can be accessed from other packages. Similarly, if the fields of a struct start with caps, they can be accessed from other packages.
+
+### Struct: Structs Equality
+Structs are value types and are comparable if each of their fields are comparable. Two struct variables are considered equal if their corresponding fields are equal.
+```go
+name1 := name{
+    firstName: "Steve",
+    lastName:  "Jobs",
+}
+name2 := name{
+    firstName: "Steve",
+    lastName:  "Jobs",
+}
+if name1 == name2 {
+    fmt.Println("name1 and name2 are equal")
+} else {
+    fmt.Println("name1 and name2 are not equal")
+}
+
+name3 := name{
+    firstName: "Steve",
+    lastName:  "Jobs",
+}
+name4 := name{
+    firstName: "Steve",
+}
+
+if name3 == name4 {
+    fmt.Println("name3 and name4 are equal")
+} else {
+    fmt.Println("name3 and name4 are not equal")
+}
+```
+```
+name1 and name2 are equal
+name3 and name4 are not equal
+```
+*Notice: Struct variables are not comparable if they contain fields that are not comparable.*
+```go
+type image struct {  
+    data map[int]int
+}
+
+func main() {  
+    image1 := image{
+        data: map[int]int{
+            0: 155,
+        }}
+    image2 := image{
+        data: map[int]int{
+            0: 155,
+        }}
+    if image1 == image2 { // Error
+        fmt.Println("image1 and image2 are equal")
+    }
+}
+```
+```
+./file.go:line:column: invalid operation: image1 == image2 (struct containing map[int]int cannot be compared)
+```
+
+## Method
+A method is just a `function` with a special receiver type between the `func keyword` and the `method name`. The receiver can either be a struct type or non-struct type.
+
+```go
+func (t Type) methodName(parameter list) {
+    ...
+}
+```
+
+### Method: Pointer Receivers vs Value Receivers
+The difference between `value receiver` and `pointer receiver` is, changes made inside a method with a pointer receiver is visible to the caller.
+
+```go
+func (e Employee) changeName(newName string) {  
+    e.name = newName
+}
+func (e *Employee) changeAge(newAge int) {  
+    e.age = newAge
+}
+
+func main() {  
+    e := Employee{
+        name: "Mark Andrew",
+        age:  50,
+    }
+    fmt.Printf("Employee name before change: %s", e.name)
+    e.changeName("Michael Andrew")
+    fmt.Printf("\nEmployee name after change: %s", e.name)
+
+    fmt.Printf("\n\nEmployee age before change: %d", e.age)
+    (&e).changeAge(51)
+    fmt.Printf("\nEmployee age after change: %d", e.age)
+}
+```
+```
+Employee name before change: Mark Andrew  
+Employee name after change: Mark Andrew
+
+Employee age before change: 50  
+Employee age after change: 51
+```
+
+## Interface
+In Go, an interface is a set of method signatures. When ***a type provides definition for all the methods in the interface***, it is said to implement the interface.
+```go
+type InterfaceName interface {  
+    MethodName() int
+}
+```
+
+### Interface: Practical use of an interface
+```go
+type SalaryCalculator interface {  
+    CalculateSalary() int
+}
+
+type Permanent struct {  
+    empId    int
+    basicpay int
+    pf       int
+}
+
+type Contract struct {  
+    empId    int
+    basicpay int
+}
+
+// salary of permanent employee is the sum of basic pay and pf
+func (p Permanent) CalculateSalary() int {  
+    return p.basicpay + p.pf
+}
+
+// salary of contract employee is the basic pay alone
+func (c Contract) CalculateSalary() int {  
+    return c.basicpay
+}
+
+/* total expense is calculated by iterating through
+the SalaryCalculator slice and summing  
+the salaries of the individual employees */
+func totalExpense(s []SalaryCalculator) {  
+    expense := 0
+    for _, v := range s {
+        expense = expense + v.CalculateSalary()
+    }
+    fmt.Printf("Total Expense Per Month $%d", expense)
+}
+
+func main() {  
+    pemp1 := Permanent{
+        empId:    1,
+        basicpay: 5000,
+        pf:       20,
+    }
+    cemp1 := Contract{
+        empId:    3,
+        basicpay: 3000,
+    }
+    employees := []SalaryCalculator{pemp1, cemp1}
+    totalExpense(employees)
+
+}
+```
+
+### Interface: Interface internal representation
+An interface can be thought of as being represented internally by a tuple `(type, value)`. `type` is the underlying concrete type of the interface and `value` holds the value of the concrete type.
+
+```go
+type Worker interface {  
+    Work()
+}
+
+type Person struct {  
+    name string
+}
+func (p Person) Work() {  
+    fmt.Println(p.name, "is working")
+}
+
+func describe(w Worker) {  
+    fmt.Printf("Interface type %T value %v\n", w, w)
+}
+
+func main() {  
+    p := Person{
+        name: "Naveen"
+    }
+    var w Worker = p
+    describe(w)
+}
+```
+
+### Interface: Empty Interface
+An interface that has zero methods is called an empty interface. It is represented as `interface{}`. Since the empty interface has zero methods, all types implement the empty interface.
+
+### Interface: Type Assertion
+Type assertion is used to extract the underlying value of the interface.
+```go
+func assert(i interface{}) {  
+    s := i.(int) //get the underlying int value from i
+    fmt.Println(s)
+}
+func main() {  
+    var s interface{} = 56
+    assert(s)
+}
+```
+What will happen if the concrete type in the above program is not int?
+```go
+func assert(i interface{}) {  
+    s := i.(int) 
+    fmt.Println(s)
+}
+func main() {  
+    var s interface{} = "Steven Paul"
+    assert(s)
+}
+```
+```
+panic: interface conversion: interface {} is string, not int
+```
+To solve the above problem, we can use the syntax
+```go
+v, ok := i.(T)
+```
+```go
+func assert(i interface{}) {  
+    v, ok := i.(int)
+    fmt.Println(v, ok)
+}
+func main() {  
+    var s interface{} = 56
+    assert(s)
+    var i interface{} = "Steven Paul"
+    assert(i)
+}
+```
+```
+56 true
+0 false
+```
+### Interface: Get the type of value
+```go
+func findType(i interface{}) {  
+    switch i.(type) {
+    case string:
+        fmt.Printf("I am a string and my value is %s\n", i.(string))
+    case int:
+        fmt.Printf("I am an int and my value is %d\n", i.(int))
+    default:
+        fmt.Printf("Unknown type\n")
+    }
+}
+```
+## Concurrency
+### Concurrency: What is parallelism and how is it different from concurrency?
+- Parallelism is doing lots of things at the same time.
+
+    Ex: Lets assume that the person is jogging and also listening to music in his iPod. In this case the person is jogging and listening to music at the same time, that is he is doing lots of things at the same time. This is called parallelism.
+- Concurrency is the capability to deal with lots of things at once.
+
+    Ex: Let's consider a person jogging. During his morning jog, lets say his shoe laces become untied. Now the person stops running, ties his shoe laces and then starts running again. This is a classic example of concurrency. The person is capable of handling both running and tying shoe laces, that is the person is able to deal with lots of things at once
+
+## Goroutine
+Goroutines are functions or methods that run concurrently with other functions or methods. Goroutines can be thought of as light weight threads. The cost of creating a Goroutine is tiny when compared to a thread. 
+
+### Goroutine: Advantages of Goroutines over threads
+- Goroutines are extremely cheap when compared to threads. They are only a few kb in stack size and the stack can grow and shrink according to needs of the application whereas in the case of threads the stack size has to be specified and is fixed.
+- The Goroutines are multiplexed to fewer number of OS threads. There might be only one thread in a program with thousands of Goroutines. If any Goroutine in that thread blocks say waiting for user input, then another OS thread is created and the remaining Goroutines are moved to the new OS thread. All these are taken care by the runtime and we as programmers are abstracted from these intricate details and are given a clean API to work with concurrency.
+- Goroutines communicate using channels. Channels by design prevent race conditions from happening when accessing shared memory using Goroutines. Channels can be thought of as a pipe using which Goroutines communicate.
+
+Create a Goroutine
+```go
+func hello() {  
+    fmt.Println("Hello world goroutine")
+}
+func main() {  
+    go hello()
+    fmt.Println("main function")
+}
+```
+
+## Channel
+Channels can be thought as pipes using which Goroutines communicate. Similar to how water flows from one end to another in a pipe, data can be sent from one end and received from the another end using channels.
+
+### Channel: Declaring a channel
+Each channel has a type associated with it. This type is the type of data that the channel is allowed to transport. No other type is allowed to be transported using the channel.
+
+`chan T` is a channel of type `T`.
+
+The zero value of a channel is `nil`. `nil` channels are not of any use and hence the channel has to be defined using `make` similar to `maps` and `slices`.
+```go
+var a chan int
+if a == nil {
+    fmt.Println("channel a is nil, going to define it")
+    a = make(chan int)
+    fmt.Printf("Type of a is %T", a)
+}
+```
+```
+channel a is nil, going to define it  
+Type of a is chan int  
+```
+
+### Channel: Sending and receiving from channel
+```go
+data := <- a // read from channel a
+a <- data // write to channel a
+```
+
+### Channel: Sends and receives are blocking by default
+Sends and receives to a channel are blocking by default. What does this mean? When a data is sent to a channel, the control is blocked in the send statement until some other Goroutine reads from that channel. Similarly when data is read from a channel, the read is blocked until some Goroutine writes data to that channel.
+
+This property of channels is what helps Goroutines communicate effectively without the use of explicit locks or conditional variables that are quite common in other programming languages.
+
+### Channel: Example with channels
+```go
+func hello(done chan bool) {  
+    fmt.Println("Hello world goroutine")
+    done <- true
+}
+func main() {  
+    done := make(chan bool)
+    go hello(done)
+    <-done
+    fmt.Println("main function")
+}
+```
+In the above program we create a done `bool channel` and pass it as a parameter to the `hello` Goroutine. And then we are receiving data from the done channel. This line of code is blocking which means that until some Goroutine writes data to the `done` channel, the control will not move to the next line of code. Hence this eliminates the need for the time.Sleep which was present in the original program to prevent the main Goroutine from exiting.
+
+The line of code `<-done` receives data from the done channel but does not use or store that data in any variable. This is perfectly legal.
+```
+Hello world goroutine  
+main function
+```
