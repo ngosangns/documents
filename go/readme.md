@@ -1147,10 +1147,90 @@ func main() {
     fmt.Println("main function")
 }
 ```
-In the above program we create a done `bool channel` and pass it as a parameter to the `hello` Goroutine. And then we are receiving data from the done channel. This line of code is blocking which means that until some Goroutine writes data to the `done` channel, the control will not move to the next line of code. Hence this eliminates the need for the time.Sleep which was present in the original program to prevent the main Goroutine from exiting.
+In the above program we create a done `bool channel` and pass it as a parameter to the `hello` Goroutine. And then we are receiving data from the done channel. This line of code is blocking which means that until some Goroutine writes data to the `done` channel, the control will not move to the next line of code. Hence this eliminates the need for the time. Sleep which was present in the original program to prevent the main Goroutine from exiting.
 
 The line of code `<-done` receives data from the done channel but does not use or store that data in any variable. This is perfectly legal.
 ```
 Hello world goroutine  
 main function
+```
+
+### Channel: Deadlock
+If a Goroutine is sending data on a channel, then it is expected that some other Goroutine should be receiving the data. If this does not happen, then the program will panic at runtime with `Deadlock`.
+
+Similarly if a Goroutine is waiting to receive data from a channel, then some other Goroutine is expected to write data on that channel, else the program will panic.
+```go
+func main() {  
+    ch := make(chan int)
+    ch <- 5
+}
+```
+```
+fatal error: all goroutines are asleep - deadlock!
+```
+
+### Channel: Unidirectional channels
+All the channels we discussed so far are bidirectional channels, that is data can be both sent and received on them. It is also possible to create unidirectional channels, that is channels that only send or receive data.
+```go
+// we can only receive data from this channel
+sendch := make(chan<- int)
+```
+If we are trying to write data to this channel, it will turn out an error
+```go
+func sendData(sendch chan<- int) {  
+    sendch <- 10
+}
+
+func main() {  
+    sendch := make(chan<- int)
+    go sendData(sendch)
+    fmt.Println(<-sendch)
+}
+```
+```
+invalid operation: <-sendch (receive from send-only type chan<- int)
+```
+
+### Channel: Closing channels and for range loops on channels
+Senders have the ability to close the channel to notify receivers that no more data will be sent on the channel.
+
+Receivers can use an additional variable while receiving data from the channel to check whether the channel has been closed.
+```go
+v, ok := <- ch
+```
+In the above statement `ok` is `true` if the value was received by a successful send operation to a channel. If `ok` is `false` it means that we are reading from a closed channel. The value read from a closed channel will be the zero value of the channel's type. For example if the channel is an `int` channel, then the value received from a closed channel will be `0`.
+```go
+func producer(chnl chan int) {  
+    for i := 0; i < 10; i++ {
+        chnl <- i
+    }
+    close(chnl)
+}
+func main() {  
+    ch := make(chan int)
+    go producer(ch)
+    for {
+        v, ok := <-ch
+        if ok == false {
+            break
+        }
+        fmt.Println("Received ", v, ok)
+    }
+    // the for loop can be write such as below
+    for v := range ch {
+        fmt.Println("Received ",v)
+    }
+}
+```
+```
+Received  0 true  
+Received  1 true  
+Received  2 true  
+Received  3 true  
+Received  4 true  
+Received  5 true  
+Received  6 true  
+Received  7 true  
+Received  8 true  
+Received  9 true  
 ```
