@@ -40,3 +40,13 @@ Press hotkey: Ctrl + Shift + C
 ```
 setx GOPATH "project-path"
 ```
+
+## Import custom package in project
+With the mod file is the root name, you create a new folder as package and import to orther package by import name `<mod-module-name>/<package-name>`
+
+## Step by step to create a new project
+0. (Optional) You can set Go workspace in Documents folder
+1. Create project folder
+2. In project folder run command `go mod init <project-name>`
+3. In project folder run command `go mod vendor`
+4. Create main.go
