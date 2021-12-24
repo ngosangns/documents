@@ -1,0 +1,6 @@
+user
+<username>
+<password>
+cd <remote-path>
+send <local-file-path>
+quit
