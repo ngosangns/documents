@@ -1,0 +1,1 @@
+[Follow this tutorial](https://github.com/git-ftp/git-ftp/blob/master/INSTALL.md#windows)
